@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\Seas of Gold\Seas-of-Gold\Seas of Gold\IRRLICHT\irrlicht-1.8.3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Seas of Gold\Seas-of-Gold\Seas of Gold\IRRLICHT\irrlicht-1.8.3\lib\Win32-visualstudio;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\IRRLICHT\irrlicht-1.8.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\IRRLICHT\irrlicht-1.8.3\lib\Win32-visualstudio;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\allen\Desktop\Seas of Gold\Seas-of-Gold\Seas of Gold\IRRLICHT\irrlicht-1.8.3\include;$(IncludePath)</IncludePath>
@@ -81,6 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\IRRLICHT\irrlicht-1.8.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>irrlicht.lib;%(AdditionalDependencies)</AdditionalDependencies>
