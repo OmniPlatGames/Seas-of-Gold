@@ -1,5 +1,6 @@
 #include <irrlicht.h>
 #include <iostream>
+#include "WorldObject.h"
 
 using namespace irr;
 
@@ -14,17 +15,22 @@ using namespace gui;
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 
-int main()
+IrrlichtDevice* loadGRender()
 {
 	IrrlichtDevice *device =
 		createDevice(video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16,
-			false, false, false, 0);
+		false, false, false, 0);
 
 	if (!device)
-		return 1;
+		return nullptr;
+	return device;
+}
 
+int main()
+{
+	IrrlichtDevice* device = loadGRender();
+	
 	device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
-
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
