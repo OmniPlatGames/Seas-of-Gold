@@ -17,6 +17,11 @@ class WorldObject{
 
 	void generateGUID(long* GUIDList[], int len)
 	{
+		if (len = 0)
+		{
+			m_lGUID = -1;
+			return;
+		}
 		long tmp = abs(rand()*rand() - rand());
 		bool test = true;
 		while (1){
@@ -55,4 +60,5 @@ public:
 	inline void setOwner(long ownGUID){ m_lOwner = ownGUID; };
 
 	WorldObject(v3d* l, v3d* r, v3d* s, irrString n, int m, bool c, bool v, long* GUIDList[], int len);
+	WorldObject();
 };
