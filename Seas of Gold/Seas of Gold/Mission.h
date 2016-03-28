@@ -1,7 +1,7 @@
 // 
 // Mission.h
 //
-// This is a header fill that contains the following: Mission Class
+// This is a header file that contains the following: Mission Class
 
 // Includes
 #include "Common.h"
@@ -31,6 +31,8 @@ private:
 	int m_iGoldReward; // Gold reward for this mission
 	long m_1TurnInGUID; // Generated GUID for quest turn in
 
+	bool m_Completed; // Whether or not the mission is completed
+
 	// Methods
 public:
 	long getMissionID(); // Returns m_1ID
@@ -42,6 +44,9 @@ public:
 
 	int getRewardGold(); // Returns m_iGoldReward
 	long getTurnInGUID(); // Return m_1TurnInGUID
+
+	void completeMission(); // Sets the m_Completed flag to true.
+	bool isCompleted(); // Returns m_Completed
 private:
 
 };

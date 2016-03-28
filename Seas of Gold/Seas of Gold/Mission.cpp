@@ -9,6 +9,7 @@ Mission::Mission()
 	// m_itReward = ?
 	m_iGoldReward = 0;
 	m_1TurnInGUID = 0;
+	m_Completed = false;
 }
 
 /*
@@ -21,6 +22,7 @@ Mission::Mission(long ID,  irrstring DispName, irrstring GoalText, Items* isReq,
 	// m_itReward = isRew;
 	m_iGoldReward = GoldRew;
 	m_1TurnInGUID = ? // However we generate this
+	m_Completed = false;
 }
 */
 
@@ -61,4 +63,14 @@ int Mission::getRewardGold()
 long Mission::getTurnInGUID()
 {
 	return m_1TurnInGUID;
+}
+
+void Mission::completeMission()
+{
+	m_Completed = true;
+}
+
+bool Mission::isCompleted()
+{
+	return m_Completed;
 }
