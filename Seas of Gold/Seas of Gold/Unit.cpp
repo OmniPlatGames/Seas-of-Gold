@@ -22,7 +22,7 @@ int Unit::getGold()
 
 int Unit::unitHasItem(int itemID)
 {
-	return 0;
+	return items->hasItem(itemID);
 }
 
 
