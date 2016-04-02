@@ -15,31 +15,7 @@ class WorldObject{
 	bool m_bVisible;
 	long m_lOwner;
 
-	void generateGUID(long* GUIDList[], int len)
-	{
-		if (len = 0)
-		{
-			m_lGUID = -1;
-			return;
-		}
-		long tmp = abs(rand()*rand() - rand());
-		bool test = true;
-		while (1){
-			for (int i = 0; i < len; i++)
-			{
-				if (*GUIDList[i] == tmp)
-					test = false;
-			}
-			if (!test)
-			{
-				tmp = abs(rand()*rand() - rand());
-				test = true;
-			}
-			else
-				break;
-		}
-		m_lGUID = tmp;
-	}
+	void generateGUID(long* GUIDList[], int len);
 
 public:
 	inline v3d* getLocation() { return &m_v3Loc; };
