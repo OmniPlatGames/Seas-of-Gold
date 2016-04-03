@@ -293,3 +293,117 @@ void GraphicsCircle::Draw(irr::video::IVideoDriver* driver)
 		m_Radius, m_Color, 60);
 	//driver->drawIndexedTriangleFan()
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Graphics3D::Graphics3D()
+{
+	m_Position = v3d(0, 0, 0);
+	m_Scale = v3d(1, 1, 1);
+	m_Rotation = v3d(0, 0, 0);
+	m_Color = irr::video::SColor(255, 255, 255, 255);
+}
+
+v3d Graphics3D::GetPosition()
+{
+	return m_Position;
+}
+
+v3d Graphics3D::GetScale()
+{
+	return m_Scale;
+}
+
+v3d Graphics3D::GetRotation()
+{
+	return m_Rotation;
+}
+
+irr::video::SColor Graphics3D::GetColor()
+{
+	return m_Color;
+}
+
+void Graphics3D::SetPosition(v3d Position)
+{
+	m_Position = Position;
+}
+
+void Graphics3D::SetPosition(float x, float y, float z)
+{
+	m_Position = v3d(x, y, z);
+}
+
+void Graphics3D::SetScale(v3d scale)
+{
+	m_Scale = scale;
+}
+
+void Graphics3D::SetScale(float x, float y, float z)
+{
+	m_Scale = v3d(x, y, z);
+}
+
+void Graphics3D::SetScale(float Uscale)
+{
+	m_Scale = v3d(Uscale, Uscale, Uscale);
+}
+
+void Graphics3D::SetRotation(v3d rotation)
+{
+	m_Rotation = rotation;
+}
+
+void Graphics3D::SetRotation(float Pitch, float Yaw, float Roll)
+{
+	m_Rotation = v3d(Pitch, Yaw, Roll);
+}
+
+void Graphics3D::SetColor(irr::video::SColor Color)
+{
+	m_Color = Color;
+}
+
+void Graphics3D::SetColor(int R, float G, float B, float A)
+{
+	m_Color = irr::video::SColor(A, R, G, B);
+}
+
+void Graphics3D::SetColor(int R, float G, float B)
+{
+	m_Color = irr::video::SColor(255, R, G, B);
+}
+
+void Graphics3D::Draw(irr::video::IVideoDriver* driver)
+{
+
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+
+GraphicsModel::GraphicsModel()
+{
+
+}
+
+void GraphicsModel::setMesh(irrstring mesh, irrstring texture,
+	irr::scene::ISceneManager* smgr,
+	irr::video::IVideoDriver* driver)
+{
+	m_Mesh = smgr->getMesh(mesh);
+	m_Node = smgr->addMeshSceneNode(m_Mesh);
+	m_Texture = driver->getTexture(texture);
+}
+
+void GraphicsModel::Draw(irr::video::IVideoDriver* driver)
+{
+	m_Node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+	m_Node->setMaterialTexture(0, m_Texture);
+	m_Node->setScale(m_Scale);
+	m_Node->setPosition(m_Position);
+	m_Node->setRotation(m_Rotation);
+}

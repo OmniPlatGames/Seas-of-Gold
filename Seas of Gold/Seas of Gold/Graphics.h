@@ -113,3 +113,50 @@ public:
 protected:
 	float m_Radius;
 };
+
+class Graphics3D : public Graphics
+{
+public:
+	Graphics3D();
+
+	virtual v3d GetPosition();
+	virtual v3d GetScale();
+	virtual v3d GetRotation();
+	virtual irr::video::SColor GetColor();
+
+	virtual void SetPosition(v3d Position);
+	virtual void SetPosition(float x, float y, float z);
+	virtual void SetScale(v3d scale);
+	virtual void SetScale(float x, float y, float z);
+	virtual void SetScale(float Uscale);
+	virtual void SetRotation(v3d rotation);
+	virtual void SetRotation(float Pitch, float Yaw, float Roll);
+	virtual void SetColor(irr::video::SColor Color);
+	virtual void SetColor(int R, float G, float B, float A);
+	virtual void SetColor(int R, float G, float B);
+
+	virtual void Draw(irr::video::IVideoDriver* driver);
+protected:
+	v3d m_Position;
+	v3d m_Scale;
+	v3d m_Rotation;
+
+	irr::video::SColor m_Color;
+};
+
+class GraphicsModel : public Graphics3D
+{
+public:
+	GraphicsModel();
+
+	virtual void setMesh(irrstring mesh, irrstring texture,
+		irr::scene::ISceneManager* smgr,
+		irr::video::IVideoDriver* driver);
+
+	virtual void Draw(irr::video::IVideoDriver* driver);
+
+protected:
+	irr::scene::IMesh* m_Mesh;
+	irr::scene::IMeshSceneNode* m_Node;
+	irr::video::ITexture* m_Texture;
+};
