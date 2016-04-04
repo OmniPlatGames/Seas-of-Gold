@@ -2,14 +2,8 @@
 #include <iostream>
 #include "WorldObject.h"
 #include "Graphics.h"
+#include "Item.h"
 
-using namespace irr;
-
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -31,12 +25,15 @@ IrrlichtDevice* loadGRender()
 
 int main()
 {
+	Item itemTest ("1", 2);
+	
 	IrrlichtDevice* device = loadGRender();
 	
 	device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
+	video::E_DRIVER_TYPE driverType = driverChoiceConsole();
 
 	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
 		rect<s32>(10, 10, 260, 22), true);
@@ -65,6 +62,8 @@ int main()
 	{
 
 		driver->beginScene(true, true, SColor(255, 100, 101, 140));
+
+		itemTest.loadSprite(driver, v2d(50, 50));
 
 		smgr->drawAll();
 		guienv->drawAll();
