@@ -20,5 +20,5 @@ WorldObject::WorldObject(){
 	m_iModelID = 0;
 	m_bClipping = true;
 	m_bVisible = false;
-	generateGUID(new long*[], 0);
+	generateGUID(nullptr, 0);
 }
