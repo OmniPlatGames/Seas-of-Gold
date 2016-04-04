@@ -20,6 +20,8 @@
 #include "EDriverFeatures.h"
 #include "SExposedVideoData.h"
 
+#include <iostream>
+
 namespace irr
 {
 namespace io
@@ -383,6 +385,9 @@ namespace video
 		could not be loaded. This pointer should not be dropped. See
 		IReferenceCounted::drop() for more information. */
 		virtual ITexture* getTexture(io::IReadFile* file) =0;
+
+		//Allen's test function
+		//virtual ITexture* getTexture(std::string) = 0;
 
 		//! Returns a texture by index
 		/** \param index: Index of the texture, must be smaller than

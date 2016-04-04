@@ -15,9 +15,9 @@ int Inventory::hasItem(int itemID)
 {
 	for (Item* Item : items)
 	{
-		if (Item->ID == itemID)
+		if (Item->getItemID() == itemID)
 		{
-			return Item->quantity;
+			return Item->getItemQty();
 		}
 	}
 	return 0;
@@ -29,9 +29,9 @@ void Inventory::addItem(Item item)
 
 	for (Item* Item : items)
 	{
-		if (Item->ID == item.ID)
+		if (Item->getItemID() == item.getItemID())
 		{
-			Item->quantity += item.quantity;
+			Item->setItemQty(Item->getItemQty() + item.getItemQty());
 			hasItem = true;
 			break;
 		}
@@ -48,15 +48,15 @@ void Inventory::removeItem(Item item)
 
 	for (Item* Item : items)
 	{
-		if (Item->ID == item.ID)
+		if (Item->getItemID() == item.getItemID())
 		{
-			Item->quantity -= item.quantity;
+			Item->setItemQty(Item->getItemQty() + item.getItemQty());
 			hasItem = true;
 			break;
 		}
 	}
 	if (hasItem = false)
 	{
-		MessageBox(NULL, "Item not in inventory! Fix checks.", NULL, MB_OK);
+		MessageBox(NULL, "Item not in inventory! Error #1.", NULL, MB_OK);
 	}
 }
