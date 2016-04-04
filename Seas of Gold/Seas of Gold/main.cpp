@@ -62,6 +62,7 @@ int main()
 	//
 	driver->getMaterial2D().TextureLayer[0].BilinearFilter = true;
 	driver->getMaterial2D().AntiAliasing = video::EAAM_FULL_BASIC;
+	smgr->addCameraSceneNodeFPS();
 
 	while (device->run())
 	{
