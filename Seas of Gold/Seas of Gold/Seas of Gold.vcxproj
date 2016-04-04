@@ -27,13 +27,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -78,15 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\IRRLICHT\irrlicht-1.8.3\include;$(IncludePath)</IncludePath>
-<<<<<<< HEAD
-    <LibraryPath>..\IRRLICHT\irrlicht-1.8.3\lib\Win32-visualstudio;$(LibraryPath)</LibraryPath>
-=======
     <LibraryPath>..\IRRLICHT\irrlicht-1.8.3\lib\Win64-visualStudio;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>..\IRRLICHT\irrlicht-1.8.3\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\IRRLICHT\irrlicht-1.8.3\lib\Win64-visualStudio;$(LibraryPath)</LibraryPath>
->>>>>>> refs/remotes/OmniPlatGames/master
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,7 +144,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mission.cpp" />
     <ClCompile Include="Unit.cpp" />
-    <ClCompile Include="Vendor.cpp" />
     <ClCompile Include="WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +154,6 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Mission.h" />
     <ClInclude Include="Unit.h" />
-    <ClInclude Include="Vendor.h" />
     <ClInclude Include="WorldObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
