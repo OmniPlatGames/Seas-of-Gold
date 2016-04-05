@@ -37,9 +37,9 @@ int main()
 
 	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
 		rect<s32>(10, 10, 260, 22), true);
-
+	
 	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
-	IAnimatedMesh* mesh = smgr->getMesh("textures/map.3ds");
+	IAnimatedMesh* mesh = smgr->getMesh("Assets/map.3ds");
 	if (!mesh)
 	{
 		device->drop();
@@ -59,7 +59,7 @@ int main()
 	//
 	driver->getMaterial2D().TextureLayer[0].BilinearFilter = true;
 	driver->getMaterial2D().AntiAliasing = video::EAAM_FULL_BASIC;
-	smgr->addCameraSceneNodeFPS();
+	smgr->addCameraSceneNodeFPS(0, 100, 0.01f, -1, NULL, 8);
 
 	while (device->run())
 	{
