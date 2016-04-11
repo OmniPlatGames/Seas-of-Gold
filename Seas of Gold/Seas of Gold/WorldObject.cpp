@@ -22,3 +22,28 @@ WorldObject::WorldObject(){
 	m_bVisible = false;
 	generateGUID(nullptr, 0);
 }
+
+void WorldObject::generateGUID(long* GUIDList[], int len){
+	if (len = 0)
+	{
+		m_lGUID = -1;
+		return;
+	}
+	long tmp = abs(rand()*rand() - rand());
+	bool test = true;
+	while (1){
+		for (int i = 0; i < len; i++)
+		{
+			if (*GUIDList[i] == tmp)
+				test = false;
+		}
+		if (!test)
+		{
+			tmp = abs(rand()*rand() - rand());
+			test = true;
+		}
+		else
+			break;
+	}
+	m_lGUID = tmp;
+}

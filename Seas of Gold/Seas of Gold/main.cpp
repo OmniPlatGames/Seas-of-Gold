@@ -29,37 +29,38 @@ int main()
 	
 	IrrlichtDevice* device = loadGRender();
 	
-	device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
+	device->setWindowCaption(L"Seas of Gold");  //Updated JFarley
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
 	video::E_DRIVER_TYPE driverType = driverChoiceConsole();
 
-	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<s32>(10, 10, 260, 22), true);
-
+	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
+		rect<s32>(10, 10, 260, 22), true);*/   //not needed JFarley
+	
 	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
-	IAnimatedMesh* mesh = smgr->getMesh("textures/map.3ds");
-	if (!mesh)
+	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
+	if (!map)
 	{
 		device->drop();
 		return 1;
 	}
-	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode(mesh);
+	IAnimatedMeshSceneNode* mapNode = smgr->addAnimatedMeshSceneNode(map);
 
-	if (node)
+	if (mapNode)
 	{
-		node->setMaterialFlag(EMF_LIGHTING, false);
-		node->setMD2Animation(scene::EMAT_STAND);
-		//node->setMaterialTexture(0, driver->getTexture("textures/sydney.bmp"));
+		mapNode->setMaterialFlag(EMF_LIGHTING, false); 
+		mapNode->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF);  // alpha blending for 3D objects -- JFarley
+		//node->setMD2Animation(scene::EMAT_STAND);
+		//node->setMaterialTexture(0, driver->getTexture("textures/sydney.bmp"));  //texture calls are internal to 3ds files -- JFarley
 		//node->setMaterialTexture(0, driver->getTexture("textures/map.png"));
 	}
-	smgr->addCameraSceneNode(0, vector3df(0, 30, -40), vector3df(0, 5, 0));
+
 
 	//
 	driver->getMaterial2D().TextureLayer[0].BilinearFilter = true;
 	driver->getMaterial2D().AntiAliasing = video::EAAM_FULL_BASIC;
-	smgr->addCameraSceneNodeFPS();
+	smgr->addCameraSceneNodeFPS(0, 100, 0.01f, -1, NULL, 8);
 
 	while (device->run())
 	{
@@ -72,6 +73,10 @@ int main()
 		guienv->drawAll();
 
 		driver->endScene();
+
+		//close game loop with escape key -- JFarley
+		if (GetAsyncKeyState(VK_ESCAPE))
+			device->closeDevice();
 	}
 
 	device->drop();
