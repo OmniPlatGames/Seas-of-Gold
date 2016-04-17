@@ -10,16 +10,7 @@
 // Mission Class
 class Mission
 {
-	// Constructor
-public:
-	Mission();
-	//Mission(long ID,  irrstring DispName, irrstring GoalText, Items* isReq, Items* isRew, int GoldRew);
-
-	// Members 
-public:
-
-private:
-	long m_1ID; // Mission ID
+	long m_loID; // Mission ID
 	irrstring m_isDisplayName; // Visible name
 	irrstring m_isGoalText; // Description Text for mission
 
@@ -29,24 +20,28 @@ private:
 	// Item* m_itReward; // Rewarded item(s) for this mission
 
 	int m_iGoldReward; // Gold reward for this mission
-	long m_1TurnInGUID; // Generated GUID for quest turn in
+	long m_loTurnInGUID; // Generated GUID for quest turn in
 
-	bool m_Completed; // Whether or not the mission is completed
+	bool m_bCompleted; // Whether or not the mission is completed
 
 	// Methods
 public:
-	long getMissionID(); // Returns m_1ID
-	irrstring getDisplayName(); // Returns m_isDisplayName
-	irrstring getGoalText(); // Returns m_isGoalText
+	// Returns m_1ID
+	inline long getMissionID(){ return m_loID; };
+	inline irrstring getDisplayName(){ return m_isDisplayName; }; // Returns m_isDisplayName
+	inline irrstring getGoalText(){ return m_isGoalText; }; // Returns m_isGoalText
 
 	// Item* getRequiredItems(); // Returns m_itRequired
 	// Item* getRewardItems(); // Returns m_itReward
 
-	int getRewardGold(); // Returns m_iGoldReward
-	long getTurnInGUID(); // Return m_1TurnInGUID
+	inline int getRewardGold(){ return m_iGoldReward; }; // Returns m_iGoldReward
+	inline long getTurnInGUID(){ return m_loTurnInGUID; }; // Return m_1TurnInGUID
 
 	void completeMission(); // Sets the m_Completed flag to true.
-	bool isCompleted(); // Returns m_Completed
-private:
+	inline bool isCompleted(){ return m_bCompleted; }; // Returns m_Completed
+	
+	Mission();
+	//Mission(long ID,  irrstring DispName, irrstring GoalText, Items* isReq, Items* isRew, int GoldRew);
 
+	// Members 
 };
