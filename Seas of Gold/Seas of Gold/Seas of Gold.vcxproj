@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CShaderPre.cpp" />
+    <ClCompile Include="EffectHandler.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Inventory.cpp" />
@@ -150,6 +152,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CScreenQuad.h" />
+    <ClInclude Include="CShaderPre.h" />
+    <ClInclude Include="EffectCB.h" />
+    <ClInclude Include="EffectHandler.h" />
+    <ClInclude Include="EffectShaders.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Inventory.h" />
@@ -159,6 +166,7 @@
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Vendor.h" />
     <ClInclude Include="WorldObject.h" />
+    <ClInclude Include="XEffects.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
