@@ -2,14 +2,14 @@
 
 Mission::Mission()
 {
-	m_1ID = 0;
+	m_loID = 0;
 	irrstring m_isDisplayName = "Default Mission";
 	irrstring m_isGoalText = "Default Mission Goal Text!";
 	// m_itRequired = ?
 	// m_itReward = ?
 	m_iGoldReward = 0;
-	m_1TurnInGUID = 0;
-	m_Completed = false;
+	m_loTurnInGUID = 0;
+	m_bCompleted = false;
 }
 
 /*
@@ -26,21 +26,6 @@ Mission::Mission(long ID,  irrstring DispName, irrstring GoalText, Items* isReq,
 }
 */
 
-long Mission::getMissionID()
-{
-	return m_1ID;
-}
-
-irrstring Mission::getDisplayName()
-{
-	return m_isDisplayName;
-}
-
-irrstring Mission::getGoalText()
-{
-	return m_isGoalText;
-}
-
 /*
 Item* Mission::getRequiredItems()
 {
@@ -55,22 +40,7 @@ Item* Mission::getRewardItems()
 }
 */
 
-int Mission::getRewardGold()
-{
-	return m_iGoldReward;
-}
-
-long Mission::getTurnInGUID()
-{
-	return m_1TurnInGUID;
-}
-
 void Mission::completeMission()
 {
-	m_Completed = true;
-}
-
-bool Mission::isCompleted()
-{
-	return m_Completed;
+	m_bCompleted = true;
 }

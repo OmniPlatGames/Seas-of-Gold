@@ -9,41 +9,24 @@ Unit::~Unit()
 {
 }
 
-
-Inventory* Unit::getItems()
-{
-	return items;
-}
-
-int Unit::getGold()
-{
-	return gold;
-}
-
-int Unit::unitHasItem(int itemID)
-{
-	return items->hasItem(itemID);
-}
-
-
 void Unit::update(v3d dir, float dt)
 {
 	
-	v3d direction = dir.normalize();
-	v3d* currentLocation = getLocation();
+	v3d v3Direction = dir.normalize();
+	v3d* v3CurrentLocation = getLocation();
 
-	setLocation(*currentLocation + (direction * speed * dt));
+	setLocation(*v3CurrentLocation + (v3Direction * fSpeed * dt));
 }
 
 int Unit::modifyGold(int i)
 {
-	if (i < gold)
+	if (i < iGold)
 	{
-		gold += i;
+		iGold += i;
 		return 0;
 	}
 	else
 	{
-		return (gold - i);
+		return (iGold - i);
 	}
 }
