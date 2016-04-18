@@ -48,8 +48,14 @@ int main()
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
 
-	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<s32>(10, 10, 260, 22), true);*/   //not needed JFarley
+	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
+		rect<s32>(10, 10, 260, 22), true);  //not needed JFarley
+
+											// add irrlicht logo
+	/*guienv->addImage(driver->getTexture("../../media/irrlichtlogo3.png"),
+		core::position2d<s32>(0, -2));*/
+
+	guienv->addImage(driver->getTexture("merchMess.png"), position2d<s32>(-5, -5));
 	
 	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
 	IAnimatedMesh* map = smgr->getMesh("Assets/map.x");
@@ -197,7 +203,7 @@ int main()
 		//itemTest.loadSprite(driver, v2d(50, 50));
 		
 		smgr->drawAll();
-		//guienv->drawAll();
+		guienv->drawAll();
 
 		driver->endScene();
 		
