@@ -5,18 +5,20 @@ struct mission { irrString missionName; bool isComplete; };
 
 class Vendor : public Unit
 {
+	int ivendorType;
+	bool bHasMissions;
+	mission* missionTable[];
 public:
 	Vendor();
 	~Vendor();
 
-	int getVendorType();
-	bool vendorHasMissions();
-	bool vendorMissionComplete(int missionIndex);
-	mission vendorMissionAccept(int missionIndex);
-
-private:
-	int vendorType;
-	bool hasMissions;
-	mission* missionTable[];
+	inline int getVendorType() { return ivendorType; };
+	inline bool vendorHasMissions(){ return bHasMissions; };
+	inline bool vendorMissionComplete(int missionIndex) {
+		return missionTable[missionIndex]->isComplete;
+	};
+	inline mission vendorMissionAccept(int missionIndex){
+		return *missionTable[missionIndex];
+	};
 };
 
