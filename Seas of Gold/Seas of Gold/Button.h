@@ -35,5 +35,7 @@ private:
 
 	irrstring m_text;
 
+	bool pressed;
+
 	int borderthickness;
 };

@@ -25,6 +25,8 @@ Button::Button()
 	m_main.SetColor(m_FrontColor);
 
 	m_TextColor = irr::video::SColor(255, 0, 0, 0);
+
+	pressed = false;
 }
 
 Button::Button(int x1, int y1, int x2, int y2)
@@ -53,6 +55,8 @@ Button::Button(int x1, int y1, int x2, int y2)
 	m_main.SetColor(m_FrontColor);
 
 	m_TextColor = irr::video::SColor(255, 0, 0, 0);
+
+	pressed = false;
 }
 
 void Button::SetFont(irr::gui::IGUIFont* font)
@@ -89,6 +93,14 @@ bool Button::isPressed(Input* in)
 		if ((m_Topleft.X < mpos.X) && (m_Topleft.Y < mpos.Y)
 			&& (m_BotRight.X > mpos.X) && (m_BotRight.Y > mpos.Y))
 		{
+			pressed = true;
+		}
+	}
+	else
+	{
+		if (pressed == true)
+		{
+			pressed = false;
 			return true;
 		}
 	}
@@ -107,6 +119,6 @@ void Button::Draw(irr::video::IVideoDriver* driver)
 		m_font->draw(m_text,
 			irr::core::rect<s32>(m_Topleft.X, m_Topleft.Y,
 				m_BotRight.X, m_BotRight.Y),
-			m_TextColor);
+			m_TextColor,true,true);
 	}
 }

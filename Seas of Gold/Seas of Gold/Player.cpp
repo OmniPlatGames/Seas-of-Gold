@@ -1,9 +1,19 @@
 #include "Player.h"
 
-/*Ship Player::*getPlayerShip()
+void Player::SetCurrentPort(int port)
+{
+	CurrentPort = port;
+}
+
+int Player::GetCurrentPort()
+{
+	return CurrentPort;
+}
+
+Ship* Player::getPlayerShip()
 {
 	return playerShip;
-}*/
+}
 
 /*int Player::getPlayerShipCrewMax()
 {

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "WorldObject.h"
 #include "Inventory.h"
 
@@ -28,5 +29,8 @@ public:
 	//add or subtract gold (never goes below 0). if i > gold, return difference but do not alter gold.
 	int modifyGold(int i);
 
+	void AddGold(int amnt);
+
+	void RemoveGold(int amnt);
 };
 
