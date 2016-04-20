@@ -94,6 +94,7 @@
     <Link>
       <AdditionalDependencies>irrlicht.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -146,8 +147,11 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MapMenu.cpp" />
     <ClCompile Include="Mission.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="TradeMenu.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Vendor.cpp" />
     <ClCompile Include="WorldObject.cpp" />
@@ -165,8 +169,11 @@
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="MapMenu.h" />
     <ClInclude Include="Mission.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Ship.h" />
+    <ClInclude Include="TradeMenu.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Vendor.h" />
     <ClInclude Include="WorldObject.h" />
