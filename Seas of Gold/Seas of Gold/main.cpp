@@ -39,6 +39,8 @@ int main()
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
 	bool xTest = false;
 	bool zTest = false;
+	bool updateCam = true;
+	bool menu1 = false;
 
 
 	
@@ -192,7 +194,7 @@ int main()
 		}
 
 
-		moveCameraControl(plyrNode, device, camera);
+		if(updateCam) moveCameraControl(plyrNode, device, camera);
 
 		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest = true;
 		else xTest = false;
@@ -218,29 +220,21 @@ int main()
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
-				while (menuloop)
-				{
-					driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
-					if (GetAsyncKeyState(VK_LBUTTON)) menuloop = false;
-				}
+				updateCam = false;
+				menu1 = true;
 			}
 		}
-		/*if (xTest && zTest && GetAsyncKeyState(VK_RETURN))
+		
+		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
+		if (GetAsyncKeyState(VK_LBUTTON))
 		{
+			updateCam = true;
+			menu1 = false;
+		}
 
-			while (menuloop)
-			{
-				driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
-				if (GetAsyncKeyState(VK_LBUTTON))
-				{
-					menuloop = false;
-				}
-			}
-		}*/
 		
 
 		driver->endScene();
-		menuloop = true;
 		
 
 		//close game loop with escape key -- JFarley
