@@ -15,6 +15,7 @@
 float direction=0, zdirection=0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
+bool menuloop = true;
 
 IrrlichtDevice* loadGRender()
 {
@@ -36,6 +37,10 @@ int main()
 	SColor sky = SColor(255, skyR, skyG, skyB);
 	IrrlichtDevice* device = loadGRender();
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
+	bool xTest = false;
+	bool zTest = false;
+	bool updateCam = true;
+	bool menu1 = false;
 
 
 	
@@ -49,7 +54,12 @@ int main()
 
 
 	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<s32>(10, 10, 260, 22), true);*/   //not needed JFarley
+		rect<s32>(10, 10, 260, 22), true);*/  //not needed JFarley
+
+	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
+	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
+
+
 	
 	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
 	IAnimatedMesh* map = smgr->getMesh("Assets/map.x");
@@ -184,7 +194,14 @@ int main()
 		}
 
 
-		moveCameraControl(plyrNode, device, camera);
+		if(updateCam) moveCameraControl(plyrNode, device, camera);
+
+		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest = true;
+		else xTest = false;
+		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest = true;
+		else zTest = false;
+
+		
 
 		if (sun_angle > 360) sun_angle = 0;
 		if (sun_angle < 180) sun_data.DiffuseColor = Diffuse_Day; else sun_data.DiffuseColor = Diffuse_Night;
@@ -197,7 +214,25 @@ int main()
 		//itemTest.loadSprite(driver, v2d(50, 50));
 		
 		smgr->drawAll();
-		//guienv->drawAll();
+
+		if (xTest && zTest)
+		{
+			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
+			if (GetAsyncKeyState(VK_RETURN))
+			{
+				updateCam = false;
+				menu1 = true;
+			}
+		}
+		
+		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
+		if (GetAsyncKeyState(VK_LBUTTON))
+		{
+			updateCam = true;
+			menu1 = false;
+		}
+
+		
 
 		driver->endScene();
 		
