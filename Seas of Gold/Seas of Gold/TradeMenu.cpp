@@ -198,6 +198,7 @@ bool TradeMenu::Update(Input* in)
 				}
 			}
 		}
+		UpdateContents();
 	}
 
 	if (BSellButton.isPressed(in))
@@ -235,6 +236,7 @@ bool TradeMenu::Update(Input* in)
 				}
 			}
 		}
+		UpdateContents();
 	}
 
 	if (BamntUp.isPressed(in))
