@@ -79,6 +79,11 @@ void Button::SetColorText(int R, int G, int B, int A)
 	m_TextColor = irr::video::SColor(A, R, G, B);
 }
 
+irrstring Button::GetText()
+{
+	return m_text;
+}
+
 void Button::SetText(irrstring text)
 {
 	m_text = text;

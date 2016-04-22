@@ -5,7 +5,7 @@
 
 class Inventory
 {
-private:
+public:
 	std::vector<Item*> items;
 
 public:
