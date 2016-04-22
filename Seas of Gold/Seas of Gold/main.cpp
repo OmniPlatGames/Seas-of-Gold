@@ -88,11 +88,22 @@ int main()
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
 	if (!merch) { device->drop(); return 1; }
 	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(merch);
+	for (int i = 0; i < merchNode->getMaterialCount(); i++)
+	{
+		merchNode->getMaterial(i).NormalizeNormals = true;
+	}
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
-	if (!player) { device->drop(); return 1; }
 	IAnimatedMeshSceneNode *plyrNode = smgr->addAnimatedMeshSceneNode(player);
+	bool plyrWalk = false;
+	plyrNode->setFrameLoop(0, 20);
+	plyrNode->setAnimationSpeed(30);
+	for (int i = 0; i < plyrNode->getMaterialCount(); i++)
+	{
+		plyrNode->getMaterial(i).NormalizeNormals=true;
+	}
 	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), plyrNode->getPosition() + vector3df(0, 2, 0));
 
@@ -167,13 +178,16 @@ int main()
 			}
 		}
 
-		if (GetAsyncKeyState(0x57))
+		if (GetAsyncKeyState(0x57)) //W key
 		{
-			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI/180));
+			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-			
+			if (plyrWalk = false) plyrWalk = true;
+
 		}
+		else
+			plyrWalk = false;
 		if (GetAsyncKeyState(0x53))
 		{
 			plPos_z += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
