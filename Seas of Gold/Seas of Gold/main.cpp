@@ -154,7 +154,7 @@ int main()
 	p.SetCurrentPort(eMapDest::South);
 
 	// Make the menu
-	MapMenu mm(device,driver);
+	TradeMenu mm(device,driver);
 	mm.SetPlayer(&p);
 	
 	while (device->run())

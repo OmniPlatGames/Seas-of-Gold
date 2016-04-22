@@ -18,6 +18,20 @@ public:
 private:
 	GraphicsImage background;
 
+	// UI Layout Buttons
+	Button BbgL;
+	Button BbgR;
+
+	Button BShopTitle;
+	Button BShipTitle;
+
+	Button BBuyButton;
+	Button BSellButton;
+
+	Button BamntDisp;
+	Button BamntUp;
+	Button BamntDown;
+
 	Button GoldButton;
 	Button BuySuppliesButton;
 	Button BuyCrewButton;
@@ -27,4 +41,6 @@ private:
 
 	int SupplyCost;
 	int CrewCost;
+
+	int ModAmnt;
 };

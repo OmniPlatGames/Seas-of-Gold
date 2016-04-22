@@ -5,27 +5,65 @@ TradeMenu::TradeMenu(IrrlichtDevice* device,
 {
 	mfont = device->getGUIEnvironment()->getBuiltInFont();
 
-	background = GraphicsImage(50, 50, 750, 550);
+	background = GraphicsImage(10, 10, 790, 590);
 	background.SetTexture("Assets/woodTex.png", driver);
 
-	BuySuppliesButton = Button(200, 60, 600, 110);
+	BbgL = Button(50, 50, 390, 500);
+	BbgL.SetFont(mfont);
+	BbgL.SetText("");
+
+	BbgR = Button(410, 50, 750, 500);
+	BbgR.SetFont(mfont);
+	BbgR.SetText("");
+
+	BuySuppliesButton = Button(410, 512, 750, 540);
 	BuySuppliesButton.SetFont(mfont);
 	BuySuppliesButton.SetText("Buy 10 Supplies : Cost 10g : Current X : Max Y");
 
-	BuyCrewButton = Button(200, 130, 600, 180);
+	BuyCrewButton = Button(410, 552, 750, 580);
 	BuyCrewButton.SetFont(mfont);
 	BuyCrewButton.SetText("Buy 1 Crew : Cost 100g : Current X : Max Y");
 
-	BExit = Button(700, 50, 750, 100);
+	BExit = Button(750, 10, 790, 50);
 	BExit.SetFont(mfont);
 	BExit.SetText("x");
 
-	GoldButton = Button(50, 50, 150, 100);
+	GoldButton = Button(20, 20, 110, 40);
 	GoldButton.SetFont(mfont);
 	GoldButton.SetText("Gold: X");
 
+	BShopTitle = Button(50, 50, 390, 75);
+	BShopTitle.SetFont(mfont);
+	BShopTitle.SetText("Shop");
+
+	BShipTitle = Button(410, 50, 750, 75);
+	BShipTitle.SetFont(mfont);
+	BShipTitle.SetText("Ship");
+
+	BBuyButton = Button(50, 520, 160, 570);
+	BBuyButton.SetFont(mfont);
+	BBuyButton.SetText("Buy");
+
+	BSellButton = Button(280, 520, 390, 570);
+	BSellButton.SetFont(mfont);
+	BSellButton.SetText("Sell");
+
+	BamntDisp = Button(200, 530, 230, 560);
+	BamntDisp.SetFont(mfont);
+	BamntDisp.SetText("1");
+
+	BamntUp = Button(230, 530, 245, 545);
+	BamntUp.SetFont(mfont);
+	BamntUp.SetText("+");
+
+	BamntDown = Button(230, 545, 245, 560);
+	BamntDown.SetFont(mfont);
+	BamntDown.SetText("-");
+
 	SupplyCost = 10;
 	CrewCost = 100;
+
+	ModAmnt = 1;
 }
 
 void TradeMenu::SetPlayer(Player* p)
@@ -55,6 +93,10 @@ bool TradeMenu::Update(Input* in)
 	str = "Gold: ";
 	str += std::to_string(mPlayer->getGold()).c_str();
 	GoldButton.SetText(str);
+
+	str = "";
+	str += std::to_string(ModAmnt).c_str();
+	BamntDisp.SetText(str);
 	
 	if (BuySuppliesButton.isPressed(in))
 	{
@@ -85,14 +127,48 @@ bool TradeMenu::Update(Input* in)
 		return true;
 	}
 
+	if (BBuyButton.isPressed(in))
+	{
+
+	}
+
+	if (BSellButton.isPressed(in))
+	{
+
+	}
+
+	if (BamntUp.isPressed(in))
+	{
+		ModAmnt++;
+	}
+
+	if (BamntDown.isPressed(in))
+	{
+		ModAmnt--;
+		if (ModAmnt < 0)
+			ModAmnt = 0;
+	}
+
 	return false;
 }
 
 void TradeMenu::Draw(irr::video::IVideoDriver* driver)
 {
 	background.Draw(driver);
+	BbgL.Draw(driver);
+	BbgR.Draw(driver);
 	BuySuppliesButton.Draw(driver);
 	BuyCrewButton.Draw(driver);
 	BExit.Draw(driver);
 	GoldButton.Draw(driver);
+
+	BShopTitle.Draw(driver);
+	BShipTitle.Draw(driver);
+
+	BBuyButton.Draw(driver);
+	BSellButton.Draw(driver);
+
+	BamntDisp.Draw(driver);
+	BamntUp.Draw(driver);
+	BamntDown.Draw(driver);
 }
