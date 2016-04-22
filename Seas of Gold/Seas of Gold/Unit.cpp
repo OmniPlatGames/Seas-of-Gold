@@ -30,3 +30,16 @@ int Unit::modifyGold(int i)
 		return (iGold - i);
 	}
 }
+
+void Unit::AddGold(int amnt)
+{
+	iGold += amnt;
+}
+
+void Unit::RemoveGold(int amnt)
+{
+	iGold -= amnt;
+
+	if (iGold < 0)
+		iGold == 0;
+}

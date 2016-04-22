@@ -4,6 +4,10 @@
 #include "Graphics.h"
 #include "Item.h"
 #include "XEffects.h"
+#include "Input.h"
+#include "MapMenu.h"
+#include "TradeMenu.h"
+#include "Player.h"
 
 
 #ifdef _IRR_WINDOWS_
@@ -17,11 +21,15 @@ vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
 bool menuloop = true;
 
+Input input;
+
+enum eMenuState{None,Main,Trade,Map};
+
 IrrlichtDevice* loadGRender()
 {
 	
 	//
-	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, 0);
+	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
 
 
 	if (!device)
@@ -39,7 +47,8 @@ int main()
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
 	bool xTest = false;
 	bool zTest = false;
-	bool updateCam = true;
+	//bool updateCam = true;
+	bool updateCam = false;
 	bool menu1 = false;
 
 
@@ -150,6 +159,14 @@ int main()
 	candleLight->setLightData(candleLight_data);
 	//------- end -----//
 
+	// Make the player
+	Player p;
+	p.AddGold(1000);
+	p.SetCurrentPort(eMapDest::South);
+
+	// Make the menu
+	MapMenu mm(device,driver);
+	mm.SetPlayer(&p);
 	
 	while (device->run())
 	{
@@ -215,7 +232,12 @@ int main()
 		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest = true;
 		else zTest = false;
 
-		
+
+		////////////////////////////////////////////////////////
+		// Menu Update
+		mm.Update(&input);
+
+		////////////////////////////////////////////////////////
 
 		if (sun_angle > 360) sun_angle = 0;
 		if (sun_angle < 180) sun_data.DiffuseColor = Diffuse_Day; else sun_data.DiffuseColor = Diffuse_Night;
@@ -242,11 +264,13 @@ int main()
 		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
 		if (GetAsyncKeyState(VK_LBUTTON))
 		{
-			updateCam = true;
+			//updateCam = true;
 			menu1 = false;
 		}
 
-		
+		// Draw the menu
+		mm.Draw(driver);
+
 
 		driver->endScene();
 		
