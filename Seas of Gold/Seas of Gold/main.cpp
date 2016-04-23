@@ -28,7 +28,6 @@ enum eMenuState{None,Main,Trade,Map};
 IrrlichtDevice* loadGRender()
 {
 	
-	//
 	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
 
 
@@ -47,8 +46,7 @@ int main()
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
 	bool xTest = false;
 	bool zTest = false;
-	//bool updateCam = true;
-	bool updateCam = false;
+	bool updateCam = true;
 	bool menu1 = false;
 
 
@@ -75,27 +73,21 @@ int main()
 	if (!map) { device->drop(); return 1; }
 	IAnimatedMeshSceneNode* mapNode = smgr->addAnimatedMeshSceneNode(map);
 
-
-	if (mapNode)
-	{
-		//mapNode->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF);  // alpha blending for 3D objects -- JFarley
-	}
-
 	IAnimatedMesh* mHut = smgr->getMesh("Assets/mHut.x");
-	if (!mHut) { device->drop(); return 1; }
+	if (!mHut) { device->drop(); return 2; }
 	IAnimatedMeshSceneNode *mHutNode = smgr->addAnimatedMeshSceneNode(mHut);
 	mHutNode->getMaterial(0).Lighting = false;
 
 	IAnimatedMesh* cHut = smgr->getMesh("Assets/cHut.x");
-	if (!cHut) { device->drop(); return 1; }
+	if (!cHut) { device->drop(); return 3; }
 	IAnimatedMeshSceneNode *cHutNode = smgr->addAnimatedMeshSceneNode(cHut);
 
 	IAnimatedMesh* dHut = smgr->getMesh("Assets/dHut.x");
-	if (!dHut) { device->drop(); return 1; }
+	if (!dHut) { device->drop(); return 4; }
 	IAnimatedMeshSceneNode *dHutNode = smgr->addAnimatedMeshSceneNode(dHut);
 
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
-	if (!merch) { device->drop(); return 1; }
+	if (!merch) { device->drop(); return 5; }
 	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(merch);
 	for (int i = 0; i < merchNode->getMaterialCount(); i++)
 	{
@@ -103,6 +95,7 @@ int main()
 	}
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
+	if (!player) { device->drop(); return 5; }
 	IAnimatedMeshSceneNode *plyrNode = smgr->addAnimatedMeshSceneNode(player);
 	bool plyrWalk = false;
 	plyrNode->setFrameLoop(0, 20);
@@ -170,6 +163,70 @@ int main()
 	
 	while (device->run())
 	{
+		
+		///// Movement control! ///////////
+		if (GetAsyncKeyState(0x57)) //W key
+		{
+			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			if (plyrWalk == false)
+			{
+				plyrNode->setFrameLoop(40, 90);
+				plyrNode->setAnimationSpeed(30);
+				plyrWalk = true;
+			}
+
+		}
+		else if (GetAsyncKeyState(0x53)) //S key
+		{
+			plPos_z += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			if (plyrWalk == false)
+			{
+				plyrNode->setFrameLoop(40, 90);
+				plyrNode->setAnimationSpeed(-30);
+				plyrWalk = true;
+			}
+		}
+		else if (GetAsyncKeyState(0x44)) // D key
+		{
+			plPos_z += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+		}
+		else if (GetAsyncKeyState(0x41)) // A key
+		{
+			plPos_z -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+		}
+		else
+		{
+			plyrNode->setFrameLoop(10, 30);
+			plyrWalk = false;
+		}
+		////// End Movement Control ////////////
+
+		// tests to see if we are using 3rd person camera
+		if(updateCam) moveCameraControl(plyrNode, device, camera);
+
+
+		// are we standing in front of the merchant table??
+		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest = true;
+		else xTest = false;
+		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest = true;
+		else zTest = false;
+
+
+		////////////////////////////////////////////////////////
+		// Menu Update
+		mm.Update(&input);
+
+		////////////////////////////////////////////////////////
+
+		////// sky control /////////
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
 		sun_angle += 0.01f;
 		if ((sun_angle > 0 && sun_angle < 109) || (sun_angle>350))
@@ -194,51 +251,6 @@ int main()
 				timer = 0;
 			}
 		}
-
-		if (GetAsyncKeyState(0x57)) //W key
-		{
-			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-			if (plyrWalk = false) plyrWalk = true;
-
-		}
-		else
-			plyrWalk = false;
-		if (GetAsyncKeyState(0x53))
-		{
-			plPos_z += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-		}
-		if (GetAsyncKeyState(0x44))
-		{
-			plPos_z += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-		}
-		if (GetAsyncKeyState(0x41))
-		{
-			plPos_z -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-		}
-
-
-		if(updateCam) moveCameraControl(plyrNode, device, camera);
-
-		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest = true;
-		else xTest = false;
-		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest = true;
-		else zTest = false;
-
-
-		////////////////////////////////////////////////////////
-		// Menu Update
-		mm.Update(&input);
-
-		////////////////////////////////////////////////////////
-
 		if (sun_angle > 360) sun_angle = 0;
 		if (sun_angle < 180) sun_data.DiffuseColor = Diffuse_Day; else sun_data.DiffuseColor = Diffuse_Night;
 		sun_node->setLightData(sun_data);
@@ -247,10 +259,11 @@ int main()
 		sky.setGreen(skyG);
 		sky.setBlue(skyB);
 		driver->beginScene(true, true, sky);
-		//itemTest.loadSprite(driver, v2d(50, 50));
+		/////// end sky control ////////
 		
 		smgr->drawAll();
 
+		//// display message and menu at merchant ///////
 		if (xTest && zTest)
 		{
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
@@ -258,19 +271,21 @@ int main()
 			{
 				updateCam = false;
 				menu1 = true;
+				device->getCursorControl()->setVisible(true);
 			}
 		}
 		
 		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
 		if (GetAsyncKeyState(VK_LBUTTON))
 		{
-			//updateCam = true;
+			updateCam = true;
 			menu1 = false;
 		}
 
 		// Draw the menu
 		mm.Draw(driver);
-
+		updateCam = false;
+		device->getCursorControl()->setVisible(true);
 
 		driver->endScene();
 		
@@ -287,10 +302,8 @@ int main()
 
 void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* device, ICameraSceneNode* camera)
 {
-	//IrrlichtDevice* device = loadGRender();
-
+	
 	position2d<f32> cursorPos = device->getCursorControl()->getRelativePosition();
-	//ICameraSceneNode* camera = device->getSceneManager()->getActiveCamera();
 	vector3df cameraPos = camera->getAbsolutePosition();
 
 	float change_x = (cursorPos.X - 0.5) * 256.0f;
@@ -299,6 +312,7 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 	zdirection = -90;
 
 	device->getCursorControl()->setPosition(0.5f, 0.5f);
+	device->getCursorControl()->setVisible(false);
 
 	vector3df playerPos = playerNode->getPosition();
 
