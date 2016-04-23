@@ -108,6 +108,9 @@ int main()
 
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), plyrNode->getPosition() + vector3df(0, 2, 0));
+	camera->setNearValue(0.5);
+	camera->setFarValue(500);
+	
 
 	
 	////////////// The Sun ////////////
@@ -269,23 +272,21 @@ int main()
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
-				updateCam = false;
+				// Draw the menu
 				menu1 = true;
+				updateCam = false;
 				device->getCursorControl()->setVisible(true);
 			}
 		}
 		
-		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
-		if (GetAsyncKeyState(VK_LBUTTON))
+		if (menu1) mm.Draw(driver);
+		if (GetAsyncKeyState(0x4D))
 		{
 			updateCam = true;
 			menu1 = false;
 		}
 
-		// Draw the menu
-		mm.Draw(driver);
-		updateCam = false;
-		device->getCursorControl()->setVisible(true);
+		
 
 		driver->endScene();
 		
