@@ -15,6 +15,8 @@ public:
 	void SetColorFront(int R, int G, int B, int A);
 	void SetColorText(int R, int G, int B, int A);
 
+	irrstring GetText();
+
 	void SetText(irrstring text);
 
 	bool isPressed(Input* in);

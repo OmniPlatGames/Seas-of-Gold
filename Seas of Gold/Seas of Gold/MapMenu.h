@@ -17,6 +17,7 @@ public:
 	void Draw(irr::video::IVideoDriver* driver);
 private:
 	GraphicsImage background;
+
 	Button BDestN;
 	Button BDestS;
 	Button BDestE;
