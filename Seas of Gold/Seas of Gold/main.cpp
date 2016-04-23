@@ -8,6 +8,7 @@
 #include "MapMenu.h"
 #include "TradeMenu.h"
 #include "Player.h"
+#include "MainMenu.h"
 
 
 #ifdef _IRR_WINDOWS_
@@ -160,10 +161,19 @@ int main()
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
 
-	// Make the menu
-	TradeMenu mm(device,driver);
-	mm.SetPlayer(&p);
+	Vendor v;
+
+	// Make the menus
+	MainMenu mainMenu(device);
+
+	MapMenu mapMenu(device, driver);
+	mapMenu.SetPlayer(&p);
+
+	TradeMenu tradeMenu(device,driver);
+	tradeMenu.SetPlayer(&p);
 	
+	int state = Main;
+
 	while (device->run())
 	{
 		
@@ -224,8 +234,91 @@ int main()
 
 
 		////////////////////////////////////////////////////////
-		// Menu Update
-		mm.Update(&input);
+		if (state != None)
+		{
+			updateCam = false;
+		}
+		else
+		{
+			updateCam = true;
+		}
+
+		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
+		{
+			if (state == Map)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Map;
+			}
+		}
+
+		if (input.IsKeyDown(irr::KEY_ESCAPE) && state == None)
+		{
+			state = Main;
+		}
+
+
+
+		switch (state)
+		{
+		case Map:
+		{
+			int out = mapMenu.Update(&input);
+
+			switch (out)
+			{
+			case eMapDest::Exit:
+			{
+				state = None;
+			}
+			default:
+			{
+				break;
+			}
+			}
+
+			break;
+		}
+		case Trade:
+		{
+			bool out = tradeMenu.Update(&input);
+			if (out)
+				state = None;
+			break;
+		}
+		case Main:
+		{
+			int out = mainMenu.Update(&input);
+			
+			switch (out)
+			{
+			case MSstart:
+			{
+				state = None;
+				break;
+			}
+			case MSexit:
+			{
+				device->closeDevice();
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+
+			break;
+		}
+		default:
+		{
+			// Do nothing
+			break;
+		}
+		}
 
 		////////////////////////////////////////////////////////
 
@@ -272,6 +365,7 @@ int main()
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
+<<<<<<< HEAD
 				// Draw the menu
 				menu1 = true;
 				updateCam = false;
@@ -281,19 +375,62 @@ int main()
 		
 		if (menu1) mm.Draw(driver);
 		if (GetAsyncKeyState(0x4D))
+=======
+				/*updateCam = false;
+				menu1 = true;*/
+
+				/////////////////////////////////////////////
+
+				state = Trade;
+
+				/////////////////////////////////////////////
+			}
+		}
+		
+		/*if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
+		if (GetAsyncKeyState(VK_LBUTTON))
+>>>>>>> refs/remotes/OmniPlatGames/master
 		{
 			updateCam = true;
 			menu1 = false;
+		}*/
+
+<<<<<<< HEAD
+		
+=======
+		// Draw the menu
+		switch (state)
+		{
+		case Map:
+		{
+			mapMenu.Draw(driver);
+			break;
+		}
+		case Trade:
+		{
+			tradeMenu.Draw(driver);
+			break;
+		}
+		case Main:
+		{
+			mainMenu.Draw(driver);
+			break;
+		}
+		default:
+		{
+			// Do nothing
+			break;
+		}
 		}
 
-		
+>>>>>>> refs/remotes/OmniPlatGames/master
 
 		driver->endScene();
 		
 
 		//close game loop with escape key -- JFarley
-		if (GetAsyncKeyState(VK_ESCAPE))
-			device->closeDevice();
+		/*if (GetAsyncKeyState(VK_ESCAPE))
+			device->closeDevice();*/
 	}
 
 	device->drop();
