@@ -24,8 +24,6 @@ bool menuloop = true;
 
 Input input;
 
-<<<<<<< HEAD
-enum eMenuState{None,Main,Trade,Map};
 
 IrrlichtDevice* loadGRender()
 {
@@ -37,29 +35,23 @@ IrrlichtDevice* loadGRender()
 		return nullptr;
 	return device;
 }
-=======
+
 enum eMenuState{None,Main,Trade,Map,Craft};
->>>>>>> refs/remotes/OmniPlatGames/master
 
 int main()
 {
 	int skyR = 30, skyG = 30, skyB = 70;
 	int timer = 0;
 	SColor sky = SColor(255, skyR, skyG, skyB);
-<<<<<<< HEAD
-	IrrlichtDevice* device = loadGRender();
-	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
 	bool xTest_M = false;
 	bool zTest_M = false;
 	bool xTest_C = false;
 	bool zTest_C = false;
-=======
 	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
 	if (!device) return 1;
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = 10.0f;
 	bool xTest = false;
 	bool zTest = false;
->>>>>>> refs/remotes/OmniPlatGames/master
 	bool updateCam = true;
 	bool menu1 = false;
 
@@ -73,7 +65,6 @@ int main()
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
-<<<<<<< HEAD
 
 	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
 		rect<s32>(10, 10, 260, 22), true);*/  //not needed JFarley
@@ -81,34 +72,11 @@ int main()
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
-
-=======
-	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
-	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
->>>>>>> refs/remotes/OmniPlatGames/master
 	
 	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
 	if (!map) { device->drop(); return 1; }
-<<<<<<< HEAD
 	IAnimatedMeshSceneNode* mapNode = smgr->addAnimatedMeshSceneNode(map);
-
-	IAnimatedMesh* mHut = smgr->getMesh("Assets/mHut.x");
-	if (!mHut) { device->drop(); return 2; }
-	IAnimatedMeshSceneNode *mHutNode = smgr->addAnimatedMeshSceneNode(mHut);
-	mHutNode->getMaterial(0).Lighting = false;
-
-	IAnimatedMesh* cHut = smgr->getMesh("Assets/cHut.x");
-	if (!cHut) { device->drop(); return 3; }
-	IAnimatedMeshSceneNode *cHutNode = smgr->addAnimatedMeshSceneNode(cHut);
-
-	IAnimatedMesh* dHut = smgr->getMesh("Assets/dHut.x");
-	if (!dHut) { device->drop(); return 4; }
-	IAnimatedMeshSceneNode *dHutNode = smgr->addAnimatedMeshSceneNode(dHut);
-=======
 	IMeshSceneNode* seasNode = 0;
-
-	if (!map) { device->drop(); return 1; }
->>>>>>> refs/remotes/OmniPlatGames/master
 
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
 	if (!merch) { device->drop(); return 5; }
@@ -130,14 +98,8 @@ int main()
 	}
 	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 
-<<<<<<< HEAD
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), plyrNode->getPosition() + vector3df(0, 2, 0));
-	camera->setNearValue(0.5);
-	camera->setFarValue(500);
-	
-=======
-	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
 	//*******************Collisions*************************
 	if (map)
@@ -166,7 +128,6 @@ int main()
 		plyrNode->addAnimator(anim);
 		anim->drop();
 	}
->>>>>>> refs/remotes/OmniPlatGames/master
 
 	ISceneCollisionManager* collMan = smgr->getSceneCollisionManager();
 
@@ -506,39 +467,35 @@ int main()
 				state = Trade;
 			}
 		}
-<<<<<<< HEAD
 		
 		
 		switch (state)
-=======
+		{
+		case Map:
+		{
+			mapMenu.Draw(driver);
+			break;
+		}
+		case Trade:
+		{
+			tradeMenu.Draw(driver);
+			break;
+		}
+		case Main:
+		{
+			mainMenu.Draw(driver);
+			break;
+		}
 		case Craft:
 		{
 			craftMenu.Draw(driver);
 			break;
 		}
 		default:
->>>>>>> refs/remotes/OmniPlatGames/master
 		{
-			case Map:
-			{
-				mapMenu.Draw(driver);
-				break;
-			}
-			case Trade:
-			{
-				tradeMenu.Draw(driver);
-				break;
-			}
-			case Main:
-			{
-				mainMenu.Draw(driver);
-				break;
-			}
-			default:
-			{
-				// Do nothing
-				break;
-			}
+			// Do nothing
+			break;
+		}
 		}
 
 
