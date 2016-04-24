@@ -9,7 +9,7 @@
 #include "TradeMenu.h"
 #include "Player.h"
 #include "MainMenu.h"
-
+#include "CraftingMenu.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -24,7 +24,7 @@ bool menuloop = true;
 
 Input input;
 
-enum eMenuState{None,Main,Trade,Map};
+enum eMenuState{None,Main,Trade,Map,Craft};
 
 IrrlichtDevice* loadGRender()
 {
@@ -173,6 +173,9 @@ int main()
 	tradeMenu.SetPlayer(&p);
 	tradeMenu.SetVendor(&vS);
 
+	CraftingMenu craftMenu(device, driver);
+	craftMenu.SetPlayer(&p);
+
 	int state = Main;
 
 	while (device->run())
@@ -261,6 +264,18 @@ int main()
 			}
 		}
 
+		if (input.IsKeyDown(irr::KEY_KEY_C) && state == None)
+		{
+			if (state == Craft)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Craft;
+			}
+		}
+
 		if (input.IsKeyDown(irr::KEY_ESCAPE) && state == None)
 		{
 			state = Main;
@@ -279,6 +294,7 @@ int main()
 			case eMapDest::Exit:
 			{
 				state = None;
+				break;
 			}
 			case eMapDest::East:
 			{
@@ -286,6 +302,7 @@ int main()
 				itemB = new Item("Bronze Ore", 1000);
 				vE.getItems()->addItem(itemB);
 				tradeMenu.SetVendor(&vE);
+				break;
 			}
 			case eMapDest::North:
 			{
@@ -293,6 +310,7 @@ int main()
 				itemG = new Item("Gold Ore", 1000);
 				vN.getItems()->addItem(itemG);
 				tradeMenu.SetVendor(&vN);
+				break;
 			}
 			case eMapDest::South:
 			{
@@ -300,6 +318,7 @@ int main()
 				itemI = new Item("Iron Ore", 1000);
 				vS.getItems()->addItem(itemI);
 				tradeMenu.SetVendor(&vS);
+				break;
 			}
 			default:
 			{
@@ -338,6 +357,13 @@ int main()
 			}
 			}
 
+			break;
+		}
+		case Craft:
+		{
+			bool out = craftMenu.Update(&input);
+			if (out)
+				state = None;
 			break;
 		}
 		default:
@@ -400,6 +426,11 @@ int main()
 		case Main:
 		{
 			mainMenu.Draw(driver);
+			break;
+		}
+		case Craft:
+		{
+			craftMenu.Draw(driver);
 			break;
 		}
 		default:

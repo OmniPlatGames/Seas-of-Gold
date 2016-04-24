@@ -351,7 +351,7 @@ void TradeMenu::UpdateContents()
 				str += in->items[i]->getItemName().c_str();
 				BSellList[i].SetText(str);
 				BSellList[i].SetColorFront(255, 255, 255, 255);
-				BSellList[i].SetColorBack(0, 0, 0, 2550);
+				BSellList[i].SetColorBack(0, 0, 0, 255);
 
 				str = "";
 				str += std::to_string(in->items[i]->getItemQty()).c_str();
