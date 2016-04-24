@@ -16,7 +16,7 @@ public:
 	int hasItem(int itemID);
 
 	//add item to inventory
-	void addItem(Item item);
+	void addItem(Item* item);
 
 	//remove item to inventory
 	void removeItem(Item item);
