@@ -26,26 +26,14 @@ Input input;
 
 enum eMenuState{None,Main,Trade,Map};
 
-IrrlichtDevice* loadGRender()
-{
-	
-	//
-	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
-
-
-	if (!device)
-		return nullptr;
-	return device;
-}
-
 int main()
 {
-	Item itemTest ("1", 2);
 	int skyR = 30, skyG = 30, skyB = 70;
 	int timer = 0;
 	SColor sky = SColor(255, skyR, skyG, skyB);
-	IrrlichtDevice* device = loadGRender();
-	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
+	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
+	if (!device) return 1;
+	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = 10.0f;
 	bool xTest = false;
 	bool zTest = false;
 	bool updateCam = true;
@@ -61,38 +49,14 @@ int main()
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
-
-	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<s32>(10, 10, 260, 22), true);*/  //not needed JFarley
-
 	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
-
-
 	
-	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
-	IAnimatedMesh* map = smgr->getMesh("Assets/map.x");
+	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
 	if (!map) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode* mapNode = smgr->addAnimatedMeshSceneNode(map);
+	IMeshSceneNode* seasNode = 0;
 
-
-	if (mapNode)
-	{
-		//mapNode->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF);  // alpha blending for 3D objects -- JFarley
-	}
-
-	IAnimatedMesh* mHut = smgr->getMesh("Assets/mHut.x");
-	if (!mHut) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *mHutNode = smgr->addAnimatedMeshSceneNode(mHut);
-	mHutNode->getMaterial(0).Lighting = false;
-
-	IAnimatedMesh* cHut = smgr->getMesh("Assets/cHut.x");
-	if (!cHut) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *cHutNode = smgr->addAnimatedMeshSceneNode(cHut);
-
-	IAnimatedMesh* dHut = smgr->getMesh("Assets/dHut.x");
-	if (!dHut) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *dHutNode = smgr->addAnimatedMeshSceneNode(dHut);
+	if (!map) { device->drop(); return 1; }
 
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
 	if (!merch) { device->drop(); return 1; }
@@ -103,8 +67,39 @@ int main()
 	IAnimatedMeshSceneNode *plyrNode = smgr->addAnimatedMeshSceneNode(player);
 	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 
-	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), plyrNode->getPosition() + vector3df(0, 2, 0));
+	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
+	//*******************Collisions*************************
+	if (map)
+		seasNode = smgr->addOctreeSceneNode(map->getMesh(0), 0, -1, 32, false);
+
+	scene::ITriangleSelector* selector = 0;
+
+	if (seasNode)
+	{
+		selector = smgr->createOctreeTriangleSelector(seasNode->getMesh(), seasNode, 32);
+		seasNode->setPosition(core::vector3df(0, 0, 0));
+
+		for (int i = 0; i < seasNode->getMaterialCount(); i++)
+		{
+			seasNode->getMaterial(i).NormalizeNormals = true;
+			seasNode->getMaterial(i).BackfaceCulling = true;
+			seasNode->getMaterial(i).FrontfaceCulling = false;
+		}
+		seasNode->setTriangleSelector(selector);
+	}
+
+	if (selector)
+	{
+		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, core::vector3df(0.5f, 1.5f, 0.5f), core::vector3df(0, 0, 0), core::vector3df(0, 0, 0));
+		selector->drop();
+		plyrNode->addAnimator(anim);
+		anim->drop();
+	}
+
+	ISceneCollisionManager* collMan = smgr->getSceneCollisionManager();
+
+	//*****************End Collisions section**********************
 	
 	////////////// The Sun ////////////
 	ILightSceneNode *sun_node;
