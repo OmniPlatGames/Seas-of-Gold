@@ -8,7 +8,8 @@
 #include "MapMenu.h"
 #include "TradeMenu.h"
 #include "Player.h"
-
+#include "MainMenu.h"
+#include "CraftingMenu.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -23,32 +24,19 @@ bool menuloop = true;
 
 Input input;
 
-enum eMenuState{None,Main,Trade,Map};
-
-IrrlichtDevice* loadGRender()
-{
-	
-	//
-	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
-
-
-	if (!device)
-		return nullptr;
-	return device;
-}
+enum eMenuState{None,Main,Trade,Map,Craft};
 
 int main()
 {
-	Item itemTest ("1", 2);
 	int skyR = 30, skyG = 30, skyB = 70;
 	int timer = 0;
 	SColor sky = SColor(255, skyR, skyG, skyB);
-	IrrlichtDevice* device = loadGRender();
-	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
+	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
+	if (!device) return 1;
+	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = 10.0f;
 	bool xTest = false;
 	bool zTest = false;
-	//bool updateCam = true;
-	bool updateCam = false;
+	bool updateCam = true;
 	bool menu1 = false;
 
 
@@ -61,38 +49,14 @@ int main()
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
-
-	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<s32>(10, 10, 260, 22), true);*/  //not needed JFarley
-
 	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
-
-
 	
-	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
-	IAnimatedMesh* map = smgr->getMesh("Assets/map.x");
+	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
 	if (!map) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode* mapNode = smgr->addAnimatedMeshSceneNode(map);
+	IMeshSceneNode* seasNode = 0;
 
-
-	if (mapNode)
-	{
-		//mapNode->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF);  // alpha blending for 3D objects -- JFarley
-	}
-
-	IAnimatedMesh* mHut = smgr->getMesh("Assets/mHut.x");
-	if (!mHut) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *mHutNode = smgr->addAnimatedMeshSceneNode(mHut);
-	mHutNode->getMaterial(0).Lighting = false;
-
-	IAnimatedMesh* cHut = smgr->getMesh("Assets/cHut.x");
-	if (!cHut) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *cHutNode = smgr->addAnimatedMeshSceneNode(cHut);
-
-	IAnimatedMesh* dHut = smgr->getMesh("Assets/dHut.x");
-	if (!dHut) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *dHutNode = smgr->addAnimatedMeshSceneNode(dHut);
+	if (!map) { device->drop(); return 1; }
 
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
 	if (!merch) { device->drop(); return 1; }
@@ -103,8 +67,39 @@ int main()
 	IAnimatedMeshSceneNode *plyrNode = smgr->addAnimatedMeshSceneNode(player);
 	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 
-	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), plyrNode->getPosition() + vector3df(0, 2, 0));
+	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
+	//*******************Collisions*************************
+	if (map)
+		seasNode = smgr->addOctreeSceneNode(map->getMesh(0), 0, -1, 32, false);
+
+	scene::ITriangleSelector* selector = 0;
+
+	if (seasNode)
+	{
+		selector = smgr->createOctreeTriangleSelector(seasNode->getMesh(), seasNode, 32);
+		seasNode->setPosition(core::vector3df(0, 0, 0));
+
+		for (int i = 0; i < seasNode->getMaterialCount(); i++)
+		{
+			seasNode->getMaterial(i).NormalizeNormals = true;
+			seasNode->getMaterial(i).BackfaceCulling = true;
+			seasNode->getMaterial(i).FrontfaceCulling = false;
+		}
+		seasNode->setTriangleSelector(selector);
+	}
+
+	if (selector)
+	{
+		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, core::vector3df(0.5f, 1.5f, 0.5f), core::vector3df(0, 0, 0), core::vector3df(0, 0, 0));
+		selector->drop();
+		plyrNode->addAnimator(anim);
+		anim->drop();
+	}
+
+	ISceneCollisionManager* collMan = smgr->getSceneCollisionManager();
+
+	//*****************End Collisions section**********************
 	
 	////////////// The Sun ////////////
 	ILightSceneNode *sun_node;
@@ -152,11 +147,36 @@ int main()
 	Player p;
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
+	Item* itemCi = new Item("Iron Ore", 1);
+	p.getItems()->addItem(itemCi);
+	Item* itemCb = new Item("Bronze Ore", 1);
+	p.getItems()->addItem(itemCb);
 
-	// Make the menu
-	TradeMenu mm(device,driver);
-	mm.SetPlayer(&p);
-	
+	Vendor vN;
+	Item* itemG = new Item("Gold Ore", 1000);
+	vN.getItems()->addItem(itemG);
+	Vendor vS;
+	Item* itemI = new Item("Iron Ore", 1000);
+	vS.getItems()->addItem(itemI);
+	Vendor vE;
+	Item* itemB = new Item("Bronze Ore", 1000);
+	vE.getItems()->addItem(itemB);
+
+	// Make the menus
+	MainMenu mainMenu(device);
+
+	MapMenu mapMenu(device, driver);
+	mapMenu.SetPlayer(&p);
+
+	TradeMenu tradeMenu(device,driver);
+	tradeMenu.SetPlayer(&p);
+	tradeMenu.SetVendor(&vS);
+
+	CraftingMenu craftMenu(device, driver);
+	craftMenu.SetPlayer(&p);
+
+	int state = Main;
+
 	while (device->run())
 	{
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
@@ -220,8 +240,137 @@ int main()
 
 
 		////////////////////////////////////////////////////////
-		// Menu Update
-		mm.Update(&input);
+		if (state != None)
+		{
+			updateCam = false;
+			device->getCursorControl()->setVisible(true);
+		}
+		else
+		{
+			updateCam = true;
+			device->getCursorControl()->setVisible(false);
+		}
+
+		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
+		{
+			if (state == Map)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Map;
+			}
+		}
+
+		if (input.IsKeyDown(irr::KEY_KEY_C) && state == None)
+		{
+			if (state == Craft)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Craft;
+			}
+		}
+
+		if (input.IsKeyDown(irr::KEY_ESCAPE) && state == None)
+		{
+			state = Main;
+		}
+
+
+
+		switch (state)
+		{
+		case Map:
+		{
+			int out = mapMenu.Update(&input);
+
+			switch (out)
+			{
+			case eMapDest::Exit:
+			{
+				state = None;
+				break;
+			}
+			case eMapDest::East:
+			{
+				state = None;			
+				itemB = new Item("Bronze Ore", 1000);
+				vE.getItems()->addItem(itemB);
+				tradeMenu.SetVendor(&vE);
+				break;
+			}
+			case eMapDest::North:
+			{
+				state = None;
+				itemG = new Item("Gold Ore", 1000);
+				vN.getItems()->addItem(itemG);
+				tradeMenu.SetVendor(&vN);
+				break;
+			}
+			case eMapDest::South:
+			{
+				state = None;
+				itemI = new Item("Iron Ore", 1000);
+				vS.getItems()->addItem(itemI);
+				tradeMenu.SetVendor(&vS);
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+
+			break;
+		}
+		case Trade:
+		{
+			bool out = tradeMenu.Update(&input);
+			if (out)
+				state = None;
+			break;
+		}
+		case Main:
+		{
+			int out = mainMenu.Update(&input);
+			
+			switch (out)
+			{
+			case MSstart:
+			{
+				state = None;
+				break;
+			}
+			case MSexit:
+			{
+				device->closeDevice();
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+
+			break;
+		}
+		case Craft:
+		{
+			bool out = craftMenu.Update(&input);
+			if (out)
+				state = None;
+			break;
+		}
+		default:
+		{
+			// Do nothing
+			break;
+		}
+		}
 
 		////////////////////////////////////////////////////////
 
@@ -242,28 +391,61 @@ int main()
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
-				updateCam = false;
-				menu1 = true;
+				/*updateCam = false;
+				menu1 = true;*/
+
+				/////////////////////////////////////////////
+
+				state = Trade;
+
+				/////////////////////////////////////////////
 			}
 		}
 		
-		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
+		/*if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
 		if (GetAsyncKeyState(VK_LBUTTON))
 		{
 			//updateCam = true;
 			menu1 = false;
-		}
+		}*/
 
 		// Draw the menu
-		mm.Draw(driver);
+		switch (state)
+		{
+		case Map:
+		{
+			mapMenu.Draw(driver);
+			break;
+		}
+		case Trade:
+		{
+			tradeMenu.Draw(driver);
+			break;
+		}
+		case Main:
+		{
+			mainMenu.Draw(driver);
+			break;
+		}
+		case Craft:
+		{
+			craftMenu.Draw(driver);
+			break;
+		}
+		default:
+		{
+			// Do nothing
+			break;
+		}
+		}
 
 
 		driver->endScene();
 		
 
 		//close game loop with escape key -- JFarley
-		if (GetAsyncKeyState(VK_ESCAPE))
-			device->closeDevice();
+		/*if (GetAsyncKeyState(VK_ESCAPE))
+			device->closeDevice();*/
 	}
 
 	device->drop();
