@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CraftingMenu.cpp" />
     <ClCompile Include="CShaderPre.cpp" />
     <ClCompile Include="EffectHandler.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CraftingMenu.h" />
     <ClInclude Include="CScreenQuad.h" />
     <ClInclude Include="CShaderPre.h" />
     <ClInclude Include="EffectCB.h" />

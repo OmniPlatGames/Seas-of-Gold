@@ -2,11 +2,14 @@
 
 Unit::Unit()
 {
+	iGold = 0;
+	items = new Inventory;
 }
 
 
 Unit::~Unit()
 {
+	delete items;
 }
 
 void Unit::update(v3d dir, float dt)
