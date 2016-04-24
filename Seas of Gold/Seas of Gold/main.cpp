@@ -153,7 +153,15 @@ int main()
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
 
-	Vendor v;
+	Vendor vN;
+	Item* itemG = new Item("Gold Ore", 1000);
+	vN.getItems()->addItem(itemG);
+	Vendor vS;
+	Item* itemI = new Item("Iron Ore", 1000);
+	vS.getItems()->addItem(itemI);
+	Vendor vE;
+	Item* itemB = new Item("Bronze Ore", 1000);
+	vE.getItems()->addItem(itemB);
 
 	// Make the menus
 	MainMenu mainMenu(device);
@@ -163,7 +171,8 @@ int main()
 
 	TradeMenu tradeMenu(device,driver);
 	tradeMenu.SetPlayer(&p);
-	
+	tradeMenu.SetVendor(&vS);
+
 	int state = Main;
 
 	while (device->run())
@@ -232,10 +241,12 @@ int main()
 		if (state != None)
 		{
 			updateCam = false;
+			device->getCursorControl()->setVisible(true);
 		}
 		else
 		{
 			updateCam = true;
+			device->getCursorControl()->setVisible(false);
 		}
 
 		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
@@ -268,6 +279,27 @@ int main()
 			case eMapDest::Exit:
 			{
 				state = None;
+			}
+			case eMapDest::East:
+			{
+				state = None;			
+				itemB = new Item("Bronze Ore", 1000);
+				vE.getItems()->addItem(itemB);
+				tradeMenu.SetVendor(&vE);
+			}
+			case eMapDest::North:
+			{
+				state = None;
+				itemG = new Item("Gold Ore", 1000);
+				vN.getItems()->addItem(itemG);
+				tradeMenu.SetVendor(&vN);
+			}
+			case eMapDest::South:
+			{
+				state = None;
+				itemI = new Item("Iron Ore", 1000);
+				vS.getItems()->addItem(itemI);
+				tradeMenu.SetVendor(&vS);
 			}
 			default:
 			{
