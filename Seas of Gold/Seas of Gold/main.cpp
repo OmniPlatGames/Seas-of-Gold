@@ -152,6 +152,10 @@ int main()
 	Player p;
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
+	Item* itemCi = new Item("Iron Ore", 1);
+	p.getItems()->addItem(itemCi);
+	Item* itemCb = new Item("Bronze Ore", 1);
+	p.getItems()->addItem(itemCb);
 
 	Vendor vN;
 	Item* itemG = new Item("Gold Ore", 1000);

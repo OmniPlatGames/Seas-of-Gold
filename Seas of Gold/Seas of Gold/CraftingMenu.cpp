@@ -66,6 +66,9 @@ CraftingMenu::CraftingMenu(IrrlichtDevice* device,
 	{
 		SelectedItems[i] = false;
 	}
+
+	HasIron = false;
+	HasBronze = true;
 }
 
 void CraftingMenu::SetPlayer(Player* p)
@@ -87,6 +90,14 @@ bool CraftingMenu::Update(Input* in)
 			{
 				items.push_back(in->items[i]);
 			}
+		}
+
+
+		if (HasIron && HasBronze && (selectedCraft == 0))
+		{
+			Item* nItem = new Item("Bronze Sword", 1);
+
+			mPlayer->getItems()->addItem(nItem);
 		}
 
 		for (int i = 0; i < 17; i++)
@@ -125,6 +136,14 @@ bool CraftingMenu::Update(Input* in)
 		}
 	}
 
+	for (int i = 0; i < 17; i++)
+	{
+		if (bItemList[i].GetText() == "Bronze Ore")
+			HasBronze = true;
+		if (bItemList[i].GetText() == "Iron Ore")
+			HasIron = true;
+	}
+
 	UpdateContents();
 
 	return false;
@@ -157,44 +176,48 @@ void CraftingMenu::UpdateContents()
 
 	for (int i = 0; i < 17; i++)
 	{
-		if (bItemList[i].GetText() != "")
+		if (in->items.size() > i)
 		{
-			if (SelectedItems[i])
+			if (in->items[i]->getItemName() != "")
 			{
-				std::string str = in->items[i]->getItemName();
-				bItemList[i].SetText(str.c_str());
-				bItemList[i].SetColorFront(255, 255, 153, 255);
-				bItemList[i].SetColorBack(0, 0, 0, 255);
+				if (SelectedItems[i])
+				{
+					std::string str = in->items[i]->getItemName();
+					bItemList[i].SetText(str.c_str());
+					bItemList[i].SetColorFront(255, 255, 153, 255);
+					bItemList[i].SetColorBack(0, 0, 0, 255);
 
-				str = in->items[i]->getItemQty();
-				bItemListAmnt[i].SetText(str.c_str());
-				bItemListAmnt[i].SetColorFront(255, 255, 153, 255);
-				bItemListAmnt[i].SetColorBack(0, 0, 0, 255);
+					str = in->items[i]->getItemQty();
+					bItemListAmnt[i].SetText(str.c_str());
+					bItemListAmnt[i].SetColorFront(255, 255, 153, 255);
+					bItemListAmnt[i].SetColorBack(0, 0, 0, 255);
+				}
+				else
+				{
+					std::string str = in->items[i]->getItemName();
+					bItemList[i].SetText(str.c_str());
+					bItemList[i].SetColorFront(255, 255, 255, 255);
+					bItemList[i].SetColorBack(0, 0, 0, 255);
+
+					str = in->items[i]->getItemQty();
+					bItemListAmnt[i].SetText(str.c_str());
+					bItemListAmnt[i].SetColorFront(255, 255, 255, 255);
+					bItemListAmnt[i].SetColorBack(0, 0, 0, 255);
+				}
 			}
 			else
 			{
-				std::string str = in->items[i]->getItemName();
-				bItemList[i].SetText(str.c_str());
-				bItemList[i].SetColorFront(255, 255, 255, 255);
-				bItemList[i].SetColorBack(0, 0, 0, 255);
+				bItemList[i].SetText("");
+				bItemList[i].SetColorFront(0, 0, 0, 0);
+				bItemList[i].SetColorBack(0, 0, 0, 0);
 
-				str = in->items[i]->getItemQty();
-				bItemListAmnt[i].SetText(str.c_str());
-				bItemListAmnt[i].SetColorFront(255, 255, 255, 255);
-				bItemListAmnt[i].SetColorBack(0, 0, 0, 255);
+				bItemListAmnt[i].SetText("");
+				bItemListAmnt[i].SetColorFront(0, 0, 0, 0);
+				bItemListAmnt[i].SetColorBack(0, 0, 0, 0);
 			}
-		}
-		else
-		{
-			bItemList[i].SetText("");
-			bItemList[i].SetColorFront(0, 0, 0, 0);
-			bItemList[i].SetColorBack(0, 0, 0, 0);
 
-			bItemListAmnt[i].SetText("");
-			bItemListAmnt[i].SetColorFront(0, 0, 0, 0);
-			bItemListAmnt[i].SetColorBack(0, 0, 0, 0);
 		}
-
+		
 		if (bCraftList[i].GetText() != "")
 		{
 			if (selectedCraft == i)
@@ -221,5 +244,10 @@ void CraftingMenu::UpdateContents()
 			bCraftListAmnt[i].SetColorBack(0, 0, 0, 0);
 		}
 
+	}
+
+	if (HasBronze && HasIron)
+	{
+		bCraftList[0].SetText("Bronze Sword");
 	}
 }

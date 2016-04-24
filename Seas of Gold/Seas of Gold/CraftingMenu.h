@@ -39,6 +39,9 @@ private:
 	bool SelectedItems[17];
 	int selectedCraft;
 
+	bool HasIron;
+	bool HasBronze;
+
 	Player* mPlayer;
 	irr::gui::IGUIFont* mfont;
 

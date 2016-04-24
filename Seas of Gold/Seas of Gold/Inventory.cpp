@@ -29,7 +29,8 @@ void Inventory::addItem(Item* item)
 
 	for (Item* Item : items)
 	{
-		if (Item->getItemID() == item->getItemID())
+		//if (Item->getItemID() == item->getItemID())
+		if(Item->getItemName() == item->getItemName())
 		{
 			Item->setItemQty(Item->getItemQty() + item->getItemQty());
 			hasItem = true;
@@ -48,7 +49,8 @@ void Inventory::removeItem(Item item)
 
 	for (Item* Item : items)
 	{
-		if (Item->getItemID() == item.getItemID())
+		//if (Item->getItemID() == item.getItemID())
+		if (Item->getItemName() == item.getItemName())
 		{
 			Item->setItemQty(Item->getItemQty() + item.getItemQty());
 			hasItem = true;
