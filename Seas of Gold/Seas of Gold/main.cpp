@@ -45,8 +45,10 @@ int main()
 	SColor sky = SColor(255, skyR, skyG, skyB);
 	IrrlichtDevice* device = loadGRender();
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
-	bool xTest = false;
-	bool zTest = false;
+	bool xTest_M = false;
+	bool zTest_M = false;
+	bool xTest_C = false;
+	bool zTest_C = false;
 	bool updateCam = true;
 	bool menu1 = false;
 
@@ -64,8 +66,8 @@ int main()
 	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
 		rect<s32>(10, 10, 260, 22), true);*/  //not needed JFarley
 
-	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
+	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
 
 	
@@ -227,16 +229,23 @@ int main()
 
 
 		// are we standing in front of the merchant table??
-		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest = true;
-		else xTest = false;
-		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest = true;
-		else zTest = false;
+		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest_M = true;
+		else xTest_M = false;
+		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest_M = true;
+		else zTest_M = false;
+
+		// are we standing in front of the crafting table??
+		if (plyrNode->getPosition().X > -13.62f && plyrNode->getPosition().X < -13.0) xTest_C = true;
+		else xTest_C = false;
+		if (plyrNode->getPosition().Z < -15.51f && plyrNode->getPosition().Z > -17.14) zTest_C = true;
+		else zTest_C = false;
 
 
 		////////////////////////////////////////////////////////
 		if (state != None)
 		{
 			updateCam = false;
+			device->getCursorControl()->setVisible(true);
 		}
 		else
 		{
@@ -360,77 +369,56 @@ int main()
 		smgr->drawAll();
 
 		//// display message and menu at merchant ///////
-		if (xTest && zTest)
+		if (xTest_M && zTest_M)
 		{
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
-<<<<<<< HEAD
 				// Draw the menu
-				menu1 = true;
-				updateCam = false;
-				device->getCursorControl()->setVisible(true);
-			}
-		}
-		
-		if (menu1) mm.Draw(driver);
-		if (GetAsyncKeyState(0x4D))
-=======
-				/*updateCam = false;
-				menu1 = true;*/
-
-				/////////////////////////////////////////////
-
 				state = Trade;
+			}
+		}
 
-				/////////////////////////////////////////////
+		//// display message and menu at crafting station ///////
+		if (xTest_C && zTest_C)
+		{
+			driver->draw2DImage(crftMess, vector2d<s32>(300, 300));
+			if (GetAsyncKeyState(VK_RETURN))
+			{
+				// Draw the menu
+				state = Trade;
 			}
 		}
 		
-		/*if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
-		if (GetAsyncKeyState(VK_LBUTTON))
->>>>>>> refs/remotes/OmniPlatGames/master
-		{
-			updateCam = true;
-			menu1 = false;
-		}*/
-
-<<<<<<< HEAD
 		
-=======
-		// Draw the menu
 		switch (state)
 		{
-		case Map:
-		{
-			mapMenu.Draw(driver);
-			break;
-		}
-		case Trade:
-		{
-			tradeMenu.Draw(driver);
-			break;
-		}
-		case Main:
-		{
-			mainMenu.Draw(driver);
-			break;
-		}
-		default:
-		{
-			// Do nothing
-			break;
-		}
+			case Map:
+			{
+				mapMenu.Draw(driver);
+				break;
+			}
+			case Trade:
+			{
+				tradeMenu.Draw(driver);
+				break;
+			}
+			case Main:
+			{
+				mainMenu.Draw(driver);
+				break;
+			}
+			default:
+			{
+				// Do nothing
+				break;
+			}
 		}
 
->>>>>>> refs/remotes/OmniPlatGames/master
 
 		driver->endScene();
 		
 
-		//close game loop with escape key -- JFarley
-		/*if (GetAsyncKeyState(VK_ESCAPE))
-			device->closeDevice();*/
 	}
 
 	device->drop();
