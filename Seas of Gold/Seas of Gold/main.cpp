@@ -91,7 +91,7 @@ int main()
 
 	if (selector)
 	{
-		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, core::vector3df(0.5f, 1.5f, 0.5f), core::vector3df(0, 0, 0), core::vector3df(0, 0, 0));
+		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, core::vector3df(0.5f, 1.0f, 0.5f), core::vector3df(0, -2.0f, 0), core::vector3df(0, -1, 0));
 		selector->drop();
 		plyrNode->addAnimator(anim);
 		anim->drop();
