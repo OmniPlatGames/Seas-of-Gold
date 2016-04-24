@@ -5,6 +5,7 @@
 Item::Item(std::string ItemID, int Quantity)
 {
 	itemID = ItemID;
+	itemName = ItemID;
 	quantity = Quantity;
 
 	int testID;
@@ -13,6 +14,7 @@ Item::Item(std::string ItemID, int Quantity)
 	std::ifstream data("book1.csv");
 	std::string cell;
 	
+	/*
 	while (data.good())
 	{
 		getline(data, cell, ',');
@@ -31,6 +33,7 @@ Item::Item(std::string ItemID, int Quantity)
 	{
 		MessageBox(NULL, "Item not in file! Error #3.", NULL, MB_OK);
 	}
+	*/
 }
 
 
