@@ -9,7 +9,7 @@
 #include "TradeMenu.h"
 #include "Player.h"
 #include "MainMenu.h"
-
+#include "CraftingMenu.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -24,6 +24,7 @@ bool menuloop = true;
 
 Input input;
 
+<<<<<<< HEAD
 enum eMenuState{None,Main,Trade,Map};
 
 IrrlichtDevice* loadGRender()
@@ -36,19 +37,29 @@ IrrlichtDevice* loadGRender()
 		return nullptr;
 	return device;
 }
+=======
+enum eMenuState{None,Main,Trade,Map,Craft};
+>>>>>>> refs/remotes/OmniPlatGames/master
 
 int main()
 {
-	Item itemTest ("1", 2);
 	int skyR = 30, skyG = 30, skyB = 70;
 	int timer = 0;
 	SColor sky = SColor(255, skyR, skyG, skyB);
+<<<<<<< HEAD
 	IrrlichtDevice* device = loadGRender();
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
 	bool xTest_M = false;
 	bool zTest_M = false;
 	bool xTest_C = false;
 	bool zTest_C = false;
+=======
+	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
+	if (!device) return 1;
+	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = 10.0f;
+	bool xTest = false;
+	bool zTest = false;
+>>>>>>> refs/remotes/OmniPlatGames/master
 	bool updateCam = true;
 	bool menu1 = false;
 
@@ -62,6 +73,7 @@ int main()
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
+<<<<<<< HEAD
 
 	/*guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
 		rect<s32>(10, 10, 260, 22), true);*/  //not needed JFarley
@@ -70,10 +82,14 @@ int main()
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
 
+=======
+	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
+	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
+>>>>>>> refs/remotes/OmniPlatGames/master
 	
-	//IAnimatedMesh* mesh = smgr->getMesh("sydney.md2");
-	IAnimatedMesh* map = smgr->getMesh("Assets/map.x");
+	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
 	if (!map) { device->drop(); return 1; }
+<<<<<<< HEAD
 	IAnimatedMeshSceneNode* mapNode = smgr->addAnimatedMeshSceneNode(map);
 
 	IAnimatedMesh* mHut = smgr->getMesh("Assets/mHut.x");
@@ -88,6 +104,11 @@ int main()
 	IAnimatedMesh* dHut = smgr->getMesh("Assets/dHut.x");
 	if (!dHut) { device->drop(); return 4; }
 	IAnimatedMeshSceneNode *dHutNode = smgr->addAnimatedMeshSceneNode(dHut);
+=======
+	IMeshSceneNode* seasNode = 0;
+
+	if (!map) { device->drop(); return 1; }
+>>>>>>> refs/remotes/OmniPlatGames/master
 
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
 	if (!merch) { device->drop(); return 5; }
@@ -109,12 +130,47 @@ int main()
 	}
 	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 
+<<<<<<< HEAD
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), plyrNode->getPosition() + vector3df(0, 2, 0));
 	camera->setNearValue(0.5);
 	camera->setFarValue(500);
 	
+=======
+	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
+	//*******************Collisions*************************
+	if (map)
+		seasNode = smgr->addOctreeSceneNode(map->getMesh(0), 0, -1, 32, false);
+
+	scene::ITriangleSelector* selector = 0;
+
+	if (seasNode)
+	{
+		selector = smgr->createOctreeTriangleSelector(seasNode->getMesh(), seasNode, 32);
+		seasNode->setPosition(core::vector3df(0, 0, 0));
+
+		for (int i = 0; i < seasNode->getMaterialCount(); i++)
+		{
+			seasNode->getMaterial(i).NormalizeNormals = true;
+			seasNode->getMaterial(i).BackfaceCulling = true;
+			seasNode->getMaterial(i).FrontfaceCulling = false;
+		}
+		seasNode->setTriangleSelector(selector);
+	}
+
+	if (selector)
+	{
+		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, core::vector3df(0.5f, 1.5f, 0.5f), core::vector3df(0, 0, 0), core::vector3df(0, 0, 0));
+		selector->drop();
+		plyrNode->addAnimator(anim);
+		anim->drop();
+	}
+>>>>>>> refs/remotes/OmniPlatGames/master
+
+	ISceneCollisionManager* collMan = smgr->getSceneCollisionManager();
+
+	//*****************End Collisions section**********************
 	
 	////////////// The Sun ////////////
 	ILightSceneNode *sun_node;
@@ -162,8 +218,20 @@ int main()
 	Player p;
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
+	Item* itemCi = new Item("Iron Ore", 1);
+	p.getItems()->addItem(itemCi);
+	Item* itemCb = new Item("Bronze Ore", 1);
+	p.getItems()->addItem(itemCb);
 
-	Vendor v;
+	Vendor vN;
+	Item* itemG = new Item("Gold Ore", 1000);
+	vN.getItems()->addItem(itemG);
+	Vendor vS;
+	Item* itemI = new Item("Iron Ore", 1000);
+	vS.getItems()->addItem(itemI);
+	Vendor vE;
+	Item* itemB = new Item("Bronze Ore", 1000);
+	vE.getItems()->addItem(itemB);
 
 	// Make the menus
 	MainMenu mainMenu(device);
@@ -173,7 +241,11 @@ int main()
 
 	TradeMenu tradeMenu(device,driver);
 	tradeMenu.SetPlayer(&p);
-	
+	tradeMenu.SetVendor(&vS);
+
+	CraftingMenu craftMenu(device, driver);
+	craftMenu.SetPlayer(&p);
+
 	int state = Main;
 
 	while (device->run())
@@ -250,6 +322,7 @@ int main()
 		else
 		{
 			updateCam = true;
+			device->getCursorControl()->setVisible(false);
 		}
 
 		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
@@ -261,6 +334,18 @@ int main()
 			else
 			{
 				state = Map;
+			}
+		}
+
+		if (input.IsKeyDown(irr::KEY_KEY_C) && state == None)
+		{
+			if (state == Craft)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Craft;
 			}
 		}
 
@@ -282,6 +367,31 @@ int main()
 			case eMapDest::Exit:
 			{
 				state = None;
+				break;
+			}
+			case eMapDest::East:
+			{
+				state = None;			
+				itemB = new Item("Bronze Ore", 1000);
+				vE.getItems()->addItem(itemB);
+				tradeMenu.SetVendor(&vE);
+				break;
+			}
+			case eMapDest::North:
+			{
+				state = None;
+				itemG = new Item("Gold Ore", 1000);
+				vN.getItems()->addItem(itemG);
+				tradeMenu.SetVendor(&vN);
+				break;
+			}
+			case eMapDest::South:
+			{
+				state = None;
+				itemI = new Item("Iron Ore", 1000);
+				vS.getItems()->addItem(itemI);
+				tradeMenu.SetVendor(&vS);
+				break;
 			}
 			default:
 			{
@@ -320,6 +430,13 @@ int main()
 			}
 			}
 
+			break;
+		}
+		case Craft:
+		{
+			bool out = craftMenu.Update(&input);
+			if (out)
+				state = None;
 			break;
 		}
 		default:
@@ -389,9 +506,18 @@ int main()
 				state = Trade;
 			}
 		}
+<<<<<<< HEAD
 		
 		
 		switch (state)
+=======
+		case Craft:
+		{
+			craftMenu.Draw(driver);
+			break;
+		}
+		default:
+>>>>>>> refs/remotes/OmniPlatGames/master
 		{
 			case Map:
 			{

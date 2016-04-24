@@ -172,27 +172,32 @@ bool TradeMenu::Update(Input* in)
 
 			for (int i = 0; i < in->items.size(); i++)
 			{
-				if (in->items[i]->getItemName().c_str() == BBuyList[SelectedItem].GetText().c_str())
+				std::string str1 = in->items[i]->getItemName().c_str();
+				std::string str2 = BBuyList[SelectedItem].GetText().c_str();
+				if (str1 == str2)
 				{
-					if (ModAmnt < in->items[i]->getItemQty())
-					{				
-						Item item(in->items[i]->getItemName(), ModAmnt);
-						in->items[i]->setItemQty(in->items[i]->getItemQty() - ModAmnt);
-						Inventory* pin = mPlayer->getItems();
-						pin->addItem(item);
-
-						// Need to implement a valid cost calc.
-						mPlayer->RemoveGold(5 * ModAmnt);
-					}
-					else
+					if (ModAmnt * 5 <= mPlayer->getGold())
 					{
-						Item item(in->items[i]->getItemName(), in->items[i]->getItemQty());
-						in->items[i]->setItemQty(0);
-						Inventory* pin = mPlayer->getItems();
-						pin->addItem(item);
+						if (ModAmnt < in->items[i]->getItemQty())
+						{
+							Item* item = new Item(in->items[i]->getItemName(), ModAmnt);
+							in->items[i]->setItemQty(in->items[i]->getItemQty() - ModAmnt);
+							Inventory* pin = mPlayer->getItems();
+							pin->addItem(item);
 
-						// Need to implement a valid cost calc.
-						mPlayer->RemoveGold(5 * in->items[i]->getItemQty());
+							// Need to implement a valid cost calc.
+							mPlayer->RemoveGold(5 * ModAmnt);
+						}
+						else
+						{
+							Item* item = new Item(in->items[i]->getItemName(), in->items[i]->getItemQty());
+							in->items[i]->setItemQty(0);
+							Inventory* pin = mPlayer->getItems();
+							pin->addItem(item);
+
+							// Need to implement a valid cost calc.
+							mPlayer->RemoveGold(5 * in->items[i]->getItemQty());
+						}
 					}
 					break;
 				}
@@ -210,11 +215,13 @@ bool TradeMenu::Update(Input* in)
 
 			for (int i = 0; i < in->items.size(); i++)
 			{
-				if (in->items[i]->getItemName().c_str() == BBuyList[SelectedItem].GetText().c_str())
+				std::string str1 = in->items[i]->getItemName().c_str();
+				std::string str2 = BSellList[SelectedItem - 16].GetText().c_str();
+				if (str1 == str2)
 				{
 					if (ModAmnt < in->items[i]->getItemQty())
 					{
-						Item item(in->items[i]->getItemName(), ModAmnt);
+						Item* item = new Item(in->items[i]->getItemName(), ModAmnt);
 						in->items[i]->setItemQty(in->items[i]->getItemQty() - ModAmnt);
 						Inventory* pin = mVendor->getItems();
 						pin->addItem(item);
@@ -224,7 +231,7 @@ bool TradeMenu::Update(Input* in)
 					}
 					else
 					{
-						Item item(in->items[i]->getItemName(), in->items[i]->getItemQty());
+						Item* item = new Item(in->items[i]->getItemName(), in->items[i]->getItemQty());
 						in->items[i]->setItemQty(0);
 						Inventory* pin = mVendor->getItems();
 						pin->addItem(item);
@@ -256,14 +263,15 @@ bool TradeMenu::Update(Input* in)
 		if (BBuyList[i].isPressed(in) && BBuyList[i].GetText() != "")
 		{
 			SelectedItem = i;
+			bool selected = false;
 			BBuyList[i].SetColorFront(255, 255, 153, 255);
-			for (int j = 0; j < BBuyList.size(); i++)
+			for (int j = 0; j < BBuyList.size(); j++)
 			{
 				if (j != i)
 				{
 					if (BBuyList[j].GetText() != "")
 					{
-						BBuyList[j].SetColorFront(255, 255, 255, 255);
+						BBuyList[j].SetColorFront(255, 255, 115, 255);
 					}
 				}
 			}
@@ -275,8 +283,9 @@ bool TradeMenu::Update(Input* in)
 		if (BSellList[i].isPressed(in) && BSellList[i].GetText() != "")
 		{
 			SelectedItem = 16 + i;
+			bool selected = false;
 			BSellList[i].SetColorFront(255, 255, 153, 255);
-			for (int j = 0; j < BSellList.size(); i++)
+			for (int j = 0; j < BSellList.size(); j++)
 			{
 				if (j != i)
 				{
@@ -288,6 +297,8 @@ bool TradeMenu::Update(Input* in)
 			}
 		}
 	}
+
+	//UpdateContents();
 
 	return false;
 }
@@ -340,7 +351,7 @@ void TradeMenu::UpdateContents()
 				str += in->items[i]->getItemName().c_str();
 				BSellList[i].SetText(str);
 				BSellList[i].SetColorFront(255, 255, 255, 255);
-				BSellList[i].SetColorBack(0, 0, 0, 2550);
+				BSellList[i].SetColorBack(0, 0, 0, 255);
 
 				str = "";
 				str += std::to_string(in->items[i]->getItemQty()).c_str();
@@ -380,7 +391,7 @@ void TradeMenu::UpdateContents()
 	{
 		Inventory* in = mVendor->getItems();
 		int i = 0;
-		if (in == NULL)
+		if (in != NULL)
 		{
 			for (i; i < in->items.size(); i++)
 			{
