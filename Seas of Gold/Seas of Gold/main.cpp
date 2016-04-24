@@ -8,6 +8,7 @@
 #include "MapMenu.h"
 #include "TradeMenu.h"
 #include "Player.h"
+#include "MainMenu.h"
 
 
 #ifdef _IRR_WINDOWS_
@@ -47,8 +48,7 @@ int main()
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = -5.0f;
 	bool xTest = false;
 	bool zTest = false;
-	//bool updateCam = true;
-	bool updateCam = false;
+	bool updateCam = true;
 	bool menu1 = false;
 
 
@@ -153,10 +153,19 @@ int main()
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
 
-	// Make the menu
-	MapMenu mm(device,driver);
-	mm.SetPlayer(&p);
+	Vendor v;
+
+	// Make the menus
+	MainMenu mainMenu(device);
+
+	MapMenu mapMenu(device, driver);
+	mapMenu.SetPlayer(&p);
+
+	TradeMenu tradeMenu(device,driver);
+	tradeMenu.SetPlayer(&p);
 	
+	int state = Main;
+
 	while (device->run())
 	{
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
@@ -220,8 +229,91 @@ int main()
 
 
 		////////////////////////////////////////////////////////
-		// Menu Update
-		mm.Update(&input);
+		if (state != None)
+		{
+			updateCam = false;
+		}
+		else
+		{
+			updateCam = true;
+		}
+
+		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
+		{
+			if (state == Map)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Map;
+			}
+		}
+
+		if (input.IsKeyDown(irr::KEY_ESCAPE) && state == None)
+		{
+			state = Main;
+		}
+
+
+
+		switch (state)
+		{
+		case Map:
+		{
+			int out = mapMenu.Update(&input);
+
+			switch (out)
+			{
+			case eMapDest::Exit:
+			{
+				state = None;
+			}
+			default:
+			{
+				break;
+			}
+			}
+
+			break;
+		}
+		case Trade:
+		{
+			bool out = tradeMenu.Update(&input);
+			if (out)
+				state = None;
+			break;
+		}
+		case Main:
+		{
+			int out = mainMenu.Update(&input);
+			
+			switch (out)
+			{
+			case MSstart:
+			{
+				state = None;
+				break;
+			}
+			case MSexit:
+			{
+				device->closeDevice();
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+
+			break;
+		}
+		default:
+		{
+			// Do nothing
+			break;
+		}
+		}
 
 		////////////////////////////////////////////////////////
 
@@ -242,28 +334,56 @@ int main()
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
-				updateCam = false;
-				menu1 = true;
+				/*updateCam = false;
+				menu1 = true;*/
+
+				/////////////////////////////////////////////
+
+				state = Trade;
+
+				/////////////////////////////////////////////
 			}
 		}
 		
-		if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
+		/*if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
 		if (GetAsyncKeyState(VK_LBUTTON))
 		{
 			//updateCam = true;
 			menu1 = false;
-		}
+		}*/
 
 		// Draw the menu
-		mm.Draw(driver);
+		switch (state)
+		{
+		case Map:
+		{
+			mapMenu.Draw(driver);
+			break;
+		}
+		case Trade:
+		{
+			tradeMenu.Draw(driver);
+			break;
+		}
+		case Main:
+		{
+			mainMenu.Draw(driver);
+			break;
+		}
+		default:
+		{
+			// Do nothing
+			break;
+		}
+		}
 
 
 		driver->endScene();
 		
 
 		//close game loop with escape key -- JFarley
-		if (GetAsyncKeyState(VK_ESCAPE))
-			device->closeDevice();
+		/*if (GetAsyncKeyState(VK_ESCAPE))
+			device->closeDevice();*/
 	}
 
 	device->drop();
