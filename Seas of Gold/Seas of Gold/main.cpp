@@ -9,7 +9,7 @@
 #include "TradeMenu.h"
 #include "Player.h"
 #include "MainMenu.h"
-
+#include "CraftingMenu.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -24,7 +24,7 @@ bool menuloop = true;
 
 Input input;
 
-enum eMenuState{None,Main,Trade,Map};
+enum eMenuState{None,Main,Trade,Map,Craft};
 
 int main()
 {
@@ -147,8 +147,20 @@ int main()
 	Player p;
 	p.AddGold(1000);
 	p.SetCurrentPort(eMapDest::South);
+	Item* itemCi = new Item("Iron Ore", 1);
+	p.getItems()->addItem(itemCi);
+	Item* itemCb = new Item("Bronze Ore", 1);
+	p.getItems()->addItem(itemCb);
 
-	Vendor v;
+	Vendor vN;
+	Item* itemG = new Item("Gold Ore", 1000);
+	vN.getItems()->addItem(itemG);
+	Vendor vS;
+	Item* itemI = new Item("Iron Ore", 1000);
+	vS.getItems()->addItem(itemI);
+	Vendor vE;
+	Item* itemB = new Item("Bronze Ore", 1000);
+	vE.getItems()->addItem(itemB);
 
 	// Make the menus
 	MainMenu mainMenu(device);
@@ -158,7 +170,11 @@ int main()
 
 	TradeMenu tradeMenu(device,driver);
 	tradeMenu.SetPlayer(&p);
-	
+	tradeMenu.SetVendor(&vS);
+
+	CraftingMenu craftMenu(device, driver);
+	craftMenu.SetPlayer(&p);
+
 	int state = Main;
 
 	while (device->run())
@@ -227,10 +243,12 @@ int main()
 		if (state != None)
 		{
 			updateCam = false;
+			device->getCursorControl()->setVisible(true);
 		}
 		else
 		{
 			updateCam = true;
+			device->getCursorControl()->setVisible(false);
 		}
 
 		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
@@ -242,6 +260,18 @@ int main()
 			else
 			{
 				state = Map;
+			}
+		}
+
+		if (input.IsKeyDown(irr::KEY_KEY_C) && state == None)
+		{
+			if (state == Craft)
+			{
+				state = None;
+			}
+			else
+			{
+				state = Craft;
 			}
 		}
 
@@ -263,6 +293,31 @@ int main()
 			case eMapDest::Exit:
 			{
 				state = None;
+				break;
+			}
+			case eMapDest::East:
+			{
+				state = None;			
+				itemB = new Item("Bronze Ore", 1000);
+				vE.getItems()->addItem(itemB);
+				tradeMenu.SetVendor(&vE);
+				break;
+			}
+			case eMapDest::North:
+			{
+				state = None;
+				itemG = new Item("Gold Ore", 1000);
+				vN.getItems()->addItem(itemG);
+				tradeMenu.SetVendor(&vN);
+				break;
+			}
+			case eMapDest::South:
+			{
+				state = None;
+				itemI = new Item("Iron Ore", 1000);
+				vS.getItems()->addItem(itemI);
+				tradeMenu.SetVendor(&vS);
+				break;
 			}
 			default:
 			{
@@ -301,6 +356,13 @@ int main()
 			}
 			}
 
+			break;
+		}
+		case Craft:
+		{
+			bool out = craftMenu.Update(&input);
+			if (out)
+				state = None;
 			break;
 		}
 		default:
@@ -363,6 +425,11 @@ int main()
 		case Main:
 		{
 			mainMenu.Draw(driver);
+			break;
+		}
+		case Craft:
+		{
+			craftMenu.Draw(driver);
 			break;
 		}
 		default:
