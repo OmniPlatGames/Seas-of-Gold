@@ -17,14 +17,14 @@
 #endif
 
 
-float direction=0, zdirection=0;
+float direction = 0, zdirection = 0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
 bool menuloop = true;
 
 Input input;
 
-enum eMenuState{None,Main,Trade,Map,Craft};
+enum eMenuState { None, Main, Trade, Map, Craft };
 
 int main()
 {
@@ -34,13 +34,15 @@ int main()
 	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
 	if (!device) return 1;
 	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = 10.0f;
-	bool xTest = false;
-	bool zTest = false;
+	bool xTest_M = false;
+	bool zTest_M = false;
+	bool xTest_C = false;
+	bool zTest_C = false;
 	bool updateCam = true;
 	bool menu1 = false;
 
 
-	
+
 	device->setWindowCaption(L"Seas of Gold");  //Updated JFarley
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
@@ -49,14 +51,12 @@ int main()
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
-	ITexture* merchMenu = driver->getTexture("Assets/merchMenu.png");
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
-	
+	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
+
 	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
 	if (!map) { device->drop(); return 1; }
-	IMeshSceneNode* seasNode = 0;
-
-	if (!map) { device->drop(); return 1; }
+	IMeshSceneNode* seasNode = smgr->addOctreeSceneNode(map, 0, -1, 32, false);
 
 	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
 	if (!merch) { device->drop(); return 1; }
@@ -65,26 +65,26 @@ int main()
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
 	if (!player) { device->drop(); return 1; }
 	IAnimatedMeshSceneNode *plyrNode = smgr->addAnimatedMeshSceneNode(player);
+	for (int i = 0; i < plyrNode->getMaterialCount(); i++)
+	{
+		plyrNode->getMaterial(i).NormalizeNormals = true;
+	}
+	bool plyrWalk = false;
 	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+	//plyrNode->setDebugDataVisible((scene::E_DEBUG_SCENE_TYPE)(plyrNode->isDebugDataVisible() ^ scene::EDS_BBOX));
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
 	//*******************Collisions*************************
-	if (map)
-		seasNode = smgr->addOctreeSceneNode(map->getMesh(0), 0, -1, 32, false);
-
 	scene::ITriangleSelector* selector = 0;
 
 	if (seasNode)
 	{
 		selector = smgr->createOctreeTriangleSelector(seasNode->getMesh(), seasNode, 32);
-		seasNode->setPosition(core::vector3df(0, 0, 0));
 
 		for (int i = 0; i < seasNode->getMaterialCount(); i++)
 		{
 			seasNode->getMaterial(i).NormalizeNormals = true;
-			seasNode->getMaterial(i).BackfaceCulling = true;
-			seasNode->getMaterial(i).FrontfaceCulling = false;
 		}
 		seasNode->setTriangleSelector(selector);
 	}
@@ -100,12 +100,12 @@ int main()
 	ISceneCollisionManager* collMan = smgr->getSceneCollisionManager();
 
 	//*****************End Collisions section**********************
-	
+
 	////////////// The Sun ////////////
 	ILightSceneNode *sun_node;
 	SLight sun_data;
 	ISceneNode *sun_billboard;
-	float sun_angle=0;
+	float sun_angle = 0;
 	video::SColorf Diffuse_Night = video::SColorf(0.0f, 0.0f, 0.0f, 1.0f);
 	video::SColorf Diffuse_Day = video::SColorf(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -113,7 +113,7 @@ int main()
 	sun_data.Direction = vector3df(0, 0, 0);
 	sun_data.Type = video::ELT_DIRECTIONAL;
 	sun_data.AmbientColor = video::SColorf(0.1f, 0.1f, 0.1f, 1);
-	sun_data.SpecularColor = video::SColorf(0,0,0,0);
+	sun_data.SpecularColor = video::SColorf(0, 0, 0, 0);
 	sun_data.DiffuseColor = Diffuse_Day;
 	sun_data.CastShadows = true;
 	sun_node->setLightData(sun_data);
@@ -168,7 +168,7 @@ int main()
 	MapMenu mapMenu(device, driver);
 	mapMenu.SetPlayer(&p);
 
-	TradeMenu tradeMenu(device,driver);
+	TradeMenu tradeMenu(device, driver);
 	tradeMenu.SetPlayer(&p);
 	tradeMenu.SetVendor(&vS);
 
@@ -179,6 +179,7 @@ int main()
 
 	while (device->run())
 	{
+
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
 		sun_angle += 0.01f;
 		if ((sun_angle > 0 && sun_angle < 109) || (sun_angle>350))
@@ -204,39 +205,65 @@ int main()
 			}
 		}
 
-		if (GetAsyncKeyState(0x57))
+		///// Movement control! ///////////
+		if (GetAsyncKeyState(0x57)) //W key
 		{
-			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI/180));
+			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-			
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			if (plyrWalk == false)
+			{
+				plyrNode->setFrameLoop(40, 90);
+				plyrNode->setAnimationSpeed(30);
+				plyrWalk = true;
+			}
+
 		}
-		if (GetAsyncKeyState(0x53))
+		else if (GetAsyncKeyState(0x53)) //S key
 		{
 			plPos_z += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			if (plyrWalk == false)
+			{
+				plyrNode->setFrameLoop(40, 90);
+				plyrNode->setAnimationSpeed(-30);
+				plyrWalk = true;
+			}
 		}
-		if (GetAsyncKeyState(0x44))
+		else if (GetAsyncKeyState(0x44)) // D key
 		{
 			plPos_z += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 		}
-		if (GetAsyncKeyState(0x41))
+		else if (GetAsyncKeyState(0x41)) // A key
 		{
 			plPos_z -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 		}
+		else
+		{
+			plyrNode->setFrameLoop(10, 30);
+			plyrWalk = false;
+		}
+		////// End Movement Control ////////////
 
+		plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+		if (updateCam) moveCameraControl(plyrNode, device, camera);
 
-		if(updateCam) moveCameraControl(plyrNode, device, camera);
-
-		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest = true;
-		else xTest = false;
-		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest = true;
-		else zTest = false;
+		//are we in front of the merchant Table?
+		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest_M = true;
+		else xTest_M = false;
+		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest_M = true;
+		else zTest_M = false;
+		
+		//are we in front of the crafting Table?
+		if (plyrNode->getPosition().X > -13.62f && plyrNode->getPosition().X < -13.0f) xTest_C = true;
+		else xTest_C = false;
+		if (plyrNode->getPosition().Z > -17.14f && plyrNode->getPosition().Z < -15.51f) zTest_C = true;
+		else zTest_C = false;
 
 
 		////////////////////////////////////////////////////////
@@ -297,7 +324,7 @@ int main()
 			}
 			case eMapDest::East:
 			{
-				state = None;			
+				state = None;
 				itemB = new Item("Bronze Ore", 1000);
 				vE.getItems()->addItem(itemB);
 				tradeMenu.SetVendor(&vE);
@@ -337,7 +364,7 @@ int main()
 		case Main:
 		{
 			int out = mainMenu.Update(&input);
-			
+
 			switch (out)
 			{
 			case MSstart:
@@ -382,18 +409,16 @@ int main()
 		sky.setGreen(skyG);
 		sky.setBlue(skyB);
 		driver->beginScene(true, true, sky);
-		//itemTest.loadSprite(driver, v2d(50, 50));
+
 		
+
 		smgr->drawAll();
 
-		if (xTest && zTest)
+		if (xTest_M && zTest_M)
 		{
 			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
 			if (GetAsyncKeyState(VK_RETURN))
 			{
-				/*updateCam = false;
-				menu1 = true;*/
-
 				/////////////////////////////////////////////
 
 				state = Trade;
@@ -401,13 +426,19 @@ int main()
 				/////////////////////////////////////////////
 			}
 		}
-		
-		/*if(menu1) driver->draw2DImage(merchMenu, vector2d<s32>(100, 100));
-		if (GetAsyncKeyState(VK_LBUTTON))
+
+		if (xTest_C && zTest_C)
 		{
-			//updateCam = true;
-			menu1 = false;
-		}*/
+			driver->draw2DImage(crftMess, vector2d<s32>(300, 300));
+			if (GetAsyncKeyState(VK_RETURN))
+			{
+				/////////////////////////////////////////////
+
+				state = Craft;
+
+				/////////////////////////////////////////////
+			}
+		}
 
 		// Draw the menu
 		switch (state)
@@ -441,11 +472,11 @@ int main()
 
 
 		driver->endScene();
-		
+
 
 		//close game loop with escape key -- JFarley
 		/*if (GetAsyncKeyState(VK_ESCAPE))
-			device->closeDevice();*/
+		device->closeDevice();*/
 	}
 
 	device->drop();
@@ -455,11 +486,11 @@ int main()
 
 void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* device, ICameraSceneNode* camera)
 {
-	//IrrlichtDevice* device = loadGRender();
 
 	position2d<f32> cursorPos = device->getCursorControl()->getRelativePosition();
-	//ICameraSceneNode* camera = device->getSceneManager()->getActiveCamera();
 	vector3df cameraPos = camera->getAbsolutePosition();
+	vector3df playerPos_old;
+	float xf, yf, zf;
 
 	float change_x = (cursorPos.X - 0.5) * 256.0f;
 	float change_y = (cursorPos.Y - 0.5) * 256.0f;
@@ -470,11 +501,17 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 
 	vector3df playerPos = playerNode->getPosition();
 
-	float xf = playerPos.X - cos(direction * PI / 180.0f) * 2.5f;
-	float yf = playerPos.Y - sin(zdirection * PI / 180.0f) * 2.5f;
-	float zf = playerPos.Z + sin(direction * PI / 180.0f) * 2.5f;
+	if (playerPos != playerPos_old)
+	{
+		xf = playerPos.X - cos(direction * PI / 180.0f) * 2.5f;
+		yf = playerPos.Y - sin(zdirection * PI / 180.0f) * 2.5f;
+		zf = playerPos.Z + sin(direction * PI / 180.0f) * 2.5f;
+	}
+
+
+	playerPos_old = playerPos;
 
 	camera->setPosition(core::vector3df(xf, yf, zf));
 	camera->setTarget(core::vector3df(playerPos.X, playerPos.Y + 2.0f, playerPos.Z));
-	playerNode->setRotation(core::vector3df(0, direction-90, 0));
+	playerNode->setRotation(core::vector3df(0, direction - 90, 0));
 }
