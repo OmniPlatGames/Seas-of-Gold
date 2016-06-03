@@ -16,7 +16,6 @@
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 
-
 float direction = 0, zdirection = 0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
@@ -58,7 +57,15 @@ int main()
 	if (!map) { device->drop(); return 1; }
 	IMeshSceneNode* seasNode = smgr->addOctreeSceneNode(map, 0, -1, 32, false);
 
-	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
+	IAnimatedMesh* trees = smgr->getMesh("Assets/trees_en.3ds");
+	if (!trees) { device->drop(); return 1; }
+	IAnimatedMeshSceneNode* treesNode = smgr->addAnimatedMeshSceneNode(trees);
+	for (int i = 0; i < treesNode->getMaterialCount(); i++)
+	{
+		treesNode->getMaterial(i).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	}
+
+	IAnimatedMesh* merch = smgr->getMesh("Assets/enMerch.x");
 	if (!merch) { device->drop(); return 1; }
 	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(merch);
 
@@ -177,11 +184,25 @@ int main()
 
 	int state = Main;
 
+	//////////////////////////////////////////////////////////////////////////
+	// Initialize timer to compute elapsed time between frames
+	//////////////////////////////////////////////////////////////////////////
+	__int64 cntsPerSec = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
+	float secsPerCnt = 1.0f / (float)cntsPerSec;
+
+	__int64 prevTimeStamp = 0;
+	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
+
 	while (device->run())
 	{
+		//for scaling animation by time, not by frame
+		__int64 currTimeStamp = 0;
+		QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
+		float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
 
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
-		sun_angle += 0.01f;
+		sun_angle += dt;
 		if ((sun_angle > 0 && sun_angle < 109) || (sun_angle>350))
 		{
 			timer++;
@@ -208,8 +229,8 @@ int main()
 		///// Movement control! ///////////
 		if (GetAsyncKeyState(0x57)) //W key
 		{
-			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z -= cos((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x -= sin((plyrNode->getRotation().Y)*PI / 180)*dt;
 			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 			if (plyrWalk == false)
 			{
@@ -221,8 +242,8 @@ int main()
 		}
 		else if (GetAsyncKeyState(0x53)) //S key
 		{
-			plPos_z += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z += cos((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x += sin((plyrNode->getRotation().Y)*PI / 180)*dt;
 			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 			if (plyrWalk == false)
 			{
@@ -233,14 +254,14 @@ int main()
 		}
 		else if (GetAsyncKeyState(0x44)) // D key
 		{
-			plPos_z += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z += sin((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x -= cos((plyrNode->getRotation().Y)*PI / 180)*dt;
 			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 		}
 		else if (GetAsyncKeyState(0x41)) // A key
 		{
-			plPos_z -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z -= sin((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x += cos((plyrNode->getRotation().Y)*PI / 180)*dt;
 			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 		}
 		else
@@ -472,6 +493,9 @@ int main()
 
 
 		driver->endScene();
+		
+		// Update the prev time stamp to current
+		prevTimeStamp = currTimeStamp;
 
 
 		//close game loop with escape key -- JFarley
