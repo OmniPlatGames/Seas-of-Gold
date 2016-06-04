@@ -146,6 +146,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="LoadMap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MapMenu.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="LoadMap.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MapMenu.h" />
     <ClInclude Include="Mission.h" />
