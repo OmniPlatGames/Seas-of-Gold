@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "MainMenu.h"
 #include "CraftingMenu.h"
+#include"LoadMap.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -39,6 +40,7 @@ int main()
 	bool zTest_C = false;
 	bool updateCam = true;
 	bool menu1 = false;
+	LoadMap loadMap;
 
 
 
@@ -53,21 +55,9 @@ int main()
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
-	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
-	if (!map) { device->drop(); return 1; }
-	IMeshSceneNode* seasNode = smgr->addOctreeSceneNode(map, 0, -1, 32, false);
-
-	IAnimatedMesh* trees = smgr->getMesh("Assets/trees_en.3ds");
-	if (!trees) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode* treesNode = smgr->addAnimatedMeshSceneNode(trees);
-	for (int i = 0; i < treesNode->getMaterialCount(); i++)
-	{
-		treesNode->getMaterial(i).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
-	}
-
-	IAnimatedMesh* merch = smgr->getMesh("Assets/enMerch.x");
-	if (!merch) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(merch);
+	// Load the map scene
+	//loadMap.england(smgr, device);
+	loadMap.india(smgr, device);
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
 	if (!player) { device->drop(); return 1; }
@@ -85,15 +75,15 @@ int main()
 	//*******************Collisions*************************
 	scene::ITriangleSelector* selector = 0;
 
-	if (seasNode)
+	if (loadMap.seasNode)
 	{
-		selector = smgr->createOctreeTriangleSelector(seasNode->getMesh(), seasNode, 32);
+		selector = smgr->createOctreeTriangleSelector(loadMap.seasNode->getMesh(), loadMap.seasNode, 32);
 
-		for (int i = 0; i < seasNode->getMaterialCount(); i++)
+		for (int i = 0; i < loadMap.seasNode->getMaterialCount(); i++)
 		{
-			seasNode->getMaterial(i).NormalizeNormals = true;
+			loadMap.seasNode->getMaterial(i).NormalizeNormals = true;
 		}
-		seasNode->setTriangleSelector(selector);
+		loadMap.seasNode->setTriangleSelector(selector);
 	}
 
 	if (selector)
