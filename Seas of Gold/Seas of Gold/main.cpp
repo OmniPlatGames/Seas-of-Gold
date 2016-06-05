@@ -76,6 +76,13 @@ int main()
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
 	//*******************Collisions*************************
+	//unused variables, but needed to use player movement control function in IRRLICHT
+	triangle3df triout;
+	vector3df hitPos;
+	bool falling;
+	ISceneNode *outfalling;
+
+
 	scene::ITriangleSelector* selector = 0;
 
 	if (seasNode)
@@ -258,12 +265,6 @@ int main()
 
 
 		vector3df plPos = vector3df(plPos_x, plPos_y, plPos_z);
-
-		//unused variables
-		triangle3df triout;
-		vector3df hitPos;
-		bool falling;
-		ISceneNode *outfalling;
 
 		//controls player's movement
 		plyrNode->setPosition(collMan->getCollisionResultPosition(selector, plyrNode->getAbsolutePosition(), core::vector3df(0.5f, 1.0f, 0.5f), plPos, triout, hitPos, falling, outfalling, 0.005f, vector3df(0.0f, 0.0f, 0.0f)));
