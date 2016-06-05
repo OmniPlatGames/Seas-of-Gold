@@ -33,7 +33,7 @@ int main()
 	SColor sky = SColor(255, skyR, skyG, skyB);
 	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
 	if (!device) return 1;
-	float plPos_x = -6.0f, plPos_y = 0.0f, plPos_z = 10.0f;
+	float plPos_x = 0.0f, plPos_y = 0.0f, plPos_z = 0.0f;
 	bool xTest_M = false;
 	bool zTest_M = false;
 	bool xTest_C = false;
@@ -41,8 +41,6 @@ int main()
 	bool updateCam = true;
 	bool menu1 = false;
 	LoadMap loadMap;
-
-
 
 	device->setWindowCaption(L"Seas of Gold");  //Updated JFarley
 	IVideoDriver* driver = device->getVideoDriver();
@@ -67,7 +65,7 @@ int main()
 		plyrNode->getMaterial(i).NormalizeNormals = true;
 	}
 	bool plyrWalk = false;
-	plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+	plyrNode->setPosition(vector3df(5.0f, 0.1f, 5.0f));
 	//plyrNode->setDebugDataVisible((scene::E_DEBUG_SCENE_TYPE)(plyrNode->isDebugDataVisible() ^ scene::EDS_BBOX));
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
@@ -95,7 +93,7 @@ int main()
 
 	if (selector)
 	{
-		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.5f, 1.0f, 0.5f), core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0, -1, 0));
+		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f), core::vector3df(0.0f, -0.725f, 0.0f));
 		//selector->drop();
 		plyrNode->addAnimator(anim);
 		anim->drop();
@@ -230,17 +228,10 @@ int main()
 
 		if (GetAsyncKeyState(0x57)) //W key
 		{
-<<<<<<< HEAD
 			plPos_z = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
-		if (plyrWalk == false)
-=======
-			plPos_z -= cos((plyrNode->getRotation().Y)*PI / 180)*dt;
-			plPos_x -= sin((plyrNode->getRotation().Y)*PI / 180)*dt;
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
 			if (plyrWalk == false)
->>>>>>> refs/remotes/OmniPlatGames/master
 			{
 				plyrNode->setFrameLoop(40, 90);
 				plyrNode->setAnimationSpeed(30);
@@ -249,15 +240,9 @@ int main()
 		}
 		if (GetAsyncKeyState(0x53)) //S key
 		{
-<<<<<<< HEAD
 			plPos_z = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
-=======
-			plPos_z += cos((plyrNode->getRotation().Y)*PI / 180)*dt;
-			plPos_x += sin((plyrNode->getRotation().Y)*PI / 180)*dt;
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
->>>>>>> refs/remotes/OmniPlatGames/master
 			if (plyrWalk == false)
 			{
 				plyrNode->setFrameLoop(40, 90);
@@ -267,32 +252,20 @@ int main()
 		}
 		if (GetAsyncKeyState(0x44)) // D key
 		{
-<<<<<<< HEAD
 			plPos_z = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 
-=======
-			plPos_z += sin((plyrNode->getRotation().Y)*PI / 180)*dt;
-			plPos_x -= cos((plyrNode->getRotation().Y)*PI / 180)*dt;
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
->>>>>>> refs/remotes/OmniPlatGames/master
 		}
 		if (GetAsyncKeyState(0x41)) // A key
 		{
-<<<<<<< HEAD
 			plPos_z = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 
-=======
-			plPos_z -= sin((plyrNode->getRotation().Y)*PI / 180)*dt;
-			plPos_x += cos((plyrNode->getRotation().Y)*PI / 180)*dt;
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
->>>>>>> refs/remotes/OmniPlatGames/master
 		}
 		//if(!plyrWalk)
-		if(!movetest)
+		if (!movetest)
 		{
 			plyrNode->setFrameLoop(10, 30);
 			plyrWalk = false;
@@ -303,15 +276,15 @@ int main()
 		vector3df plPos = vector3df(plPos_x, plPos_y, plPos_z);
 
 		//controls player's movement
-		plyrNode->setPosition(collMan->getCollisionResultPosition(selector, plyrNode->getAbsolutePosition(), core::vector3df(0.5f, 1.0f, 0.5f), plPos, triout, hitPos, falling, outfalling, 0.005f, vector3df(0.0f, 0.0f, 0.0f)));
+		plyrNode->setPosition(collMan->getCollisionResultPosition(selector, plyrNode->getPosition(), core::vector3df(0.01f, 0.01f, 0.01f), plPos, triout, hitPos, falling, outfalling, 0.0f, vector3df(0.0f, -0.05f, 0.0f)));
 		if (updateCam) moveCameraControl(plyrNode, device, camera);
 
 		//are we in front of the merchant Table?
-		if (plyrNode->getPosition().X > 0.96f && plyrNode->getPosition().X < 1.41f) xTest_M = true;
+		if (plyrNode->getPosition().X > 0.0f && plyrNode->getPosition().X < 1.5f) xTest_M = true;
 		else xTest_M = false;
-		if (plyrNode->getPosition().Z < -2.66f && plyrNode->getPosition().Z > -3.32f) zTest_M = true;
+		if (plyrNode->getPosition().Z < -2.00f && plyrNode->getPosition().Z > -4.0f) zTest_M = true;
 		else zTest_M = false;
-		
+
 		//are we in front of the crafting Table?
 		if (plyrNode->getPosition().X > -13.62f && plyrNode->getPosition().X < -13.0f) xTest_C = true;
 		else xTest_C = false;
