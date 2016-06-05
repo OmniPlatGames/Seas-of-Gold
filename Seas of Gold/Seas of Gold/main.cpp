@@ -91,8 +91,8 @@ int main()
 
 	if (selector)
 	{
-		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, core::vector3df(0.5f, 1.0f, 0.5f), core::vector3df(0, -2.0f, 0), core::vector3df(0, -1, 0));
-		selector->drop();
+		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.5f, 1.0f, 0.5f), core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0, -1, 0));
+		//selector->drop();
 		plyrNode->addAnimator(anim);
 		anim->drop();
 	}
@@ -204,26 +204,29 @@ int main()
 				timer = 0;
 			}
 		}
+		plPos_x = 0.0f;
+		plPos_z = 0.0f;
 
 		///// Movement control! ///////////
+		bool movetest = false;
+
 		if (GetAsyncKeyState(0x57)) //W key
 		{
-			plPos_z -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
-			if (plyrWalk == false)
+			plPos_z = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			movetest = true;
+		if (plyrWalk == false)
 			{
 				plyrNode->setFrameLoop(40, 90);
 				plyrNode->setAnimationSpeed(30);
 				plyrWalk = true;
 			}
-
 		}
-		else if (GetAsyncKeyState(0x53)) //S key
+		if (GetAsyncKeyState(0x53)) //S key
 		{
-			plPos_z += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			plPos_z = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			movetest = true;
 			if (plyrWalk == false)
 			{
 				plyrNode->setFrameLoop(40, 90);
@@ -231,26 +234,39 @@ int main()
 				plyrWalk = true;
 			}
 		}
-		else if (GetAsyncKeyState(0x44)) // D key
+		if (GetAsyncKeyState(0x44)) // D key
 		{
-			plPos_z += 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x -= 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			plPos_z = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			movetest = true;
+
 		}
-		else if (GetAsyncKeyState(0x41)) // A key
+		if (GetAsyncKeyState(0x41)) // A key
 		{
-			plPos_z -= 0.01f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x += 0.01f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			plPos_z = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			movetest = true;
+
 		}
-		else
+		//if(!plyrWalk)
+		if(!movetest)
 		{
 			plyrNode->setFrameLoop(10, 30);
 			plyrWalk = false;
 		}
 		////// End Movement Control ////////////
 
-		plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+
+		vector3df plPos = vector3df(plPos_x, plPos_y, plPos_z);
+
+		//unused variables
+		triangle3df triout;
+		vector3df hitPos;
+		bool falling;
+		ISceneNode *outfalling;
+
+		//controls player's movement
+		plyrNode->setPosition(collMan->getCollisionResultPosition(selector, plyrNode->getAbsolutePosition(), core::vector3df(0.5f, 1.0f, 0.5f), plPos, triout, hitPos, falling, outfalling, 0.005f, vector3df(0.0f, 0.0f, 0.0f)));
 		if (updateCam) moveCameraControl(plyrNode, device, camera);
 
 		//are we in front of the merchant Table?
@@ -501,12 +517,12 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 
 	vector3df playerPos = playerNode->getPosition();
 
-	if (playerPos != playerPos_old)
-	{
+	//if (playerPos != playerPos_old)
+	//{
 		xf = playerPos.X - cos(direction * PI / 180.0f) * 2.5f;
 		yf = playerPos.Y - sin(zdirection * PI / 180.0f) * 2.5f;
 		zf = playerPos.Z + sin(direction * PI / 180.0f) * 2.5f;
-	}
+	//}
 
 
 	playerPos_old = playerPos;
