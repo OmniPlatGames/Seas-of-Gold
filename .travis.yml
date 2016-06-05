@@ -1,5 +1,2 @@
 language:c++
 ./configure && make && make test
-compiler:
-  - clang++
-  - g++
