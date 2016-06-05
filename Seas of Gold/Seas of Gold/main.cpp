@@ -10,12 +10,12 @@
 #include "Player.h"
 #include "MainMenu.h"
 #include "CraftingMenu.h"
+#include"LoadMap.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
-
 
 float direction = 0, zdirection = 0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
@@ -40,6 +40,7 @@ int main()
 	bool zTest_C = false;
 	bool updateCam = true;
 	bool menu1 = false;
+	LoadMap loadMap;
 
 
 
@@ -54,13 +55,9 @@ int main()
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
-	IAnimatedMesh* map = smgr->getMesh("Assets/map.3ds");
-	if (!map) { device->drop(); return 1; }
-	IMeshSceneNode* seasNode = smgr->addOctreeSceneNode(map, 0, -1, 32, false);
-
-	IAnimatedMesh* merch = smgr->getMesh("Assets/merch.x");
-	if (!merch) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(merch);
+	// Load the map scene
+	//loadMap.england(smgr, device);
+	loadMap.india(smgr, device);
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
 	if (!player) { device->drop(); return 1; }
@@ -85,15 +82,15 @@ int main()
 
 	scene::ITriangleSelector* selector = 0;
 
-	if (seasNode)
+	if (loadMap.seasNode)
 	{
-		selector = smgr->createOctreeTriangleSelector(seasNode->getMesh(), seasNode, 32);
+		selector = smgr->createOctreeTriangleSelector(loadMap.seasNode->getMesh(), loadMap.seasNode, 32);
 
-		for (int i = 0; i < seasNode->getMaterialCount(); i++)
+		for (int i = 0; i < loadMap.seasNode->getMaterialCount(); i++)
 		{
-			seasNode->getMaterial(i).NormalizeNormals = true;
+			loadMap.seasNode->getMaterial(i).NormalizeNormals = true;
 		}
-		seasNode->setTriangleSelector(selector);
+		loadMap.seasNode->setTriangleSelector(selector);
 	}
 
 	if (selector)
@@ -184,11 +181,25 @@ int main()
 
 	int state = Main;
 
+	//////////////////////////////////////////////////////////////////////////
+	// Initialize timer to compute elapsed time between frames
+	//////////////////////////////////////////////////////////////////////////
+	__int64 cntsPerSec = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
+	float secsPerCnt = 1.0f / (float)cntsPerSec;
+
+	__int64 prevTimeStamp = 0;
+	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
+
 	while (device->run())
 	{
+		//for scaling animation by time, not by frame
+		__int64 currTimeStamp = 0;
+		QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
+		float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
 
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
-		sun_angle += 0.01f;
+		sun_angle += dt;
 		if ((sun_angle > 0 && sun_angle < 109) || (sun_angle>350))
 		{
 			timer++;
@@ -219,10 +230,17 @@ int main()
 
 		if (GetAsyncKeyState(0x57)) //W key
 		{
+<<<<<<< HEAD
 			plPos_z = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 		if (plyrWalk == false)
+=======
+			plPos_z -= cos((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x -= sin((plyrNode->getRotation().Y)*PI / 180)*dt;
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+			if (plyrWalk == false)
+>>>>>>> refs/remotes/OmniPlatGames/master
 			{
 				plyrNode->setFrameLoop(40, 90);
 				plyrNode->setAnimationSpeed(30);
@@ -231,9 +249,15 @@ int main()
 		}
 		if (GetAsyncKeyState(0x53)) //S key
 		{
+<<<<<<< HEAD
 			plPos_z = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
+=======
+			plPos_z += cos((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x += sin((plyrNode->getRotation().Y)*PI / 180)*dt;
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+>>>>>>> refs/remotes/OmniPlatGames/master
 			if (plyrWalk == false)
 			{
 				plyrNode->setFrameLoop(40, 90);
@@ -243,17 +267,29 @@ int main()
 		}
 		if (GetAsyncKeyState(0x44)) // D key
 		{
+<<<<<<< HEAD
 			plPos_z = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 
+=======
+			plPos_z += sin((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x -= cos((plyrNode->getRotation().Y)*PI / 180)*dt;
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+>>>>>>> refs/remotes/OmniPlatGames/master
 		}
 		if (GetAsyncKeyState(0x41)) // A key
 		{
+<<<<<<< HEAD
 			plPos_z = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
 			plPos_x = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 
+=======
+			plPos_z -= sin((plyrNode->getRotation().Y)*PI / 180)*dt;
+			plPos_x += cos((plyrNode->getRotation().Y)*PI / 180)*dt;
+			//plyrNode->setPosition(vector3df(plPos_x, plPos_y, plPos_z));
+>>>>>>> refs/remotes/OmniPlatGames/master
 		}
 		//if(!plyrWalk)
 		if(!movetest)
@@ -489,6 +525,9 @@ int main()
 
 
 		driver->endScene();
+		
+		// Update the prev time stamp to current
+		prevTimeStamp = currTimeStamp;
 
 
 		//close game loop with escape key -- JFarley
