@@ -1,2 +1,1 @@
-language:c++
-./configure && make && make test
+language: cpp
