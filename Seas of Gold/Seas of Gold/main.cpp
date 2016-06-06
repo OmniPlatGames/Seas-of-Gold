@@ -54,8 +54,12 @@ int main()
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
 	// Load the map scene
+<<<<<<< HEAD
 	loadMap.england(smgr, device);
 	//loadMap.india(smgr, device);
+=======
+	loadMap.Load(smgr, device, Map_India);
+>>>>>>> refs/remotes/OmniPlatGames/master
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
 	if (!player) { device->drop(); return 1; }
