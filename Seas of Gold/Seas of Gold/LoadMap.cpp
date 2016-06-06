@@ -31,4 +31,12 @@ void LoadMap::india(ISceneManager* smgr, IrrlichtDevice *device)
 	{
 		merchNode->getMaterial(i).NormalizeNormals = true;
 	}
+
+	IAnimatedMesh* intrees = smgr->getMesh("Assets/trees_in.3ds");
+	IAnimatedMeshSceneNode* intreesNode = smgr->addAnimatedMeshSceneNode(intrees);
+}
+
+void LoadMap::africa(ISceneManager* smgr, IrrlichtDevice *device)
+{
+
 }
