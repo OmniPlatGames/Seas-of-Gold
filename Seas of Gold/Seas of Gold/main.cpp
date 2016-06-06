@@ -54,8 +54,7 @@ int main()
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
 	// Load the map scene
-	//loadMap.england(smgr, device);
-	loadMap.india(smgr, device);
+	loadMap.Load(smgr, device, Map_India);
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
 	if (!player) { device->drop(); return 1; }
