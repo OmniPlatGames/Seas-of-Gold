@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Graphics.h"
 #include "Button.h"
+#include "CraftingSystem.h"
 
 class CraftingMenu
 {
@@ -46,4 +47,7 @@ private:
 	irr::gui::IGUIFont* mfont;
 
 	GraphicsImage background;
+
+	CraftingSystem CS;
+	CSOutputItems Citems;
 };
