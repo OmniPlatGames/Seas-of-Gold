@@ -80,25 +80,59 @@ bool CraftingMenu::Update(Input* in)
 {
 	if (CraftButton.isPressed(in))
 	{
-		std::vector<Item*> items;
 
 		Inventory* in = mPlayer->getItems();
+
+		CSOutputItem temp;
 
 		for (int i = 0; i < 17; i++)
 		{
 			if (SelectedItems[i])
 			{
-				items.push_back(in->items[i]);
+				//items.push_back(in->items[i]);
+				for (int j = 0; j < Citems.items.size(); j++)
+				{
+					if (Citems.items[j].Name == bCraftList[i].GetText())
+					{
+						temp = Citems.items[j];
+						break;
+					}
+				}
+				break;
 			}
 		}
 
+		Item* nItem = new Item(temp.Name.c_str(), 1);
+		in->addItem(nItem);
 
-		if (HasIron && HasBronze && (selectedCraft == 0))
+		for (int i = 0; i < temp.components.size(); i++)
+		{
+			for (int j = 0; j < in->items.size(); j++)
+			{
+				if (in->items[j]->getItemName() == temp.components[i].c_str())
+				{
+					in->items[j]->setItemQty(in->items[j]->getItemQty()
+						- temp.amnts[i]);
+					if (in->items[j]->getItemQty() <= 0)
+					{
+						in->items[j]->setItemQty(0);
+						in->items.erase(in->items.begin() + j);
+					}
+
+					break;
+				}
+			}
+		}
+
+		
+		
+
+		/*if (HasIron && HasBronze && (selectedCraft == 0))
 		{
 			Item* nItem = new Item("Bronze Sword", 1);
 
 			mPlayer->getItems()->addItem(nItem);
-		}
+		}*/
 
 		for (int i = 0; i < 17; i++)
 		{
@@ -136,13 +170,13 @@ bool CraftingMenu::Update(Input* in)
 		}
 	}
 
-	for (int i = 0; i < 17; i++)
+	/*for (int i = 0; i < 17; i++)
 	{
 		if (bItemList[i].GetText() == "Bronze Ore")
 			HasBronze = true;
 		if (bItemList[i].GetText() == "Iron Ore")
 			HasIron = true;
-	}
+	}*/
 
 	UpdateContents();
 
@@ -182,25 +216,31 @@ void CraftingMenu::UpdateContents()
 			{
 				if (SelectedItems[i])
 				{
-					std::string str = in->items[i]->getItemName();
+					irrstring str = "";
+					str = in->items[i]->getItemName().c_str();
 					bItemList[i].SetText(str.c_str());
 					bItemList[i].SetColorFront(255, 255, 153, 255);
 					bItemList[i].SetColorBack(0, 0, 0, 255);
 
-					str = in->items[i]->getItemQty();
+					str = "";
+					str = std::to_string(in->items[i]->getItemQty()).c_str();
 					bItemListAmnt[i].SetText(str.c_str());
+					//bItemListAmnt[i].SetColorText(255, 255, 255, 255);
 					bItemListAmnt[i].SetColorFront(255, 255, 153, 255);
 					bItemListAmnt[i].SetColorBack(0, 0, 0, 255);
 				}
 				else
 				{
-					std::string str = in->items[i]->getItemName();
+					irrstring str = "";
+					str += in->items[i]->getItemName().c_str();
 					bItemList[i].SetText(str.c_str());
 					bItemList[i].SetColorFront(255, 255, 255, 255);
 					bItemList[i].SetColorBack(0, 0, 0, 255);
 
-					str = in->items[i]->getItemQty();
+					str = "";
+					str += std::to_string(in->items[i]->getItemQty()).c_str();
 					bItemListAmnt[i].SetText(str.c_str());
+					//bItemListAmnt[i].SetColorText(255, 255, 255, 255);
 					bItemListAmnt[i].SetColorFront(255, 255, 255, 255);
 					bItemListAmnt[i].SetColorBack(0, 0, 0, 255);
 				}
@@ -216,6 +256,16 @@ void CraftingMenu::UpdateContents()
 				bItemListAmnt[i].SetColorBack(0, 0, 0, 0);
 			}
 
+		}
+		else
+		{
+			bItemList[i].SetText("");
+			bItemList[i].SetColorFront(0, 0, 0, 0);
+			bItemList[i].SetColorBack(0, 0, 0, 0);
+
+			bItemListAmnt[i].SetText("");
+			bItemListAmnt[i].SetColorFront(0, 0, 0, 0);
+			bItemListAmnt[i].SetColorBack(0, 0, 0, 0);
 		}
 		
 		if (bCraftList[i].GetText() != "")
@@ -246,8 +296,41 @@ void CraftingMenu::UpdateContents()
 
 	}
 
-	if (HasBronze && HasIron)
+	CSInputItems csin;
+
+	for (int i = 0; i < 17; i++)
+	{
+		if (SelectedItems[i])
+		{
+			for (int j = 0; j < in->items.size(); j++)
+			{
+				if (in->items[i]->getItemName() == bItemList[i].GetText().c_str())
+				{
+					csin.AddItem(in->items[i]->getItemName().c_str(), in->items[i]->getItemQty());
+					break;
+				}
+
+			}
+		}
+	}
+
+	Citems = CS.Craftables(csin);
+
+	for (int i = 0; i < 17; i++)
+	{
+		if (i < Citems.items.size())
+		{
+			irrstring temp = Citems.items[i].Name;
+			bCraftList[i].SetText(temp);
+		}
+		else
+		{
+			bCraftList[i].SetText("");
+		}
+	}
+
+	/*if (HasBronze && HasIron)
 	{
 		bCraftList[0].SetText("Bronze Sword");
-	}
+	}*/
 }
