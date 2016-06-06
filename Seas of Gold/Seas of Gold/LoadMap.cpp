@@ -1,22 +1,34 @@
 #include "LoadMap.h"
 
-void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice* device, int map){
-	IAnimatedMesh* merch = smgr->getMesh(mapData.MapMerchants[map].c_str());
-	IAnimatedMeshSceneNode* merchNode = smgr->addAnimatedMeshSceneNode(merch);
-
-	IAnimatedMesh* foliage = smgr->getMesh(mapData.MapAssets[map].c_str());
-	IAnimatedMeshSceneNode* foliageNode = smgr->addAnimatedMeshSceneNode(foliage);
-
-	IAnimatedMesh* mapFile = smgr->getMesh(mapData.MapFiles[1].c_str());
-	seasNode = smgr->addOctreeSceneNode(mapFile, 0, -1, 32, false);
-
+void LoadMap::england(ISceneManager* smgr, IrrlichtDevice *device)
+{
+	IAnimatedMesh* merch = smgr->getMesh("Assets/enMerch.x");
+	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(merch);
 	for (int i = 0; i < merchNode->getMaterialCount(); i++)
 	{
 		merchNode->getMaterial(i).NormalizeNormals = true;
 	}
 
-	for (int i = 0; i < foliageNode->getMaterialCount(); i++)
+	IAnimatedMesh* trees = smgr->getMesh("Assets/trees_en.3ds");
+	IAnimatedMeshSceneNode* treesNode = smgr->addAnimatedMeshSceneNode(trees);
+	for (int i = 0; i < treesNode->getMaterialCount(); i++)
 	{
-		foliageNode->getMaterial(i).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+		treesNode->getMaterial(i).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	}
+
+	IAnimatedMesh* enmap = smgr->getMesh("Assets/map.3ds");
+	seasNode = smgr->addOctreeSceneNode(enmap, 0, -1, 32, false);
+}
+
+void LoadMap::india(ISceneManager* smgr, IrrlichtDevice *device)
+{
+	IAnimatedMesh* inmap = smgr->getMesh("Assets/indMap.3ds");
+	seasNode = smgr->addOctreeSceneNode(inmap, 0, -1, 32, false);
+
+	IAnimatedMesh* inMerch = smgr->getMesh("Assets/inMerch.x");
+	IAnimatedMeshSceneNode *merchNode = smgr->addAnimatedMeshSceneNode(inMerch);
+	for (int i = 0; i < merchNode->getMaterialCount(); i++)
+	{
+		merchNode->getMaterial(i).NormalizeNormals = true;
 	}
 }
