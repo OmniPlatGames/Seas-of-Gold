@@ -17,7 +17,7 @@ struct MapData
 	
 	void Initialize()
 	{
-		MapFiles[Map_England] = "Assets/enmap.3ds";
+		MapFiles[Map_England] = "Assets/enmapcoll.3ds";
 		MapAssets[Map_England] = "Assets/trees_en.3ds";
 		MapMerchants[Map_England] = "Assets/enMerch.x";
 		MapVendorTable[Map_England] = "Assets/vndrTble.3ds";
