@@ -53,8 +53,12 @@ int main()
 	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
 	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
 
+	
+
 	// Load the map scene
-	loadMap.Load(smgr, device, Map_India);
+	//loadMap.Load(smgr, device, Map_Africa);
+	//loadMap.Load(smgr, device, Map_India);
+	loadMap.Load(smgr, device, Map_England);
 
 	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
 	if (!player) { device->drop(); return 1; }
@@ -227,8 +231,8 @@ int main()
 
 		if (GetAsyncKeyState(0x57)) //W key
 		{
-			plPos_z = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z = -(dt*10) * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = -(dt*10) * (sin((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 			if (plyrWalk == false)
 			{
@@ -239,8 +243,8 @@ int main()
 		}
 		if (GetAsyncKeyState(0x53)) //S key
 		{
-			plPos_z = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z = dt * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = dt * (sin((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 			if (plyrWalk == false)
 			{
@@ -251,15 +255,15 @@ int main()
 		}
 		if (GetAsyncKeyState(0x44)) // D key
 		{
-			plPos_z = 0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = -0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z = dt * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = -dt * (cos((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 
 		}
 		if (GetAsyncKeyState(0x41)) // A key
 		{
-			plPos_z = -0.05f * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = 0.05f * (cos((plyrNode->getRotation().Y)*PI / 180));
+			plPos_z = -dt * (sin((plyrNode->getRotation().Y)*PI / 180));
+			plPos_x = dt * (cos((plyrNode->getRotation().Y)*PI / 180));
 			movetest = true;
 
 		}
@@ -279,16 +283,17 @@ int main()
 		if (updateCam) moveCameraControl(plyrNode, device, camera);
 
 		//are we in front of the merchant Table?
-		if (plyrNode->getPosition().X > 0.0f && plyrNode->getPosition().X < 1.5f) xTest_M = true;
+		
+		/*if (plyrNode->getPosition().X > 0.0f && plyrNode->getPosition().X < 1.5f) xTest_M = true;
 		else xTest_M = false;
 		if (plyrNode->getPosition().Z < -2.00f && plyrNode->getPosition().Z > -4.0f) zTest_M = true;
-		else zTest_M = false;
+		else zTest_M = false;*/
 
 		//are we in front of the crafting Table?
-		if (plyrNode->getPosition().X > -13.62f && plyrNode->getPosition().X < -13.0f) xTest_C = true;
+		/*if (plyrNode->getPosition().X > -13.62f && plyrNode->getPosition().X < -13.0f) xTest_C = true;
 		else xTest_C = false;
 		if (plyrNode->getPosition().Z > -17.14f && plyrNode->getPosition().Z < -15.51f) zTest_C = true;
-		else zTest_C = false;
+		else zTest_C = false;*/
 
 
 		////////////////////////////////////////////////////////

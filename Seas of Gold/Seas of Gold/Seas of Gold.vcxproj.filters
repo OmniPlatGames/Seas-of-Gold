@@ -66,10 +66,13 @@
     <ClCompile Include="TradeMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LoadMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CraftingMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LoadMap.cpp">
+    <ClCompile Include="CraftingSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,10 +140,13 @@
     <ClInclude Include="TradeMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LoadMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CraftingMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LoadMap.h">
+    <ClInclude Include="CraftingSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
