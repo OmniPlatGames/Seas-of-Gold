@@ -2,7 +2,7 @@
 
 Ship::Ship()
 {
-	Supplies = 100;
+	Supplies = 1000;
 	SupplyCost = 10;
 	SupplyMax = 100;
 	CrewMax = 10;
