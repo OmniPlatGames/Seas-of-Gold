@@ -77,8 +77,9 @@ void LoadMap::Unload()
 	foliageNode->~IAnimatedMeshSceneNode();
 	crfTblNode->~IAnimatedMeshSceneNode();
 	vndTblNode->~IAnimatedMeshSceneNode();
-	merchNode->~IAnimatedMeshSceneNode();
-	//CollNode->~IMeshSceneNode();	
+	merchNode->~IAnimatedMeshSceneNode();	
+	//bandaid fix until better way found -Allen
+	CollNode->setPosition(v3d(100.0f, -1000.0f, 100.0f));
 }
 
 void LoadMap::setCollisions(ISceneManager* smgr, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim)

@@ -62,7 +62,6 @@ int main()
 	if (loadMap.CollNode)
 	{
 		selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
-
 		for (int i = 0; i < loadMap.CollNode->getMaterialCount(); i++)
 		{
 			loadMap.CollNode->getMaterial(i).NormalizeNormals = true;
@@ -238,6 +237,7 @@ int main()
 					plyrNode->addAnimator(anim);
 				}
 				break;
+				collMan = smgr->getSceneCollisionManager();
 			}
 			case eMapDest::North:
 			{
@@ -263,6 +263,7 @@ int main()
 						core::vector3df(0.0f, -0.725f, 0.0f));
 					plyrNode->addAnimator(anim);
 				}
+				collMan = smgr->getSceneCollisionManager();
 				break;
 			}
 			case eMapDest::South:
@@ -289,6 +290,7 @@ int main()
 						core::vector3df(0.0f, -0.725f, 0.0f));
 					plyrNode->addAnimator(anim);
 				}
+				collMan = smgr->getSceneCollisionManager();
 				break;
 			}
 			default:
