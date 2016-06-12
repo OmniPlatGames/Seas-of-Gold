@@ -4,13 +4,11 @@
 #include "Graphics.h"
 #include "Item.h"
 #include "XEffects.h"
-#include "Input.h"
-#include "MapMenu.h"
-#include "TradeMenu.h"
 #include "Player.h"
 #include "MainMenu.h"
+#include "MapMenu.h"
+#include "TradeMenu.h"
 #include "CraftingMenu.h"
-#include"LoadMap.h"
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
@@ -22,89 +20,63 @@ vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
 bool menuloop = true;
 
-Input input;
-
-enum eMenuState { None, Main, Trade, Map, Craft };
-
 int main()
 {
-	int skyR = 30, skyG = 30, skyB = 70;
-	int timer = 0;
-	SColor sky = SColor(255, skyR, skyG, skyB);
+	Input input;
 	IrrlichtDevice *device = createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16, false, true, false, &input);
-	if (!device) return 1;
-	float plPos_x = 0.0f, plPos_y = 0.0f, plPos_z = 0.0f;
-	bool xTest_M = false;
-	bool zTest_M = false;
-	bool xTest_C = false;
-	bool zTest_C = false;
-	bool updateCam = true;
-	bool menu1 = false;
-	LoadMap loadMap;
-
-	device->setWindowCaption(L"Seas of Gold");  //Updated JFarley
+	device->setWindowCaption(L"Seas of Gold");
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
-	video::E_DRIVER_TYPE driverType = driverChoiceConsole();
+	E_DRIVER_TYPE driverType = driverChoiceConsole();
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
 
-	ITexture* merchMess = driver->getTexture("Assets/merchMess.png");
-	ITexture* crftMess = driver->getTexture("Assets/crftMess.png");
-
-	
+	int skyR = 30, skyG = 30, skyB = 70;
+	int timer = 0;
+	SColor sky = SColor(255, skyR, skyG, skyB);
+	float plPos_x = 0.0f, plPos_y = 0.0f, plPos_z = 0.0f;
+	bool updateCam = true;
+	bool menu1 = false;
+	int state = Main;
+	LoadMap loadMap;
+	Player player;
+	Interface playerInterface(driver);
+	ITriangleSelector* selector = 0;
+	ISceneNodeAnimator* anim = 0;
 
 	// Load the map scene
 	//loadMap.Load(smgr, device, Map_Africa);
 	//loadMap.Load(smgr, device, Map_India);
-	loadMap.Load(smgr, device, Map_England);
+	//loadMap.Load(smgr, device, selector, plyrNode, anim, Map_England);
 
-	IAnimatedMesh* player = smgr->getMesh("Assets/player.x");
-	if (!player) { device->drop(); return 1; }
-	IAnimatedMeshSceneNode *plyrNode = smgr->addAnimatedMeshSceneNode(player);
-	for (int i = 0; i < plyrNode->getMaterialCount(); i++)
-	{
-		plyrNode->getMaterial(i).NormalizeNormals = true;
-	}
-	bool plyrWalk = false;
-	plyrNode->setPosition(vector3df(5.0f, 0.1f, 5.0f));
+	IAnimatedMeshSceneNode* plyrNode = player.loadPlayerNode(device, smgr);
 	//plyrNode->setDebugDataVisible((scene::E_DEBUG_SCENE_TYPE)(plyrNode->isDebugDataVisible() ^ scene::EDS_BBOX));
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
-	//*******************Collisions*************************
-	//unused variables, but needed to use player movement control function in IRRLICHT
-	triangle3df triout;
-	vector3df hitPos;
-	bool falling;
-	ISceneNode *outfalling;
+	loadMap.Load(smgr, device, selector, plyrNode, anim, Map_England);
 
+	//loadMap.setCollisions(smgr, selector, plyrNode, anim);
 
-	scene::ITriangleSelector* selector = 0;
-
-	if (loadMap.seasNode)
+	if (loadMap.CollNode)
 	{
-		selector = smgr->createOctreeTriangleSelector(loadMap.seasNode->getMesh(), loadMap.seasNode, 32);
-
-		for (int i = 0; i < loadMap.seasNode->getMaterialCount(); i++)
+		selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
+		for (int i = 0; i < loadMap.CollNode->getMaterialCount(); i++)
 		{
-			loadMap.seasNode->getMaterial(i).NormalizeNormals = true;
+			loadMap.CollNode->getMaterial(i).NormalizeNormals = true;
 		}
-		loadMap.seasNode->setTriangleSelector(selector);
+		loadMap.CollNode->setTriangleSelector(selector);
 	}
 
 	if (selector)
 	{
-		ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f), core::vector3df(0.0f, -0.725f, 0.0f));
-		//selector->drop();
+		anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f),
+			core::vector3df(0.0f, -0.725f, 0.0f));
 		plyrNode->addAnimator(anim);
-		anim->drop();
 	}
 
 	ISceneCollisionManager* collMan = smgr->getSceneCollisionManager();
-
-	//*****************End Collisions section**********************
 
 	////////////// The Sun ////////////
 	ILightSceneNode *sun_node;
@@ -149,13 +121,12 @@ int main()
 	//------- end -----//
 
 	// Make the player
-	Player p;
-	p.AddGold(1000);
-	p.SetCurrentPort(eMapDest::South);
+	player.AddGold(1000);
+	player.SetCurrentPort(eMapDest::South);
 	Item* itemCi = new Item("Iron Ore", 1);
-	p.getItems()->addItem(itemCi);
+	player.getItems()->addItem(itemCi);
 	Item* itemCb = new Item("Bronze Ore", 1);
-	p.getItems()->addItem(itemCb);
+	player.getItems()->addItem(itemCb);
 
 	Vendor vN;
 	Item* itemG = new Item("Gold Ore", 1000);
@@ -171,16 +142,14 @@ int main()
 	MainMenu mainMenu(device);
 
 	MapMenu mapMenu(device, driver);
-	mapMenu.SetPlayer(&p);
+	mapMenu.SetPlayer(&player);
 
 	TradeMenu tradeMenu(device, driver);
-	tradeMenu.SetPlayer(&p);
+	tradeMenu.SetPlayer(&player);
 	tradeMenu.SetVendor(&vS);
 
 	CraftingMenu craftMenu(device, driver);
-	craftMenu.SetPlayer(&p);
-
-	int state = Main;
+	craftMenu.SetPlayer(&player);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Initialize timer to compute elapsed time between frames
@@ -223,121 +192,12 @@ int main()
 				timer = 0;
 			}
 		}
-		plPos_x = 0.0f;
-		plPos_z = 0.0f;
 
-		///// Movement control! ///////////
-		bool movetest = false;
+		player.updatePlayer(plyrNode, dt, collMan, selector);
+		playerInterface.update(plyrNode, loadMap, driver, device, input, updateCam, state);
 
-		if (GetAsyncKeyState(0x57)) //W key
-		{
-			plPos_z = -(dt*10) * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = -(dt*10) * (sin((plyrNode->getRotation().Y)*PI / 180));
-			movetest = true;
-			if (plyrWalk == false)
-			{
-				plyrNode->setFrameLoop(40, 90);
-				plyrNode->setAnimationSpeed(30);
-				plyrWalk = true;
-			}
-		}
-		if (GetAsyncKeyState(0x53)) //S key
-		{
-			plPos_z = dt * (cos((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = dt * (sin((plyrNode->getRotation().Y)*PI / 180));
-			movetest = true;
-			if (plyrWalk == false)
-			{
-				plyrNode->setFrameLoop(40, 90);
-				plyrNode->setAnimationSpeed(-30);
-				plyrWalk = true;
-			}
-		}
-		if (GetAsyncKeyState(0x44)) // D key
-		{
-			plPos_z = dt * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = -dt * (cos((plyrNode->getRotation().Y)*PI / 180));
-			movetest = true;
-
-		}
-		if (GetAsyncKeyState(0x41)) // A key
-		{
-			plPos_z = -dt * (sin((plyrNode->getRotation().Y)*PI / 180));
-			plPos_x = dt * (cos((plyrNode->getRotation().Y)*PI / 180));
-			movetest = true;
-
-		}
-		//if(!plyrWalk)
-		if (!movetest)
-		{
-			plyrNode->setFrameLoop(10, 30);
-			plyrWalk = false;
-		}
-		////// End Movement Control ////////////
-
-
-		vector3df plPos = vector3df(plPos_x, plPos_y, plPos_z);
-
-		//controls player's movement
-		plyrNode->setPosition(collMan->getCollisionResultPosition(selector, plyrNode->getPosition(), core::vector3df(0.01f, 0.01f, 0.01f), plPos, triout, hitPos, falling, outfalling, 0.0f, vector3df(0.0f, -0.05f, 0.0f)));
-		if (updateCam) moveCameraControl(plyrNode, device, camera);
-
-		//are we in front of the merchant Table?
-		
-		/*if (plyrNode->getPosition().X > 0.0f && plyrNode->getPosition().X < 1.5f) xTest_M = true;
-		else xTest_M = false;
-		if (plyrNode->getPosition().Z < -2.00f && plyrNode->getPosition().Z > -4.0f) zTest_M = true;
-		else zTest_M = false;*/
-
-		//are we in front of the crafting Table?
-		/*if (plyrNode->getPosition().X > -13.62f && plyrNode->getPosition().X < -13.0f) xTest_C = true;
-		else xTest_C = false;
-		if (plyrNode->getPosition().Z > -17.14f && plyrNode->getPosition().Z < -15.51f) zTest_C = true;
-		else zTest_C = false;*/
-
-
-		////////////////////////////////////////////////////////
-		if (state != None)
-		{
-			updateCam = false;
-			device->getCursorControl()->setVisible(true);
-		}
-		else
-		{
-			updateCam = true;
-			device->getCursorControl()->setVisible(false);
-		}
-
-		if (input.IsKeyDown(irr::KEY_KEY_M) && state == None)
-		{
-			if (state == Map)
-			{
-				state = None;
-			}
-			else
-			{
-				state = Map;
-			}
-		}
-
-		if (input.IsKeyDown(irr::KEY_KEY_C) && state == None)
-		{
-			if (state == Craft)
-			{
-				state = None;
-			}
-			else
-			{
-				state = Craft;
-			}
-		}
-
-		if (input.IsKeyDown(irr::KEY_ESCAPE) && state == None)
-		{
-			state = Main;
-		}
-
-
+		int test = state;
+		int test2 = 0;
 
 		switch (state)
 		{
@@ -355,31 +215,86 @@ int main()
 			case eMapDest::East:
 			{
 				state = None;
-				itemB = new Item("Bronze Ore", 1000);
+				Item* itemB = new Item("Bronze Ore", 1000);
 				vE.getItems()->addItem(itemB);
 				tradeMenu.SetVendor(&vE);
+				loadMap.Load(smgr, device, selector, plyrNode, anim, Map_India);
+				if (loadMap.CollNode)
+				{
+					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
+
+					for (int i = 0; i < loadMap.CollNode->getMaterialCount(); i++)
+					{
+						loadMap.CollNode->getMaterial(i).NormalizeNormals = true;
+					}
+					loadMap.CollNode->setTriangleSelector(selector);
+				}
+
+				if (selector)
+				{
+					anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f),
+						core::vector3df(0.0f, -0.725f, 0.0f));
+					plyrNode->addAnimator(anim);
+				}
 				break;
+				collMan = smgr->getSceneCollisionManager();
 			}
 			case eMapDest::North:
 			{
 				state = None;
-				itemG = new Item("Gold Ore", 1000);
+				Item *itemG = new Item("Gold Ore", 1000);
 				vN.getItems()->addItem(itemG);
 				tradeMenu.SetVendor(&vN);
+				loadMap.Load(smgr, device, selector, plyrNode, anim, Map_England);
+				if (loadMap.CollNode)
+				{
+					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
+
+					for (int i = 0; i < loadMap.CollNode->getMaterialCount(); i++)
+					{
+						loadMap.CollNode->getMaterial(i).NormalizeNormals = true;
+					}
+					loadMap.CollNode->setTriangleSelector(selector);
+				}
+
+				if (selector)
+				{
+					anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f),
+						core::vector3df(0.0f, -0.725f, 0.0f));
+					plyrNode->addAnimator(anim);
+				}
+				collMan = smgr->getSceneCollisionManager();
 				break;
 			}
 			case eMapDest::South:
 			{
 				state = None;
-				itemI = new Item("Iron Ore", 1000);
+				Item *itemI = new Item("Iron Ore", 1000);
 				vS.getItems()->addItem(itemI);
 				tradeMenu.SetVendor(&vS);
+				loadMap.Load(smgr, device, selector, plyrNode, anim, Map_Africa);
+				if (loadMap.CollNode)
+				{
+					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
+
+					for (int i = 0; i < loadMap.CollNode->getMaterialCount(); i++)
+					{
+						loadMap.CollNode->getMaterial(i).NormalizeNormals = true;
+					}
+					loadMap.CollNode->setTriangleSelector(selector);
+				}
+
+				if (selector)
+				{
+					anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f),
+						core::vector3df(0.0f, -0.725f, 0.0f));
+					plyrNode->addAnimator(anim);
+				}
+				collMan = smgr->getSceneCollisionManager();
 				break;
 			}
 			default:
-			{
 				break;
-			}
 			}
 
 			break;
@@ -408,9 +323,7 @@ int main()
 				break;
 			}
 			default:
-			{
 				break;
-			}
 			}
 
 			break;
@@ -423,11 +336,11 @@ int main()
 			break;
 		}
 		default:
-		{
 			// Do nothing
 			break;
 		}
-		}
+
+		if (updateCam) moveCameraControl(plyrNode, device, camera);
 
 		////////////////////////////////////////////////////////
 
@@ -440,35 +353,9 @@ int main()
 		sky.setBlue(skyB);
 		driver->beginScene(true, true, sky);
 
-		
-
 		smgr->drawAll();
 
-		if (xTest_M && zTest_M)
-		{
-			driver->draw2DImage(merchMess, vector2d<s32>(300, 300));
-			if (GetAsyncKeyState(VK_RETURN))
-			{
-				/////////////////////////////////////////////
-
-				state = Trade;
-
-				/////////////////////////////////////////////
-			}
-		}
-
-		if (xTest_C && zTest_C)
-		{
-			driver->draw2DImage(crftMess, vector2d<s32>(300, 300));
-			if (GetAsyncKeyState(VK_RETURN))
-			{
-				/////////////////////////////////////////////
-
-				state = Craft;
-
-				/////////////////////////////////////////////
-			}
-		}
+		playerInterface.render(driver, state);
 
 		// Draw the menu
 		switch (state)
@@ -494,25 +381,18 @@ int main()
 			break;
 		}
 		default:
-		{
 			// Do nothing
 			break;
 		}
-		}
-
 
 		driver->endScene();
 		
 		// Update the prev time stamp to current
 		prevTimeStamp = currTimeStamp;
 
-
-		//close game loop with escape key -- JFarley
-		/*if (GetAsyncKeyState(VK_ESCAPE))
-		device->closeDevice();*/
 	}
 
-	device->drop();
+	//device->drop();
 
 	return 0;
 }
@@ -534,12 +414,9 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 
 	vector3df playerPos = playerNode->getPosition();
 
-	//if (playerPos != playerPos_old)
-	//{
-		xf = playerPos.X - cos(direction * PI / 180.0f) * 2.5f;
-		yf = playerPos.Y - sin(zdirection * PI / 180.0f) * 2.5f;
-		zf = playerPos.Z + sin(direction * PI / 180.0f) * 2.5f;
-	//}
+	xf = playerPos.X - cos(direction * PI / 180.0f) * 2.5f;
+	yf = playerPos.Y - sin(zdirection * PI / 180.0f) * 2.5f;
+	zf = playerPos.Z + sin(direction * PI / 180.0f) * 2.5f;
 
 
 	playerPos_old = playerPos;

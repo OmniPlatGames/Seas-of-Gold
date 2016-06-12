@@ -2,7 +2,7 @@
 
 #include "Unit.h"
 #include "Ship.h"
-
+#include "Interface.h"
 
 class Player : public Unit
 {
@@ -14,6 +14,15 @@ private:
 
 	// Current position on the map
 	int CurrentPort;
+	bool plyrWalk;
+
+	//unused variables, but needed to use player movement control function in IRRLICHT
+	triangle3df triout;
+	vector3df hitPos;
+	bool falling;
+	ISceneNode *outfalling;
+
+	void movePlayer(IAnimatedMeshSceneNode* plyrNode, float dt, ISceneCollisionManager* collMan, ITriangleSelector* selector);
 
 public:
 	Player() { playerShip = new Ship; }
@@ -25,6 +34,12 @@ public:
 
 	//Return Ship pointer
 	Ship* getPlayerShip();
+
+	//loads the player
+	IAnimatedMeshSceneNode* loadPlayerNode(IrrlichtDevice* device, ISceneManager* smgr);
+
+	//update player
+	void updatePlayer(IAnimatedMeshSceneNode* playerNode, float dt, ISceneCollisionManager* collMan, ITriangleSelector* selector);
 
 	//Returns the capacity of ship size
 	//int getPlayerShipCrewMax();
