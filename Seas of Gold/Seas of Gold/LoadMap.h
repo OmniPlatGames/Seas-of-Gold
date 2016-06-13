@@ -20,25 +20,25 @@ struct MapData
 	
 	void Initialize()
 	{
-		MapFiles[Map_England] = "Assets/enmap.3ds";
+		MapFiles[Map_England] = "Assets/enmap.x";
 		MapAssets[Map_England] = "Assets/trees_en.3ds";
 		MapMerchants[Map_England] = "Assets/enMerch.x";
 		MapVendorTable[Map_England] = "Assets/vndrTble.3ds";
-		MapCraftingTable[Map_England] = "Assets/crftTble.3ds";
+		MapCraftingTable[Map_England] = "Assets/crftTble.x";
 		MapColl[Map_England] = "Assets/enmapcoll.3ds";
 
 		MapFiles[Map_India] = "Assets/indMap.3ds";
 		MapAssets[Map_India] = "Assets/trees_in.3ds";
 		MapMerchants[Map_India] = "Assets/inMerch.x";
 		MapVendorTable[Map_India] = "Assets/vndrTble.3ds";
-		MapCraftingTable[Map_India] = "Assets/crftTble.3ds";
+		MapCraftingTable[Map_India] = "Assets/crftTble.x";
 		MapColl[Map_India] = "Assets/indMap.3ds";
 
 		MapFiles[Map_Africa] = "Assets/afMap.3ds";
 		MapAssets[Map_Africa] = "Assets/trees_in.3ds";
 		MapMerchants[Map_Africa] = "Assets/inMerch.x";
 		MapVendorTable[Map_Africa] = "Assets/vndrTble.3ds";
-		MapCraftingTable[Map_Africa] = "Assets/crftTble.3ds";
+		MapCraftingTable[Map_Africa] = "Assets/crftTble.x";
 		MapColl[Map_Africa] = "Assets/afMap.3ds";
 
 	}
@@ -53,6 +53,7 @@ public:
 	IAnimatedMeshSceneNode* crfTblNode;
 	IAnimatedMeshSceneNode* vndTblNode;
 	IAnimatedMeshSceneNode* merchNode;
+	IAnimatedMeshSceneNode* rmapNode;
 	IMeshSceneNode* CollNode;
 
 	void Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim, int map);
