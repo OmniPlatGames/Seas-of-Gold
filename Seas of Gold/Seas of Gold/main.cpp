@@ -236,8 +236,8 @@ int main()
 						core::vector3df(0.0f, -0.725f, 0.0f));
 					plyrNode->addAnimator(anim);
 				}
-				break;
 				collMan = smgr->getSceneCollisionManager();
+				break;
 			}
 			case eMapDest::North:
 			{
