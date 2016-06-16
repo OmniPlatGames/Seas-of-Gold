@@ -9,8 +9,7 @@ LoadMap::~LoadMap()
 	merchNode->drop();
 	CollNode->drop();*/
 }
-bool loaded = false;
-void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim, int map)
+void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim, IVideoDriver* driver, int map)
 {
 	
 	if(rmapNode)
@@ -41,7 +40,9 @@ void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelecto
 	foliageNode = smgr->addAnimatedMeshSceneNode(foliage);
 	for (int i = 0; i < foliageNode->getMaterialCount(); i++)
 	{
-		foliageNode->getMaterial(i).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+		foliageNode->getMaterial(i).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+		foliageNode->getMaterial(i).NormalizeNormals = true;
+		foliageNode->getMaterial(i).BackfaceCulling = false;
 	}
 
 	//Load rendered map
@@ -58,13 +59,10 @@ void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelecto
 	//load collision map
 	IMesh* CollMapFile = smgr->getMesh(mapData.MapColl[map].c_str());
 	CollNode = smgr->addOctreeSceneNode(CollMapFile, 0, -1, 32, false);
-	CollNode->setVisible(false);
+	CollNode->getMaterial(0).setTexture(0, driver->getTexture("Assets/colltex.png"));
+	CollNode->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
 	
-	for (int i = 0; i < CollNode->getMaterialCount(); i++)
-	{
-		CollNode->getMaterial(i).NormalizeNormals = true;
-	}
-	CollNode->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	//CollNode->setVisible(false);
 
 	//set table locations based on which map is loaded
 	switch (map)
@@ -80,15 +78,13 @@ void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelecto
 						crfTblNode->setRotation(v3d(0, -5.0f, 0));
 						break;
 	case Map_Africa:	vndTblNode->setPosition(v3d(28.67009f, 0, 38.97609f));
-						vndTblNode->setRotation(v3d(0, -45.652f, 0));
-						crfTblNode->setPosition(v3d(-24.5f, 0, -27.6f));
-						crfTblNode->setRotation(v3d(0, -10.0f, 0));
+						vndTblNode->setRotation(v3d(0, -44.0f, 0));
+						crfTblNode->setPosition(v3d(-23.0f, 0, -27.2f));
+						crfTblNode->setRotation(v3d(0, -100.0f, 0));
 						break;
 	}
 
 	setCollisions(smgr, selector, plyrNode, anim);
-	
-	loaded = true;
 }
 
 void LoadMap::Unload()
@@ -99,7 +95,8 @@ void LoadMap::Unload()
 	vndTblNode->~IAnimatedMeshSceneNode();
 	merchNode->~IAnimatedMeshSceneNode();	
 	//bandaid fix until better way found -Allen
-	CollNode->setPosition(v3d(100.0f, -1000.0f, 100.0f));
+	//CollNode->setVisible(true);
+	CollNode->setPosition(v3d(0.0f, -1000.0f, 0.0f));
 }
 
 void LoadMap::setCollisions(ISceneManager* smgr, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim)

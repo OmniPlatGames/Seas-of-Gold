@@ -23,23 +23,23 @@ struct MapData
 		MapFiles[Map_England] = "Assets/enmap.x";
 		MapAssets[Map_England] = "Assets/trees_en.3ds";
 		MapMerchants[Map_England] = "Assets/enMerch.x";
-		MapVendorTable[Map_England] = "Assets/vndrTble.3ds";
+		MapVendorTable[Map_England] = "Assets/vndrTble.x";
 		MapCraftingTable[Map_England] = "Assets/crftTble.x";
 		MapColl[Map_England] = "Assets/enmapcoll.3ds";
 
 		MapFiles[Map_India] = "Assets/indMap.3ds";
 		MapAssets[Map_India] = "Assets/trees_in.3ds";
 		MapMerchants[Map_India] = "Assets/inMerch.x";
-		MapVendorTable[Map_India] = "Assets/vndrTble.3ds";
+		MapVendorTable[Map_India] = "Assets/vndrTble.x";
 		MapCraftingTable[Map_India] = "Assets/crftTble.x";
 		MapColl[Map_India] = "Assets/indMap.3ds";
 
-		MapFiles[Map_Africa] = "Assets/afMap.3ds";
-		MapAssets[Map_Africa] = "Assets/trees_in.3ds";
-		MapMerchants[Map_Africa] = "Assets/inMerch.x";
-		MapVendorTable[Map_Africa] = "Assets/vndrTble.3ds";
+		MapFiles[Map_Africa] = "Assets/afMap.x";
+		MapAssets[Map_Africa] = "Assets/trees_af.x";
+		MapMerchants[Map_Africa] = "Assets/afMerch.x";
+		MapVendorTable[Map_Africa] = "Assets/vndrTble.x";
 		MapCraftingTable[Map_Africa] = "Assets/crftTble.x";
-		MapColl[Map_Africa] = "Assets/afMap.3ds";
+		MapColl[Map_Africa] = "Assets/coll_af.3ds";
 
 	}
 };
@@ -56,7 +56,7 @@ public:
 	IAnimatedMeshSceneNode* rmapNode;
 	IMeshSceneNode* CollNode;
 
-	void Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim, int map);
+	void Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim, IVideoDriver* driver, int map);
 	void Unload();
 	void setCollisions(ISceneManager* smgr, ITriangleSelector* selector, IAnimatedMeshSceneNode* plyrNode, ISceneNodeAnimator* anim);
 
