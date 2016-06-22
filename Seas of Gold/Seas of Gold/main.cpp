@@ -55,7 +55,7 @@ int main()
 
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
-	loadMap.Load(smgr, device, selector, plyrNode, anim, Map_England);
+	loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
 
 	//loadMap.setCollisions(smgr, selector, plyrNode, anim);
 
@@ -218,7 +218,7 @@ int main()
 				Item* itemB = new Item("Bronze Ore", 1000);
 				vE.getItems()->addItem(itemB);
 				tradeMenu.SetVendor(&vE);
-				loadMap.Load(smgr, device, selector, plyrNode, anim, Map_India);
+				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_India);
 				if (loadMap.CollNode)
 				{
 					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
@@ -236,8 +236,8 @@ int main()
 						core::vector3df(0.0f, -0.725f, 0.0f));
 					plyrNode->addAnimator(anim);
 				}
-				break;
 				collMan = smgr->getSceneCollisionManager();
+				break;
 			}
 			case eMapDest::North:
 			{
@@ -245,7 +245,7 @@ int main()
 				Item *itemG = new Item("Gold Ore", 1000);
 				vN.getItems()->addItem(itemG);
 				tradeMenu.SetVendor(&vN);
-				loadMap.Load(smgr, device, selector, plyrNode, anim, Map_England);
+				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_England);
 				if (loadMap.CollNode)
 				{
 					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
@@ -272,7 +272,7 @@ int main()
 				Item *itemI = new Item("Iron Ore", 1000);
 				vS.getItems()->addItem(itemI);
 				tradeMenu.SetVendor(&vS);
-				loadMap.Load(smgr, device, selector, plyrNode, anim, Map_Africa);
+				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
 				if (loadMap.CollNode)
 				{
 					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
