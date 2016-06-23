@@ -15,6 +15,9 @@
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 
+//function prototype
+void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender);
+
 float direction = 0, zdirection = 0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
@@ -120,23 +123,23 @@ int main()
 	candleLight->setLightData(candleLight_data);
 	//------- end -----//
 
-	// Make the player
-	player.AddGold(1000);
-	player.SetCurrentPort(eMapDest::South);
-	Item* itemCi = new Item("Iron Ore", 1);
-	player.getItems()->addItem(itemCi);
-	Item* itemCb = new Item("Bronze Ore", 1);
-	player.getItems()->addItem(itemCb);
+	//// Make the player
+	//player.AddGold(1000);
+	//player.SetCurrentPort(eMapDest::South);
+	//Item* itemCi = new Item("Iron Ore", 1);
+	//player.getItems()->addItem(itemCi);
+	//Item* itemCb = new Item("Bronze Ore", 1);
+	//player.getItems()->addItem(itemCb);
 
 	Vendor vN;
-	Item* itemG = new Item("Gold Ore", 1000);
-	vN.getItems()->addItem(itemG);
+	//Item* itemG = new Item("Gold Ore", 1000);
+	//vN.getItems()->addItem(itemG);
 	Vendor vS;
-	Item* itemI = new Item("Iron Ore", 1000);
-	vS.getItems()->addItem(itemI);
+	//Item* itemI = new Item("Iron Ore", 1000);
+	//vS.getItems()->addItem(itemI);
 	Vendor vE;
-	Item* itemB = new Item("Bronze Ore", 1000);
-	vE.getItems()->addItem(itemB);
+	//Item* itemB = new Item("Bronze Ore", 1000);
+	//vE.getItems()->addItem(itemB);
 
 	// Make the menus
 	MainMenu mainMenu(device);
@@ -144,12 +147,13 @@ int main()
 	MapMenu mapMenu(device, driver);
 	mapMenu.SetPlayer(&player);
 
-	TradeMenu tradeMenu(device, driver);
-	tradeMenu.SetPlayer(&player);
-	tradeMenu.SetVendor(&vS);
-
-	CraftingMenu craftMenu(device, driver);
-	craftMenu.SetPlayer(&player);
+	TradeMenu tradeMenu;
+	//TradeMenu tradeMenu(device, driver);
+	//tradeMenu.SetPlayer(&player);
+	//tradeMenu.SetVendor(&vS);
+	//
+	//CraftingMenu craftMenu(device, driver);
+	//craftMenu.SetPlayer(&player);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Initialize timer to compute elapsed time between frames
@@ -215,9 +219,9 @@ int main()
 			case eMapDest::East:
 			{
 				state = None;
-				Item* itemB = new Item("Bronze Ore", 1000);
-				vE.getItems()->addItem(itemB);
-				tradeMenu.SetVendor(&vE);
+				//Item* itemB = new Item("Bronze Ore", 1000);
+				//vE.getItems()->addItem(itemB);
+				//tradeMenu.SetVendor(&vE);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_India);
 				if (loadMap.CollNode)
 				{
@@ -242,9 +246,9 @@ int main()
 			case eMapDest::North:
 			{
 				state = None;
-				Item *itemG = new Item("Gold Ore", 1000);
-				vN.getItems()->addItem(itemG);
-				tradeMenu.SetVendor(&vN);
+				//Item *itemG = new Item("Gold Ore", 1000);
+				//vN.getItems()->addItem(itemG);
+				//tradeMenu.SetVendor(&vN);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_England);
 				if (loadMap.CollNode)
 				{
@@ -269,9 +273,9 @@ int main()
 			case eMapDest::South:
 			{
 				state = None;
-				Item *itemI = new Item("Iron Ore", 1000);
-				vS.getItems()->addItem(itemI);
-				tradeMenu.SetVendor(&vS);
+				//Item *itemI = new Item("Iron Ore", 1000);
+				//vS.getItems()->addItem(itemI);
+				//tradeMenu.SetVendor(&vS);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
 				if (loadMap.CollNode)
 				{
@@ -301,9 +305,10 @@ int main()
 		}
 		case Trade:
 		{
-			bool out = tradeMenu.Update(&input);
-			if (out)
-				state = None;
+
+			//bool out = tradeMenu.Update(&input);
+			//if (out)
+			//	state = None;
 			break;
 		}
 		case Main:
@@ -330,9 +335,9 @@ int main()
 		}
 		case Craft:
 		{
-			bool out = craftMenu.Update(&input);
-			if (out)
-				state = None;
+			//bool out = craftMenu.Update(&input);
+			//if (out)
+			//	state = None;
 			break;
 		}
 		default:
@@ -367,7 +372,7 @@ int main()
 		}
 		case Trade:
 		{
-			tradeMenu.Draw(driver);
+			tradeMenu.Render(driver);
 			break;
 		}
 		case Main:
@@ -377,7 +382,7 @@ int main()
 		}
 		case Craft:
 		{
-			craftMenu.Draw(driver);
+			//craftMenu.Draw(driver);
 			break;
 		}
 		default:
@@ -392,7 +397,7 @@ int main()
 
 	}
 
-	//device->drop();
+	device->drop();
 
 	return 0;
 }
@@ -424,4 +429,9 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 	camera->setPosition(core::vector3df(xf, yf, zf));
 	camera->setTarget(core::vector3df(playerPos.X, playerPos.Y + 2.0f, playerPos.Z));
 	playerNode->setRotation(core::vector3df(0, direction - 90, 0));
+}
+
+void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender)
+{
+
 }

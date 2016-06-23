@@ -21,7 +21,7 @@ public:
 	inline int getGold() { return iGold; };
 
 	//return number of items the unit has of itemID
-	inline int unitHasItem(int itemID){ return items->hasItem(itemID); };
+	inline int unitHasItem(int itemID){ return items->qtyOfItem(itemID); };
 
 	//displace unit
 	void update(v3d dir, float dt);

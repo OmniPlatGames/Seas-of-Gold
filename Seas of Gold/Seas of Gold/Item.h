@@ -10,7 +10,6 @@ private:
 
 public:
 
-	//items should only be created with an ID and a quantity
 	Item(int itemID, irrstring itemName, irrstring spriteLocation);
 	~Item();
 
@@ -22,6 +21,9 @@ public:
 
 	//load the sprite image
 	void loadSprite(IVideoDriver *driver, v2d pos);
+
+	//load the tool tip
+	void loadToolTip(IVideoDriver *driver, v2d pos);
 
 	Item& operator = (Item item)
 	{

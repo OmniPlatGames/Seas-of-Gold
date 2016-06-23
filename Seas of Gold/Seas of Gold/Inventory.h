@@ -1,32 +1,32 @@
 #pragma once
-#include "Item.h"
+#include "ItemDatabase.h"
 #include "Common.h"
 
 //holds the item and how may of the item
-struct items
-{
-	Item* item;
-	int qty;
-};
-
 
 class Inventory
 {
+private:
+	struct InventorySlot
+	{
+		Item* item;
+		int qty;
+	}; 
 
 public:
-	std::vector<Item*> inventory;
+	std::vector<InventorySlot*> inventory;
 
 public:
 	Inventory();
 	~Inventory();
 
 	//return quantity of item ID
-	int hasItem(int itemID);
+	int qtyOfItem(int itemID);
 
-	//add item to inventory
-	void addItem(Item* item);
+	//add items to inventory
+	void addItem(Item* item, int quantity);
 
-	//remove item to inventory
-	void removeItem(Item item);
+	//remove items inventory
+	void removeItem(Item* item, int quantity);
 };
 
