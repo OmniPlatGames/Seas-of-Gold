@@ -2,11 +2,19 @@
 #include "Item.h"
 #include "Common.h"
 
+//holds the item and how may of the item
+struct items
+{
+	Item* item;
+	int qty;
+};
+
 
 class Inventory
 {
+
 public:
-	std::vector<Item*> items;
+	std::vector<Item*> inventory;
 
 public:
 	Inventory();
