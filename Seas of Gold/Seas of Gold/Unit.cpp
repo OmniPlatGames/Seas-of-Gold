@@ -9,7 +9,7 @@ Unit::Unit()
 
 Unit::~Unit()
 {
-	delete items;
+	//delete items;
 }
 
 void Unit::update(v3d dir, float dt)

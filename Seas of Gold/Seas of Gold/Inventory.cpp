@@ -7,17 +7,18 @@ Inventory::Inventory()
 
 Inventory::~Inventory()
 {
+	//delete &inventory;
 }
 
 //returns the quantity of item that the entity has
 int Inventory::qtyOfItem(int itemID)
 {
 	//find the item and return the quantity.
-	for (InventorySlot* slots : inventory)
+	for (InventorySlot& slots : inventory)
 	{
-		if (slots->item->getItemID() == itemID)
+		if (slots.item->getItemID() == itemID)
 		{
-			return slots->qty;
+			return slots.qty;
 		}
 	}
 	//If item is not in inventory return 0
@@ -30,12 +31,12 @@ void Inventory::addItem(Item* item, int quantity)
 	bool hasItem = false;
 
 	//search inventory to see if we already have at least one of the item
-	for (InventorySlot* slots : inventory)
+	for (InventorySlot& slots : inventory)
 	{
 		//if we do, add to it's quantity
-		if(slots->item->getItemID() == item->getItemID())
+		if(slots.item->getItemID() == item->getItemID())
 		{
-			slots->qty += quantity;
+			slots.qty += quantity;
 			hasItem = true;
 			break;
 		}
@@ -46,12 +47,12 @@ void Inventory::addItem(Item* item, int quantity)
 		InventorySlot newSlot;
 		newSlot.item = item;
 		newSlot.qty = quantity;
-		inventory.push_back(&newSlot);
+		inventory.push_back(newSlot);
 	}
 }
 
 //removes items from the inventory for an entity
-void Inventory::removeItem(Item* item, int quantity)
+/*void Inventory::removeItem(Item* item, int quantity)
 {
 	bool hasItem = false;
 
@@ -77,4 +78,4 @@ void Inventory::removeItem(Item* item, int quantity)
 	{
 		MessageBox(NULL, "Item not in inventory! Error #1.", NULL, MB_OK);
 	}
-}
+}*/

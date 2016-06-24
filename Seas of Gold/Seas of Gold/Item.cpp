@@ -4,9 +4,9 @@
 
 Item::Item(int item_ID, irrstring item_Name, irrstring sprite_Location)
 {
-	item_ID = itemID;
-	item_Name = itemName;
-	sprite_Location = spriteLocation;
+	itemID = item_ID;
+	itemName = item_Name;
+	spriteLocation = sprite_Location;
 }
 
 
@@ -17,7 +17,7 @@ Item::~Item()
 //returns ID of the item
 int Item::getItemID()
 {
-	return 0;
+	return itemID;
 }
 
 //returns item name

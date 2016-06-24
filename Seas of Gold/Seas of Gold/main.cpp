@@ -16,7 +16,7 @@
 #endif
 
 //function prototype
-void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender);
+void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender, ItemDatabase itemDB);
 
 float direction = 0, zdirection = 0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
@@ -47,6 +47,19 @@ int main()
 	Interface playerInterface(driver);
 	ITriangleSelector* selector = 0;
 	ISceneNodeAnimator* anim = 0;
+	//ItemDatabase itemD;
+	//itemD = new ItemDatabase;
+	//itemD.Initialize();
+	//Inventory inventory;
+
+	//Item item(0, "bronzeOre", "Sprites/ore_Bronze.png");
+	//Item item2 = item;
+	//Item* item2 = itemD.getItem(3);
+	//inventory.addItem(&item, 2);
+	//inventory.addItem(&item, 2);
+	//inventory.addItem(item2, 2);
+
+	//int test = 0;
 
 	// Load the map scene
 	//loadMap.Load(smgr, device, Map_Africa);
@@ -76,6 +89,7 @@ int main()
 	{
 		anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f),
 			core::vector3df(0.0f, -0.725f, 0.0f));
+
 		plyrNode->addAnimator(anim);
 	}
 
@@ -131,15 +145,38 @@ int main()
 	//Item* itemCb = new Item("Bronze Ore", 1);
 	//player.getItems()->addItem(itemCb);
 
-	Vendor vN;
+	//Vendor vN;
 	//Item* itemG = new Item("Gold Ore", 1000);
 	//vN.getItems()->addItem(itemG);
-	Vendor vS;
+	//Vendor vS;
 	//Item* itemI = new Item("Iron Ore", 1000);
 	//vS.getItems()->addItem(itemI);
-	Vendor vE;
+	//Vendor vE;
 	//Item* itemB = new Item("Bronze Ore", 1000);
 	//vE.getItems()->addItem(itemB);
+	//Vendor northVendor;
+	Vendor southVendor;
+	//Vendor eastVendor;
+	//InitializeVendors(northVendor, southVendor, eastVendor, itemD);
+
+	ItemDatabase itemD;
+	itemD.Initialize();
+
+	//initialize south vendor's inventory
+	//southVendor.getItems()->addItem(itemD.getItem(bronzeOre), 50);
+	Item* test = itemD.getItem(bronzeAxe);
+	Item* test2 = itemD.getItem(bronzePlateLegs);
+	southVendor.getItems()->addItem(test, 50);
+	southVendor.getItems()->addItem(test2, 50);
+	//SouthVendor.getItems()->addItem(itemDB.getItem(3), 50);
+	southVendor.getItems()->addItem(itemD.getItem(bronzeAxe), 50);
+	southVendor.getItems()->addItem(itemD.getItem(bronzeHelmet), 50);
+	southVendor.getItems()->addItem(itemD.getItem(bronzePlateLegs), 50);
+
+	//delete &itemD;
+
+	int test99 = 0;
+
 
 	// Make the menus
 	MainMenu mainMenu(device);
@@ -148,6 +185,7 @@ int main()
 	mapMenu.SetPlayer(&player);
 
 	TradeMenu tradeMenu;
+	tradeMenu.Initialize(device, driver);
 	//TradeMenu tradeMenu(device, driver);
 	//tradeMenu.SetPlayer(&player);
 	//tradeMenu.SetVendor(&vS);
@@ -199,9 +237,6 @@ int main()
 
 		player.updatePlayer(plyrNode, dt, collMan, selector);
 		playerInterface.update(plyrNode, loadMap, driver, device, input, updateCam, state);
-
-		int test = state;
-		int test2 = 0;
 
 		switch (state)
 		{
@@ -325,6 +360,7 @@ int main()
 			case MSexit:
 			{
 				device->closeDevice();
+				//return 0;
 				break;
 			}
 			default:
@@ -431,7 +467,18 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 	playerNode->setRotation(core::vector3df(0, direction - 90, 0));
 }
 
-void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender)
+void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender, ItemDatabase itemDB)
 {
+	//initialize north vendor's inventory
+
+
+	//initialize south vendor's inventory
+	SouthVendor.getItems()->addItem(itemDB.getItem(bronzeOre), 50);
+	//SouthVendor.getItems()->addItem(itemDB.getItem(3), 50);
+	SouthVendor.getItems()->addItem(itemDB.getItem(bronzeAxe), 50);
+	SouthVendor.getItems()->addItem(itemDB.getItem(bronzeHelmet), 50);
+	SouthVendor.getItems()->addItem(itemDB.getItem(bronzePlateLegs), 50);
+										 
+	//initialize east vendor's inventory
 
 }

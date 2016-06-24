@@ -14,7 +14,7 @@ private:
 	}; 
 
 public:
-	std::vector<InventorySlot*> inventory;
+	std::vector<InventorySlot> inventory;
 
 public:
 	Inventory();

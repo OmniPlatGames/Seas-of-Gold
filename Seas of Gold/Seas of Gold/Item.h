@@ -3,7 +3,7 @@
 
 class Item
 {
-private:
+public:
 	int itemID;
 	irrstring itemName;
 	irrstring spriteLocation;
@@ -25,7 +25,7 @@ public:
 	//load the tool tip
 	void loadToolTip(IVideoDriver *driver, v2d pos);
 
-	Item& operator = (Item item)
+	Item operator = (Item item)
 	{
 		itemID = item.itemID;
 		itemName = item.itemName;

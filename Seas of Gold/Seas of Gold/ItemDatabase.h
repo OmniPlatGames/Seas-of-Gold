@@ -4,13 +4,15 @@
 class ItemDatabase
 {
 
-private:
+public:
 	Item* itemDB[];
 	//std::vector<Item*> itemDB;
 
 public:
 	ItemDatabase();
 	~ItemDatabase();
+
+	void Initialize();
 
 	Item* getItem(int itemID);
 
@@ -25,10 +27,11 @@ enum
 	bronzeOre = 0,
 	bronzeDagger = 1,
 	bronzeSword = 2,
-	bronzeHelmet = 3,
-	bronzePlateChest = 4,
-	bronzePlateLegs = 5,
-	bronzeBoots = 6
+	bronzeAxe = 3,
+	bronzeHelmet = 4,
+	bronzePlateChest = 5,
+	bronzePlateLegs = 6,
+	bronzeBoots = 7
 
 	///////////////////
 	//iron items
