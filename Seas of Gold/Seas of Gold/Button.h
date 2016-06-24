@@ -7,7 +7,7 @@ class Button
 {
 public:
 	Button();
-	Button(int x1, int y1, int x2, int y2);
+	Button(int x1, int y1, int x2, int y2, ITexture* texture);
 
 	void SetFont(irr::gui::IGUIFont* font);
 

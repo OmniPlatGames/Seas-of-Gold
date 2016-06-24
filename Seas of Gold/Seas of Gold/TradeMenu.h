@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-//#include "Button.h"
+#include "Button.h"
 #include "Graphics.h"
 #include "Player.h"
 #include "Vendor.h"
@@ -14,17 +14,23 @@ class TradeMenu
 {
 private:
 	GraphicsImage background;
+	IGUIFont* font;
+
+	Vendor vendor;
+	Player player;
 
 public:
 	TradeMenu();
 	~TradeMenu();
 
 	//initializes the menu data
-	void Initialize(IrrlichtDevice* device, IVideoDriver* driver);
+	void Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player& Plyr, Vendor& Vndr);
+
+	//sets vendor for new location
+	void SetVendor(Vendor& vndr);
 
 	//updates the menu
-	void Update(Input* in);
-
+	bool Update(Input* in);
 
 	//Renders the menu on the screen
 	void Render(IVideoDriver* driver);

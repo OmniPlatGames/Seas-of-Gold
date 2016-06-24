@@ -1,6 +1,8 @@
 #include "Item.h"
 
-
+Item::Item()
+{
+}
 
 Item::Item(int item_ID, irrstring item_Name, irrstring sprite_Location)
 {
@@ -29,7 +31,7 @@ irrstring Item::getItemName()
 
 void Item::loadSprite(IVideoDriver *driver, v2d pos)
 {
-	io::path test = spriteLocation; //spriteName;
-	video::ITexture* sprite = driver->getTexture(test);
-	driver->draw2DImage(sprite, core::position2d<s32>(pos.X, pos.Y), core::rect<s32>(0, 0, 61, 61), 0, video::SColor(255, 255, 255, 255), true);
+	io::path loc = spriteLocation; //spriteName;
+	video::ITexture* sprite = driver->getTexture(loc);
+	driver->draw2DImage(sprite, position2d<s32>(pos.X, pos.Y), rect<s32>(0, 0, 32, 32), 0, SColor(255, 255, 255, 255), true);
 }

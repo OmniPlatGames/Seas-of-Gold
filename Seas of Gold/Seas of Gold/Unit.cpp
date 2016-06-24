@@ -3,7 +3,7 @@
 Unit::Unit()
 {
 	iGold = 0;
-	items = new Inventory;
+	inventory = new Inventory;
 }
 
 

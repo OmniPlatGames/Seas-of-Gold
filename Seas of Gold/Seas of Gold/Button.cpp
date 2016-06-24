@@ -29,7 +29,7 @@ Button::Button()
 	pressed = false;
 }
 
-Button::Button(int x1, int y1, int x2, int y2)
+Button::Button(int x1, int y1, int x2, int y2, ITexture* texture)
 {
 	m_Topleft = v2d(x1, y1);
 	m_BotRight = v2d(x2, y2);

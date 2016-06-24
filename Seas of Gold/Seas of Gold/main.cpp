@@ -47,10 +47,24 @@ int main()
 	Interface playerInterface(driver);
 	ITriangleSelector* selector = 0;
 	ISceneNodeAnimator* anim = 0;
-	//ItemDatabase itemD;
-	//itemD = new ItemDatabase;
-	//itemD.Initialize();
-	//Inventory inventory;
+	Vendor southVendor;
+	Vendor eastVendor;
+	Vendor northVendor;
+	//InitializeVendors(northVendor, southVendor, eastVendor, itemD);
+
+	//ItemDatabase* itemD = new ItemDatabase;
+	ItemDatabase itemD;
+	itemD.Initialize();
+
+	//initialize player's inventory
+	player.getInventory()->addItem(itemD.getItem(bronzeAxe), 50);
+	player.getInventory()->addItem(itemD.getItem(bronzeHelmet), 100);
+	player.getInventory()->addItem(itemD.getItem(bronzePlateLegs), 50);
+
+	//initialize south vendor's inventory
+	southVendor.getInventory()->addItem(itemD.getItem(bronzeAxe), 1000);
+	southVendor.getInventory()->addItem(itemD.getItem(bronzeHelmet), 1000);
+	southVendor.getInventory()->addItem(itemD.getItem(bronzePlateLegs), 1000);
 
 	//Item item(0, "bronzeOre", "Sprites/ore_Bronze.png");
 	//Item item2 = item;
@@ -154,24 +168,7 @@ int main()
 	//Vendor vE;
 	//Item* itemB = new Item("Bronze Ore", 1000);
 	//vE.getItems()->addItem(itemB);
-	//Vendor northVendor;
-	Vendor southVendor;
-	//Vendor eastVendor;
-	//InitializeVendors(northVendor, southVendor, eastVendor, itemD);
-
-	ItemDatabase itemD;
-	itemD.Initialize();
-
-	//initialize south vendor's inventory
-	//southVendor.getItems()->addItem(itemD.getItem(bronzeOre), 50);
-	Item* test = itemD.getItem(bronzeAxe);
-	Item* test2 = itemD.getItem(bronzePlateLegs);
-	southVendor.getItems()->addItem(test, 50);
-	southVendor.getItems()->addItem(test2, 50);
-	//SouthVendor.getItems()->addItem(itemDB.getItem(3), 50);
-	southVendor.getItems()->addItem(itemD.getItem(bronzeAxe), 50);
-	southVendor.getItems()->addItem(itemD.getItem(bronzeHelmet), 50);
-	southVendor.getItems()->addItem(itemD.getItem(bronzePlateLegs), 50);
+	//Vendor northVendor
 
 	//delete &itemD;
 
@@ -185,7 +182,7 @@ int main()
 	mapMenu.SetPlayer(&player);
 
 	TradeMenu tradeMenu;
-	tradeMenu.Initialize(device, driver);
+	tradeMenu.Initialize(device, driver, player, southVendor);
 	//TradeMenu tradeMenu(device, driver);
 	//tradeMenu.SetPlayer(&player);
 	//tradeMenu.SetVendor(&vS);
@@ -256,7 +253,7 @@ int main()
 				state = None;
 				//Item* itemB = new Item("Bronze Ore", 1000);
 				//vE.getItems()->addItem(itemB);
-				//tradeMenu.SetVendor(&vE);
+				tradeMenu.SetVendor(eastVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_India);
 				if (loadMap.CollNode)
 				{
@@ -341,9 +338,9 @@ int main()
 		case Trade:
 		{
 
-			//bool out = tradeMenu.Update(&input);
-			//if (out)
-			//	state = None;
+			bool out = tradeMenu.Update(&input);
+			if (out)
+				state = None;
 			break;
 		}
 		case Main:
@@ -473,11 +470,11 @@ void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVen
 
 
 	//initialize south vendor's inventory
-	SouthVendor.getItems()->addItem(itemDB.getItem(bronzeOre), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzeOre), 50);
 	//SouthVendor.getItems()->addItem(itemDB.getItem(3), 50);
-	SouthVendor.getItems()->addItem(itemDB.getItem(bronzeAxe), 50);
-	SouthVendor.getItems()->addItem(itemDB.getItem(bronzeHelmet), 50);
-	SouthVendor.getItems()->addItem(itemDB.getItem(bronzePlateLegs), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzeAxe), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzeHelmet), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzePlateLegs), 50);
 										 
 	//initialize east vendor's inventory
 

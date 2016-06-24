@@ -2,17 +2,17 @@
 #include "ItemDatabase.h"
 #include "Common.h"
 
+
+
 //holds the item and how may of the item
+struct InventorySlot
+{
+	Item item;
+	int qty;
+};
 
 class Inventory
 {
-private:
-	struct InventorySlot
-	{
-		Item* item;
-		int qty;
-	}; 
-
 public:
 	std::vector<InventorySlot> inventory;
 
@@ -24,9 +24,15 @@ public:
 	int qtyOfItem(int itemID);
 
 	//add items to inventory
-	void addItem(Item* item, int quantity);
+	void addItem(Item item, int quantity);
 
 	//remove items inventory
-	void removeItem(Item* item, int quantity);
+	void removeItem(Item item, int quantity);
+
+	//get number of slots in the inventory
+	int getSize();
+
+	//get item and it's qty from the inventory
+	InventorySlot getItem(int itemSlot);
 };
 

@@ -5,7 +5,7 @@ class ItemDatabase
 {
 
 public:
-	Item* itemDB[];
+	Item itemDB[8];
 	//std::vector<Item*> itemDB;
 
 public:
@@ -14,7 +14,7 @@ public:
 
 	void Initialize();
 
-	Item* getItem(int itemID);
+	Item getItem(int itemID);
 
 };
 

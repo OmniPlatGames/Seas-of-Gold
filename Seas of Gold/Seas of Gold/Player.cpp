@@ -48,8 +48,8 @@ void Player::movePlayer(IAnimatedMeshSceneNode* plyrNode, float dt, ISceneCollis
 
 	if (GetAsyncKeyState(0x57)) //W key move forward
 	{
-		plPos_z = -dt * 3 * (cos((plyrNode->getRotation().Y)*PI / 180));
-		plPos_x = -dt * 3 * (sin((plyrNode->getRotation().Y)*PI / 180));
+		plPos_z = -dt * 13 * (cos((plyrNode->getRotation().Y)*PI / 180));
+		plPos_x = -dt * 13 * (sin((plyrNode->getRotation().Y)*PI / 180));
 		movetest = true;
 		if (!plyrWalk)
 		{

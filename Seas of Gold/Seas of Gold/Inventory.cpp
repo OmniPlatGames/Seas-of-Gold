@@ -16,7 +16,7 @@ int Inventory::qtyOfItem(int itemID)
 	//find the item and return the quantity.
 	for (InventorySlot& slots : inventory)
 	{
-		if (slots.item->getItemID() == itemID)
+		if (slots.item.getItemID() == itemID)
 		{
 			return slots.qty;
 		}
@@ -26,7 +26,7 @@ int Inventory::qtyOfItem(int itemID)
 }
 
 //adds items to the inventory for an entity
-void Inventory::addItem(Item* item, int quantity)
+void Inventory::addItem(Item item, int quantity)
 {
 	bool hasItem = false;
 
@@ -34,7 +34,7 @@ void Inventory::addItem(Item* item, int quantity)
 	for (InventorySlot& slots : inventory)
 	{
 		//if we do, add to it's quantity
-		if(slots.item->getItemID() == item->getItemID())
+		if(slots.item.getItemID() == item.getItemID())
 		{
 			slots.qty += quantity;
 			hasItem = true;
@@ -79,3 +79,13 @@ void Inventory::addItem(Item* item, int quantity)
 		MessageBox(NULL, "Item not in inventory! Error #1.", NULL, MB_OK);
 	}
 }*/
+
+int Inventory::getSize()
+{
+	return inventory.size();
+}
+
+InventorySlot Inventory::getItem(int itemSlot)
+{
+	return inventory[itemSlot];
+}
