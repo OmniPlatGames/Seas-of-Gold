@@ -11,7 +11,7 @@ public:
 public:
 
 	Item();
-	Item(int itemID, irrstring itemName, irrstring spriteLocation);
+	Item(int itemID, irrstring itemName, irrstring spriteLocation, int baseCost);
 	~Item();
 
 	//returns ID of the item
@@ -23,16 +23,26 @@ public:
 	//load the sprite image
 	void loadSprite(IVideoDriver *driver, v2d pos);
 
-	//load the tool tip
+	//load the tool tip (future implementation)
 	void loadToolTip(IVideoDriver *driver, v2d pos);
 
-	/*Item& operator = (Item& item)
+	bool operator == (Item item)
 	{
-		itemID = item.itemID;
-		itemName = item.itemName;
-		spriteLocation = item.spriteLocation;
-		return item;
-	}*/
+		if (itemID == item.itemID)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool operator != (Item item)
+	{
+		if (itemID != item.itemID)
+		{
+			return true;
+		}
+		return false;
+	}
 
 };
 

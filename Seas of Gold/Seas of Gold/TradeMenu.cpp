@@ -2,6 +2,8 @@
 
 TradeMenu::TradeMenu()
 {
+	playerButtons.empty();
+	vendorButtons.empty();
 }
 
 TradeMenu::~TradeMenu()
@@ -9,90 +11,273 @@ TradeMenu::~TradeMenu()
 }
 
 //initializes the menu data
-void TradeMenu::Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player& plyr, Vendor& vndr)
+void TradeMenu::Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player* plyr, Vendor* vndr)
 {
 	
 	//initialize background information
 	background = GraphicsImage(10, 10, 790, 500);
 	background.SetTexture("Assets/trademenu.png", driver);
 
-	font = device->getGUIEnvironment()->getBuiltInFont();
+	//initialize buy and sell and exit Buttons
+	buyButtonTex = GraphicsImage(160, 485, 288, 549); // 160, 485;
+	buyButtonTex.SetTexture("Assets/Buy.png", driver);
+	sellButtonTex = GraphicsImage(530, 485, 658, 549); // 530, 485;
+	sellButtonTex.SetTexture("Assets/Sell.png", driver);
+	exitButtonTex = GraphicsImage(720, 36, 752, 68);
+	exitButtonTex.SetTexture("Assets/x.png", driver);
+
+	buyButton = Button(buyButtonTex, device);
+	sellButton = Button(sellButtonTex, device);
+	exitButton = Button(exitButtonTex, device);
+
+	//set up font
+	//font = device->getGUIEnvironment()->getBuiltInFont();
 
 	player = plyr;
 	vendor = vndr;	
 
+	selectedItems = 0;
+	maxSelected = 1;
+
+	int incrX = 0;
+	int incrY = 0;
+	InventorySlot iSlot;
+
+	//setup the player's inventory
+	for (int i = 0; i < player->getInventory()->getSize(); i++)
+	{
+		//get positions the icons need to be at
+		incrX = i;
+		if (incrX > 8)
+		{
+			incrX = 0;
+			incrY += 1;
+		}
+		iconPos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
+		qtyPos = v2d(90 + (incrX * 40), 133 + (incrY * 40));
+
+		//create the button and draw it
+		playerButtons.push_back(Button(player->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+	}
+
+	//reset incrementors
+	incrX = 0;
+	incrY = 0;
+
+	//draw the vendors's inventory
+	for (int i = 0; i < vendor->getInventory()->getSize(); i++)
+	{
+		//get positions the icons need to be at
+		incrX = i;
+		if (incrX > 8)
+		{
+			incrX = 0;
+			incrY += 1;
+		}
+		iconPos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
+		qtyPos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
+
+		//create the button and draw it
+		vendorButtons.push_back(Button(vendor->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+	}
+
 }
 
-void TradeMenu::SetVendor(Vendor& vndr)
+void TradeMenu::SetVendor(Vendor* vndr)
 {
 	vendor = vndr;
 }
 
 //updates the menu
-bool TradeMenu::Update(Input* in)
+bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
 {
+
+	//if left mouse button is pressed, and we haven't reach max selected items, find out if an icon was clicked
+	if (in->IsMBDown(0) && (selectedItems < maxSelected))
+	{
+		for (int i = 0; i < playerButtons.size(); i++)
+		{
+			playerButtons[i].Select(in, frameCount, selectedItems);
+		}
+		for (int i = 0; i < vendorButtons.size(); i++)
+		{
+			vendorButtons[i].Select(in, frameCount, selectedItems);
+		}
+	}
+	//if left mouse button is pressed, but we reached our max selected items, only find out if a selected icon was clicked
+	else if(in->IsMBDown(0) && (selectedItems >= maxSelected))
+	{
+		for (int i = 0; i < playerButtons.size(); i++)
+		{
+			if (playerButtons[i].isSelected())
+			{
+				playerButtons[i].Select(in, frameCount, selectedItems);
+			}
+		}
+		for (int i = 0; i < vendorButtons.size(); i++)
+		{
+			if (vendorButtons[i].isSelected())
+			{
+				vendorButtons[i].Select(in, frameCount, selectedItems);
+			}
+		}
+	}
+
+	//if buy button is pressed, see if a vendor item is selected. If it is, transfer from vendor to player inventory
+	if (in->IsMBDown(0) && buyButton.isPressed(in, frameCount))
+	{
+		for (int i = 0; i < vendorButtons.size(); i++)
+		{
+			if (vendorButtons[i].isSelected() == true)
+			{
+				Item item = vendorButtons[i].getItem();
+				player->getInventory()->addItem(item, 1);
+				vendor->getInventory()->removeItem(item, 1);
+				//reset inventory buttons for display
+				int incrX = 0;
+				int incrY = 0;
+				playerButtons.clear();
+				vendorButtons.clear();
+				selectedItems -= 1;
+				for (int i = 0; i < player->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(90 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					playerButtons.push_back(Button(player->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+
+				//reset incrementors
+				incrX = 0;
+				incrY = 0;
+
+				//draw the vendors's inventory
+				for (int i = 0; i < vendor->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					vendorButtons.push_back(Button(vendor->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+				//no need to search through rest of items
+				break;
+			}
+		}
+	}
+	//if sell button is pressed, see if a player item is selected. If it is, transfer from player to vendor inventory
+	else if (in->IsMBDown(0) && sellButton.isPressed(in, frameCount))
+	{
+		for (int i = 0; i < playerButtons.size(); i++)
+		{
+			if (playerButtons[i].isSelected() == true)
+			{
+				Item item = playerButtons[i].getItem();
+				//get current last item information
+
+				vendor->getInventory()->addItem(item, 1);
+				player->getInventory()->removeItem(item, 1);
+
+				//reset inventory buttons for display
+				int incrX = 0;
+				int incrY = 0;
+				playerButtons.clear();
+				vendorButtons.clear();
+				selectedItems -= 1;
+				for (int i = 0; i < player->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(90 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					playerButtons.push_back(Button(player->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+
+				//reset incrementors
+				incrX = 0;
+				incrY = 0;
+
+				//draw the vendors's inventory
+				for (int i = 0; i < vendor->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					vendorButtons.push_back(Button(vendor->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+				//sellButton.setSelected(false);
+				int test = 1;
+				break;
+			}
+		}
+	}
+
+	if (in->IsMBDown(0) && exitButton.isPressed(in, frameCount))
+	{
+		return true;
+	}
 	return false;
 }
 
 //renders the menu on the screen
-void TradeMenu::Render(IVideoDriver* driver)
+void TradeMenu::Render(IVideoDriver* driver, IrrlichtDevice* device)
 {
-	int incrX = 0;
-	int incrY = 0;
-	InventorySlot iSlot;
+	//playerButtons.clear();
+	//vendorButtons.clear();
 
 	//draw the background image
 	background.Draw(driver);
 
+	//draw buy and sell buttons
+	buyButton.Draw(driver);
+	sellButton.Draw(driver);
+	exitButton.Draw(driver);
+
 	//draw the player's inventory
-	for (int i = 0; i < player.getInventory()->getSize(); i++)
+	for (int i = 0; i < player->getInventory()->getSize(); i++)
 	{
-		//get the item in the inventory slot
-		iSlot = player.getInventory()->getItem(i);
-
-		//render the item in the slot
-		incrX = i;
-		if (incrX > 8)
-		{
-			incrX = 0;
-			incrY += 1;
-		}
-		v2d pos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
-
-		iSlot.item.loadSprite(driver, pos);
-
-		//render the qty of the item in the slot
-		pos = v2d(90+(incrX*40), 133+(incrY*40));
-		char quantity = iSlot.qty;
-		font->draw(stringw(quantity), rect<s32>(pos.X, pos.Y, pos.X + 8, pos.Y + 8), SColor(255, 0, 0, 255), false, false, 0);
+		playerButtons[i].Draw(driver);
 	}
 
 	//draw the vendors's inventory
-	for (int i = 0; i < vendor.getInventory()->getSize(); i++)
+	for (int i = 0; i < vendor->getInventory()->getSize(); i++)
 	{
-		//get the item in the inventory slot
-		iSlot = vendor.getInventory()->getItem(i);
-
-		/*//render the item in the slot
-		incrX = i;
-		if (incrX > 8)
-		{
-			incrX = 0;
-			incrY += 1;
-		}
-		v2d pos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
-
-		iSlot.item.loadSprite(driver, pos);
-
-		//render the qty of the item in the slot
-		pos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
-		char test = iSlot.qty;
-
-		font->draw(stringw(test), rect<s32>(pos.X, pos.Y, pos.X + 8, pos.Y + 8), SColor(255, 0, 0, 255), false, false, 0);*/
-
-
-
+		vendorButtons[i].Draw(driver);
 	}
-
-	int test = 0;
 }

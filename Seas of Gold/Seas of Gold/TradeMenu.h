@@ -14,24 +14,40 @@ class TradeMenu
 {
 private:
 	GraphicsImage background;
-	IGUIFont* font;
+	GraphicsImage buyButtonTex;
+	GraphicsImage sellButtonTex;
+	GraphicsImage exitButtonTex;
 
-	Vendor vendor;
-	Player player;
+
+	Vendor* vendor;
+	Player* player;
+
+	std::vector<Button> playerButtons;
+	std::vector<Button> vendorButtons;
+
+	Button buyButton;
+	Button sellButton;
+	Button exitButton;
+
+	v2d iconPos;
+	v2d qtyPos;
+
+	int selectedItems;
+	int maxSelected;
 
 public:
 	TradeMenu();
 	~TradeMenu();
 
 	//initializes the menu data
-	void Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player& Plyr, Vendor& Vndr);
+	void Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player* Plyr, Vendor* Vndr);
 
 	//sets vendor for new location
-	void SetVendor(Vendor& vndr);
+	void SetVendor(Vendor* vndr);
 
 	//updates the menu
-	bool Update(Input* in);
+	bool Update(Input* in, int& frameCount, IrrlichtDevice* device);
 
 	//Renders the menu on the screen
-	void Render(IVideoDriver* driver);
+	void Render(IVideoDriver* driver, IrrlichtDevice* device);
 };

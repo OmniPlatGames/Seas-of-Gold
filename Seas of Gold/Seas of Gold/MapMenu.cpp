@@ -2,7 +2,7 @@
 
 MapMenu::MapMenu(IrrlichtDevice* device, irr::video::IVideoDriver* driver)
 {
-	background = GraphicsImage(0, 0, 800, 600);
+	/*background = GraphicsImage(0, 0, 800, 600);
 	background.SetTexture("Assets/Dani-Map.png", driver);
 
 	mfont = device->getGUIEnvironment()->getBuiltInFont();
@@ -25,11 +25,33 @@ MapMenu::MapMenu(IrrlichtDevice* device, irr::video::IVideoDriver* driver)
 
 	SuppliesButton = Button(0, 0, 100, 50);
 	SuppliesButton.SetFont(mfont);
-	SuppliesButton.SetText("Supplies: X");
+	SuppliesButton.SetText("Supplies: X");*/
 
 	CostN = 100;
 	CostS = 50;
 	CostE = 10;
+
+	background = GraphicsImage(0, 0, 800, 600);
+	background.SetTexture("Assets/Dani-Map.png", driver);
+
+	//initialize buy and sell Buttons
+	northButtonTex = GraphicsImage(240, 250, 368, 314);
+	northButtonTex.SetTexture("Assets/NorthTown.png", driver);
+	southButtonTex = GraphicsImage(350, 520, 478, 584);
+	southButtonTex.SetTexture("Assets/SouthTown.png", driver);
+	eastButtonTex = GraphicsImage(600, 420, 728, 484);
+	eastButtonTex.SetTexture("Assets/EastTown.png", driver);
+
+	exitButtonTex = GraphicsImage(720, 36, 752, 68);
+	exitButtonTex.SetTexture("Assets/x.png", driver);
+
+	northButton = Button(northButtonTex, device);
+	southButton = Button(southButtonTex, device);
+	eastButton = Button(eastButtonTex, device);
+
+	exitButton = Button(exitButtonTex, device);
+
+
 }
 
 bool MapMenu::SetPlayer(Player* p)
@@ -39,9 +61,9 @@ bool MapMenu::SetPlayer(Player* p)
 	return false;
 }
 
-int MapMenu::Update(Input* in)
+int MapMenu::Update(Input* in, int& frameCount)
 {
-	// Show your current port
+	/*// Show your current port
 	switch (mPlayer->GetCurrentPort())
 	{
 	case eMapDest::North:
@@ -135,17 +157,80 @@ int MapMenu::Update(Input* in)
 	if (BExit.isPressed(in))
 	{
 		return eMapDest::Exit;
+	}*/
+
+	Ship* curship = mPlayer->getPlayerShip();
+
+	// Update Supply Button
+	//irrstring str = "Supplies: ";
+	//str += std::to_string(curship->GetSupplies()).c_str();
+	//SuppliesButton.SetText(str);
+
+	if (in->IsMBDown(0) && northButton.isPressed(in, frameCount))
+	{
+		if (mPlayer->GetCurrentPort() != eMapDest::North)
+		{
+			int curSup = curship->GetSupplies();
+			if (curSup < CostN)
+			{
+				// Not enough supplies
+			}
+			else
+			{
+				curship->RemoveSupplies(CostN);
+				mPlayer->SetCurrentPort(eMapDest::North);
+				return eMapDest::North;
+			}
+		}
+	}
+	if (in->IsMBDown(0) && southButton.isPressed(in, frameCount))
+	{
+		if (mPlayer->GetCurrentPort() != eMapDest::South)
+		{
+			int curSup = curship->GetSupplies();
+			if (curSup < CostS)
+			{
+				// Not enough supplies
+			}
+			else
+			{
+				curship->RemoveSupplies(CostS);
+				mPlayer->SetCurrentPort(eMapDest::South);
+				return eMapDest::South;
+			}
+		}
+	}
+	if (in->IsMBDown(0) && eastButton.isPressed(in, frameCount))
+	{
+		if (mPlayer->GetCurrentPort() != eMapDest::East)
+		{
+			int curSup = curship->GetSupplies();
+			if (curSup < CostE)
+			{
+				// Not enough supplies
+			}
+			else
+			{
+				curship->RemoveSupplies(CostE);
+				mPlayer->SetCurrentPort(eMapDest::East);
+				return eMapDest::East;
+			}
+		}
+	}
+	if (in->IsMBDown(0) && exitButton.isPressed(in, frameCount))
+	{
+		return eMapDest::Exit;
 	}
 
 	return eMapDest::noDest;
 }
 
-void MapMenu::Draw(irr::video::IVideoDriver* driver)
+void MapMenu::Draw(IVideoDriver* driver)
 {
 	background.Draw(driver);
-	BDestN.Draw(driver);
-	BDestE.Draw(driver);
-	BDestS.Draw(driver);
-	BExit.Draw(driver);
-	SuppliesButton.Draw(driver);
+	northButton.Draw(driver);
+	eastButton.Draw(driver);
+	southButton.Draw(driver);
+	exitButton.Draw(driver);
+	//SuppliesButton.Draw(driver);
 }

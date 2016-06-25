@@ -42,6 +42,7 @@ int main()
 	bool updateCam = true;
 	bool menu1 = false;
 	int state = Main;
+	int frameCount = 0;
 	LoadMap loadMap;
 	Player player;
 	Interface playerInterface(driver);
@@ -57,14 +58,13 @@ int main()
 	itemD.Initialize();
 
 	//initialize player's inventory
-	player.getInventory()->addItem(itemD.getItem(bronzeAxe), 50);
-	player.getInventory()->addItem(itemD.getItem(bronzeHelmet), 100);
-	player.getInventory()->addItem(itemD.getItem(bronzePlateLegs), 50);
+	player.getInventory()->addItem(itemD.getItem(bronzeOre), 50);
+	player.getInventory()->addItem(itemD.getItem(ironOre), 50);
+	player.getInventory()->addItem(itemD.getItem(goldOre), 50);
 
 	//initialize south vendor's inventory
-	southVendor.getInventory()->addItem(itemD.getItem(bronzeAxe), 1000);
-	southVendor.getInventory()->addItem(itemD.getItem(bronzeHelmet), 1000);
-	southVendor.getInventory()->addItem(itemD.getItem(bronzePlateLegs), 1000);
+	southVendor.getInventory()->addItem(itemD.getItem(bronzeOre), 100);
+	southVendor.getInventory()->addItem(itemD.getItem(bronzeDagger), 1000);
 
 	//Item item(0, "bronzeOre", "Sprites/ore_Bronze.png");
 	//Item item2 = item;
@@ -176,18 +176,18 @@ int main()
 
 
 	// Make the menus
-	MainMenu mainMenu(device);
+	MainMenu mainMenu(device, driver);
 
 	MapMenu mapMenu(device, driver);
 	mapMenu.SetPlayer(&player);
 
 	TradeMenu tradeMenu;
-	tradeMenu.Initialize(device, driver, player, southVendor);
+	tradeMenu.Initialize(device, driver, &player, &southVendor);
 	//TradeMenu tradeMenu(device, driver);
 	//tradeMenu.SetPlayer(&player);
 	//tradeMenu.SetVendor(&vS);
 	//
-	//CraftingMenu craftMenu(device, driver);
+	CraftingMenu craftMenu(device, driver, &player, itemD);
 	//craftMenu.SetPlayer(&player);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -209,6 +209,7 @@ int main()
 
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
 		sun_angle += dt;
+		frameCount += 1;
 		if ((sun_angle > 0 && sun_angle < 109) || (sun_angle>350))
 		{
 			timer++;
@@ -239,7 +240,7 @@ int main()
 		{
 		case Map:
 		{
-			int out = mapMenu.Update(&input);
+			int out = mapMenu.Update(&input, frameCount);
 
 			switch (out)
 			{
@@ -253,7 +254,7 @@ int main()
 				state = None;
 				//Item* itemB = new Item("Bronze Ore", 1000);
 				//vE.getItems()->addItem(itemB);
-				tradeMenu.SetVendor(eastVendor);
+				tradeMenu.SetVendor(&eastVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_India);
 				if (loadMap.CollNode)
 				{
@@ -281,6 +282,7 @@ int main()
 				//Item *itemG = new Item("Gold Ore", 1000);
 				//vN.getItems()->addItem(itemG);
 				//tradeMenu.SetVendor(&vN);
+				tradeMenu.SetVendor(&northVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_England);
 				if (loadMap.CollNode)
 				{
@@ -308,6 +310,7 @@ int main()
 				//Item *itemI = new Item("Iron Ore", 1000);
 				//vS.getItems()->addItem(itemI);
 				//tradeMenu.SetVendor(&vS);
+				tradeMenu.SetVendor(&southVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
 				if (loadMap.CollNode)
 				{
@@ -338,14 +341,15 @@ int main()
 		case Trade:
 		{
 
-			bool out = tradeMenu.Update(&input);
+			bool out = false;
+			out = tradeMenu.Update(&input, frameCount, device);
 			if (out)
 				state = None;
 			break;
 		}
 		case Main:
 		{
-			int out = mainMenu.Update(&input);
+			int out = mainMenu.Update(&input, frameCount);
 
 			switch (out)
 			{
@@ -368,9 +372,9 @@ int main()
 		}
 		case Craft:
 		{
-			//bool out = craftMenu.Update(&input);
-			//if (out)
-			//	state = None;
+			bool out = craftMenu.Update(&input, frameCount, device);
+			if (out)
+				state = None;
 			break;
 		}
 		default:
@@ -405,7 +409,7 @@ int main()
 		}
 		case Trade:
 		{
-			tradeMenu.Render(driver);
+			tradeMenu.Render(driver, device);
 			break;
 		}
 		case Main:
@@ -415,7 +419,7 @@ int main()
 		}
 		case Craft:
 		{
-			//craftMenu.Draw(driver);
+			craftMenu.Draw(driver);
 			break;
 		}
 		default:

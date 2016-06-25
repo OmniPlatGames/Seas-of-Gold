@@ -9,6 +9,18 @@ struct InventorySlot
 {
 	Item item;
 	int qty;
+
+	bool operator == (InventorySlot test)
+	{
+		if (test.item.getItemID() == item.getItemID())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 };
 
 class Inventory

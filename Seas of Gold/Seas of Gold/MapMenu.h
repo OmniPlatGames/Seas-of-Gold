@@ -21,19 +21,24 @@ public:
 	bool SetPlayer(Player* p);
 
 	// Update the map and output a eMapDest variable based on what you choose
-	int Update(Input* in);
+	int Update(Input* in, int& frameCount);
 
 	// Draw this menu
-	void Draw(irr::video::IVideoDriver* driver);
+	void Draw(IVideoDriver* driver);
 private:
 	GraphicsImage background; // The background image
+	GraphicsImage northButtonTex;
+	GraphicsImage southButtonTex;
+	GraphicsImage eastButtonTex;
+	GraphicsImage exitButtonTex;
 
-	Button BDestN; // Button that allows you to select the norther town
-				   // Also displays the town and shows how much it is to travel there
-	Button BDestS; // Button that allows you to select the southern town
-				   // Also displays the town and shows how much it is to travel there
-	Button BDestE; // Button that allows you to select the eastern town
-				   // Also displays the town and shows how much it is to travel there
+	Button northButton;
+	Button southButton;
+	Button eastButton;
+	Button exitButton;
+
+	
+
 	Button BExit; // Button that closes the menu
 	Button SuppliesButton; // Button that shows how much supply you have
 

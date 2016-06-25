@@ -1,6 +1,7 @@
 #include "Inventory.h"
 
 
+
 Inventory::Inventory()
 {
 }
@@ -52,23 +53,39 @@ void Inventory::addItem(Item item, int quantity)
 }
 
 //removes items from the inventory for an entity
-/*void Inventory::removeItem(Item* item, int quantity)
+void Inventory::removeItem(Item item, int quantity)
 {
 	bool hasItem = false;
 
-	//find the item in the inventory
-	for (InventorySlot* slots : inventory)
+	/*//find the item in the inventory
+	for (InventorySlot& slots : inventory)
 	{
 		//once found, remove the specified quantity
-		if (slots->item->getItemID() == item->getItemID())
+		if (slots.item.getItemID() == item.getItemID())
 		{
-			slots->qty -= quantity;
-			//if no more of the item exists, remove from inventory
-			if (slots->qty <= 0)
-			{
-				delete slots;
-			}
+			slots.qty -= quantity;
 			hasItem = true;
+			//if no more of the item exists, remove from inventory
+			if (slots.qty <= 0)
+			{
+				hasItem = false;
+				//delete slots;
+			}
+			break;
+		}
+	}*/
+	for (int i = 0; i < inventory.size(); i++)
+	{
+		if (inventory[i].item.getItemID() == item.getItemID())
+		{
+			hasItem = true;
+			inventory[i].qty -= quantity;
+			//if no more of the item exists, remove from inventory
+			if (inventory[i].qty <= 0)
+			{
+				//hasItem = false;
+				inventory.erase(inventory.begin()+i);
+			}
 			break;
 		}
 	}
@@ -78,7 +95,7 @@ void Inventory::addItem(Item item, int quantity)
 	{
 		MessageBox(NULL, "Item not in inventory! Error #1.", NULL, MB_OK);
 	}
-}*/
+}
 
 int Inventory::getSize()
 {
