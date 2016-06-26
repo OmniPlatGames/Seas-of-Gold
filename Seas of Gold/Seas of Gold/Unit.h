@@ -18,7 +18,7 @@ public:
 	inline Inventory* getInventory(){ return inventory; };
 
 	//returns current gold
-	inline int getGold() { return iGold; };
+	int getGold() { return iGold; };
 
 	//return number of items the unit has of itemID
 	inline int unitHasItem(int itemID){ return inventory->qtyOfItem(itemID); };

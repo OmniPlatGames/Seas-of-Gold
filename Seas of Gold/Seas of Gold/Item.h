@@ -11,7 +11,7 @@ public:
 public:
 
 	Item();
-	Item(int itemID, irrstring itemName, irrstring spriteLocation, int baseCost);
+	Item(int itemID, irrstring itemName, irrstring spriteLocation);
 	~Item();
 
 	//returns ID of the item

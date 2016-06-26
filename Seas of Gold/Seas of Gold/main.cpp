@@ -58,13 +58,24 @@ int main()
 	itemD.Initialize();
 
 	//initialize player's inventory
+	player.AddGold(1000);
 	player.getInventory()->addItem(itemD.getItem(bronzeOre), 50);
 	player.getInventory()->addItem(itemD.getItem(ironOre), 50);
 	player.getInventory()->addItem(itemD.getItem(goldOre), 50);
 
 	//initialize south vendor's inventory
 	southVendor.getInventory()->addItem(itemD.getItem(bronzeOre), 100);
-	southVendor.getInventory()->addItem(itemD.getItem(bronzeDagger), 1000);
+	southVendor.getInventory()->addItem(itemD.getItem(coalOre), 100);
+	southVendor.getInventory()->addItem(itemD.getItem(supplies), 1000);
+
+	//initialize north vendor's inventory
+	northVendor.getInventory()->addItem(itemD.getItem(obsidianOre), 50);
+	northVendor.getInventory()->addItem(itemD.getItem(supplies), 1000);
+
+	//initialize south vendor's inventory
+	eastVendor.getInventory()->addItem(itemD.getItem(goldOre), 100);
+	eastVendor.getInventory()->addItem(itemD.getItem(ironOre), 100);
+	eastVendor.getInventory()->addItem(itemD.getItem(supplies), 1000);
 
 	//Item item(0, "bronzeOre", "Sprites/ore_Bronze.png");
 	//Item item2 = item;
@@ -404,7 +415,7 @@ int main()
 		{
 		case Map:
 		{
-			mapMenu.Draw(driver);
+			mapMenu.Draw(driver, device);
 			break;
 		}
 		case Trade:

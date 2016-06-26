@@ -24,25 +24,29 @@ public:
 	int Update(Input* in, int& frameCount);
 
 	// Draw this menu
-	void Draw(IVideoDriver* driver);
+	void Draw(IVideoDriver* driver, IrrlichtDevice* device);
 private:
 	GraphicsImage background; // The background image
 	GraphicsImage northButtonTex;
 	GraphicsImage southButtonTex;
 	GraphicsImage eastButtonTex;
 	GraphicsImage exitButtonTex;
+	GraphicsImage supplyButtonTex;
 
 	Button northButton;
 	Button southButton;
 	Button eastButton;
 	Button exitButton;
+	Button supplyButton;
 
-	
+	IGUIFont* m_font;
+
+	int playerSupplies;
 
 	Button BExit; // Button that closes the menu
 	Button SuppliesButton; // Button that shows how much supply you have
 
-	Player* mPlayer; // Pointer to the current player.
+	Player* player; // Pointer to the current player.
 	irr::gui::IGUIFont* mfont; // Current font
 
 	int CostN; // How much it costs to go to the north

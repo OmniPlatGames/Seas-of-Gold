@@ -13,6 +13,11 @@ TradeMenu::~TradeMenu()
 //initializes the menu data
 void TradeMenu::Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player* plyr, Vendor* vndr)
 {
+
+	player = plyr;
+	vendor = vndr;
+	m_font = device->getGUIEnvironment()->getBuiltInFont();
+
 	
 	//initialize background information
 	background = GraphicsImage(10, 10, 790, 500);
@@ -25,16 +30,18 @@ void TradeMenu::Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player*
 	sellButtonTex.SetTexture("Assets/Sell.png", driver);
 	exitButtonTex = GraphicsImage(720, 36, 752, 68);
 	exitButtonTex.SetTexture("Assets/x.png", driver);
+	goldButtonTex = GraphicsImage(43, 37, 75, 69);
+	goldButtonTex.SetTexture("Sprites/coins.png", driver);
+
 
 	buyButton = Button(buyButtonTex, device);
 	sellButton = Button(sellButtonTex, device);
 	exitButton = Button(exitButtonTex, device);
+	goldButton = Button(goldButtonTex, device);
+	goldButton.setText(player->getGold());
 
 	//set up font
 	//font = device->getGUIEnvironment()->getBuiltInFont();
-
-	player = plyr;
-	vendor = vndr;	
 
 	selectedItems = 0;
 	maxSelected = 1;
@@ -93,6 +100,8 @@ void TradeMenu::SetVendor(Vendor* vndr)
 //updates the menu
 bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
 {
+	//get player gold and set the text
+	goldButton.setText(player->getGold());
 
 	//if left mouse button is pressed, and we haven't reach max selected items, find out if an icon was clicked
 	if (in->IsMBDown(0) && (selectedItems < maxSelected))
@@ -128,6 +137,7 @@ bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
 	//if buy button is pressed, see if a vendor item is selected. If it is, transfer from vendor to player inventory
 	if (in->IsMBDown(0) && buyButton.isPressed(in, frameCount))
 	{
+
 		for (int i = 0; i < vendorButtons.size(); i++)
 		{
 			if (vendorButtons[i].isSelected() == true)
@@ -268,6 +278,7 @@ void TradeMenu::Render(IVideoDriver* driver, IrrlichtDevice* device)
 	buyButton.Draw(driver);
 	sellButton.Draw(driver);
 	exitButton.Draw(driver);
+	goldButton.Draw(driver);
 
 	//draw the player's inventory
 	for (int i = 0; i < player->getInventory()->getSize(); i++)
@@ -280,4 +291,7 @@ void TradeMenu::Render(IVideoDriver* driver, IrrlichtDevice* device)
 	{
 		vendorButtons[i].Draw(driver);
 	}
+
+	//draw player's gold
+	m_font->draw(std::to_string(player->getGold()).c_str(), irr::core::rect<s32>(43, 37, 75, 69), SColor(255, 255, 255, 255), true, true);
 }

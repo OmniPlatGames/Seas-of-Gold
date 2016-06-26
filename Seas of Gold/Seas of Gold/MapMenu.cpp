@@ -2,30 +2,7 @@
 
 MapMenu::MapMenu(IrrlichtDevice* device, irr::video::IVideoDriver* driver)
 {
-	/*background = GraphicsImage(0, 0, 800, 600);
-	background.SetTexture("Assets/Dani-Map.png", driver);
 
-	mfont = device->getGUIEnvironment()->getBuiltInFont();
-
-	BDestN = Button(240, 250, 340, 300);
-	BDestN.SetFont(mfont);
-	BDestN.SetText("Northtown : 100 Supplies");
-
-	BDestS = Button(350, 520, 450, 570);
-	BDestS.SetFont(mfont);
-	BDestS.SetText("Southtown : 50 Supplies");
-
-	BDestE = Button(600, 420, 700, 470);
-	BDestE.SetFont(mfont);
-	BDestE.SetText("Easttown : 10 Supplies");
-
-	BExit = Button(750, 0, 800, 50);
-	BExit.SetFont(mfont);
-	BExit.SetText("x");
-
-	SuppliesButton = Button(0, 0, 100, 50);
-	SuppliesButton.SetFont(mfont);
-	SuppliesButton.SetText("Supplies: X");*/
 
 	CostN = 100;
 	CostS = 50;
@@ -45,130 +22,44 @@ MapMenu::MapMenu(IrrlichtDevice* device, irr::video::IVideoDriver* driver)
 	exitButtonTex = GraphicsImage(720, 36, 752, 68);
 	exitButtonTex.SetTexture("Assets/x.png", driver);
 
+	supplyButtonTex = GraphicsImage(43, 37, 75, 69);
+	supplyButtonTex.SetTexture("Sprites/crate.png", driver);
+
+
 	northButton = Button(northButtonTex, device);
 	southButton = Button(southButtonTex, device);
 	eastButton = Button(eastButtonTex, device);
+	supplyButton = Button(supplyButtonTex, device);
 
 	exitButton = Button(exitButtonTex, device);
 
-
+	m_font = device->getGUIEnvironment()->getBuiltInFont();
 }
 
 bool MapMenu::SetPlayer(Player* p)
 {
-	mPlayer = p;
+	player = p;
 
 	return false;
 }
 
 int MapMenu::Update(Input* in, int& frameCount)
 {
-	/*// Show your current port
-	switch (mPlayer->GetCurrentPort())
-	{
-	case eMapDest::North:
-	{
-		BDestN.SetColorFront(255, 255, 153, 255);
-		BDestS.SetColorFront(255, 255, 255, 255);
-		BDestE.SetColorFront(255, 255, 255, 255);
-		break;
-	}
-	case eMapDest::South:
-	{
-		BDestS.SetColorFront(255, 255, 153, 255);
-		BDestN.SetColorFront(255, 255, 255, 255);
-		BDestE.SetColorFront(255, 255, 255, 255);
-		break;
-	}
-	case eMapDest::East:
-	{
-		BDestE.SetColorFront(255, 255, 153, 255);
-		BDestS.SetColorFront(255, 255, 255, 255);
-		BDestN.SetColorFront(255, 255, 255, 255);
-		break;
-	}
-	default:
-	{
-		BDestE.SetColorFront(255, 255, 255, 255);
-		BDestS.SetColorFront(255, 255, 255, 255);
-		BDestN.SetColorFront(255, 255, 255, 255);
-		break;
-	}
-	}
+	Ship* curship = player->getPlayerShip();
 
-	Ship* curship = mPlayer->getPlayerShip();
-
-	// Update Supply Button
-	irrstring str = "Supplies: ";
-	str += std::to_string(curship->GetSupplies()).c_str();
-	SuppliesButton.SetText(str);
-
-	if (BDestN.isPressed(in))
+	//get player supplies
+	for (int i = 0; i < player->getInventory()->getSize(); i++)
 	{
-		if (mPlayer->GetCurrentPort() != eMapDest::North)
+		if (player->getInventory()->getItem(i).item == Item(supplies, "Ship Supplies", "Assets/crate.png"))
 		{
-			int curSup = curship->GetSupplies();
-			if (curSup < CostN)
-			{
-				// Not enough supplies
-			}
-			else
-			{
-				curship->RemoveSupplies(CostN);
-				mPlayer->SetCurrentPort(eMapDest::North);
-				return eMapDest::North;
-			}
+			playerSupplies = player->getInventory()->getItem(i).qty;
+			break;
 		}
 	}
-	if (BDestE.isPressed(in))
-	{
-		if (mPlayer->GetCurrentPort() != eMapDest::East)
-		{
-			int curSup = curship->GetSupplies();
-			if (curSup < CostE)
-			{
-				// Not enough supplies
-			}
-			else
-			{
-				curship->RemoveSupplies(CostE);
-				mPlayer->SetCurrentPort(eMapDest::East);
-				return eMapDest::East;
-			}
-		}
-	}
-	if (BDestS.isPressed(in))
-	{
-		if (mPlayer->GetCurrentPort() != eMapDest::South)
-		{
-			int curSup = curship->GetSupplies();
-			if (curSup < CostS)
-			{
-				// Not enough supplies
-			}
-			else
-			{
-				curship->RemoveSupplies(CostS);
-				mPlayer->SetCurrentPort(eMapDest::South);
-				return eMapDest::South;
-			}
-		}
-	}
-	if (BExit.isPressed(in))
-	{
-		return eMapDest::Exit;
-	}*/
-
-	Ship* curship = mPlayer->getPlayerShip();
-
-	// Update Supply Button
-	//irrstring str = "Supplies: ";
-	//str += std::to_string(curship->GetSupplies()).c_str();
-	//SuppliesButton.SetText(str);
 
 	if (in->IsMBDown(0) && northButton.isPressed(in, frameCount))
 	{
-		if (mPlayer->GetCurrentPort() != eMapDest::North)
+		if (player->GetCurrentPort() != eMapDest::North)
 		{
 			int curSup = curship->GetSupplies();
 			if (curSup < CostN)
@@ -178,14 +69,14 @@ int MapMenu::Update(Input* in, int& frameCount)
 			else
 			{
 				curship->RemoveSupplies(CostN);
-				mPlayer->SetCurrentPort(eMapDest::North);
+				player->SetCurrentPort(eMapDest::North);
 				return eMapDest::North;
 			}
 		}
 	}
 	if (in->IsMBDown(0) && southButton.isPressed(in, frameCount))
 	{
-		if (mPlayer->GetCurrentPort() != eMapDest::South)
+		if (player->GetCurrentPort() != eMapDest::South)
 		{
 			int curSup = curship->GetSupplies();
 			if (curSup < CostS)
@@ -195,14 +86,14 @@ int MapMenu::Update(Input* in, int& frameCount)
 			else
 			{
 				curship->RemoveSupplies(CostS);
-				mPlayer->SetCurrentPort(eMapDest::South);
+				player->SetCurrentPort(eMapDest::South);
 				return eMapDest::South;
 			}
 		}
 	}
 	if (in->IsMBDown(0) && eastButton.isPressed(in, frameCount))
 	{
-		if (mPlayer->GetCurrentPort() != eMapDest::East)
+		if (player->GetCurrentPort() != eMapDest::East)
 		{
 			int curSup = curship->GetSupplies();
 			if (curSup < CostE)
@@ -212,7 +103,7 @@ int MapMenu::Update(Input* in, int& frameCount)
 			else
 			{
 				curship->RemoveSupplies(CostE);
-				mPlayer->SetCurrentPort(eMapDest::East);
+				player->SetCurrentPort(eMapDest::East);
 				return eMapDest::East;
 			}
 		}
@@ -225,12 +116,16 @@ int MapMenu::Update(Input* in, int& frameCount)
 	return eMapDest::noDest;
 }
 
-void MapMenu::Draw(IVideoDriver* driver)
+void MapMenu::Draw(IVideoDriver* driver, IrrlichtDevice* device)
 {
 	background.Draw(driver);
 	northButton.Draw(driver);
 	eastButton.Draw(driver);
 	southButton.Draw(driver);
 	exitButton.Draw(driver);
-	//SuppliesButton.Draw(driver);
+	supplyButton.Draw(driver);
+
+	//draw player's supplies
+	m_font = device->getGUIEnvironment()->getBuiltInFont();
+	m_font->draw(std::to_string(playerSupplies).c_str(), irr::core::rect<s32>(43, 37, 75, 69), SColor(255, 255, 255, 255), true, true);
 }

@@ -17,6 +17,9 @@ private:
 	GraphicsImage buyButtonTex;
 	GraphicsImage sellButtonTex;
 	GraphicsImage exitButtonTex;
+	GraphicsImage goldButtonTex;
+
+	IGUIFont* m_font;
 
 
 	Vendor* vendor;
@@ -28,6 +31,7 @@ private:
 	Button buyButton;
 	Button sellButton;
 	Button exitButton;
+	Button goldButton;
 
 	v2d iconPos;
 	v2d qtyPos;

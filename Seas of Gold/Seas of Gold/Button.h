@@ -17,6 +17,8 @@ public:
 
 	void Draw(irr::video::IVideoDriver* driver);
 
+	void setText(int);
+
 	Item getItem();
 	int getQty();
 
@@ -29,6 +31,8 @@ private:
 
 	v2d q_TopLeft;
 	v2d q_BotRight;
+
+	stringw text;
 
 	GraphicsRect selectedBorder;
 
@@ -46,5 +50,6 @@ private:
 
 	//used only for graphicsImage constructor and related draw
 	GraphicsImage buttonImage;
+
 
 };

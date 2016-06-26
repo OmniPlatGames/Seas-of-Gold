@@ -166,6 +166,11 @@ void ItemDatabase::Initialize()
 	itemDB[99] = Item(99, "Silver Chest", "Sprites/Silver_Chest.png");
 	itemDB[100] = Item(100, "Silver Plate Legs", "Sprites/Silver_LegPlates.png");
 	itemDB[101] = Item(101, "Silver Boots", "Sprites/Silver_Boots.png");
+
+	//////////////////
+	//Ship supplies
+	//////////////////
+	itemDB[102] = Item(102, "Ship Supplies", "Sprites/crate.png");
 }
 
 Item ItemDatabase::getItem(int itemID)

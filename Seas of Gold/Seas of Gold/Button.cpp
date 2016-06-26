@@ -57,7 +57,7 @@ Button::Button(GraphicsImage& image, IrrlichtDevice* device)
 	pressed = false;
 
 	buttonImage = image;
-
+	m_font = device->getGUIEnvironment()->getBuiltInFont();
 }
 
 bool Button::isPressed(Input* in, int& frameCount)
@@ -153,15 +153,20 @@ void Button::Draw(irr::video::IVideoDriver* driver)
 		}
 
 		//render the qty of the item in the slot
-		char quantity = iSlot.qty;
-		m_font->draw(stringw(quantity), irr::core::rect<s32>(q_TopLeft.X, q_TopLeft.Y, q_BotRight.X, q_BotRight.Y), SColor(255, 255, 0, 0), true, true);
+		//char quantity = iSlot.qty;
+		std::string s = std::to_string(iSlot.qty);
+		stringw test = s.c_str();
+		m_font->draw(test, irr::core::rect<s32>(q_TopLeft.X, q_TopLeft.Y, q_BotRight.X, q_BotRight.Y), SColor(255, 255, 0, 0), true, true);
 	}
 	//if button is a button (buy, sell, craft, etc)
 	else
 	{
 		buttonImage.Draw(driver);
+		//if (text.size() > 0)
+		//{
+			//m_font->draw(text, irr::core::rect<s32>(q_TopLeft.X, q_TopLeft.Y, q_BotRight.X, q_BotRight.Y), SColor(255, 255, 0, 0), true, true);
+		//}
 	}
-
 }
 
 Item Button::getItem()
@@ -177,4 +182,10 @@ int Button::getQty()
 void Button::setSelected(bool set)
 {
 	pressed = set;
+}
+
+void Button::setText(int intToText)
+{
+	text = std::to_string(intToText).c_str();
+
 }

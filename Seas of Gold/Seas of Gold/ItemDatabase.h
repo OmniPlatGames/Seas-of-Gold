@@ -5,7 +5,7 @@ class ItemDatabase
 {
 
 public:
-	Item itemDB[102];
+	Item itemDB[103];
 	//std::vector<Item*> itemDB;
 
 public:
@@ -147,5 +147,8 @@ enum
 	silverHelmet,
 	silverChest,
 	silverPlateLegs,
-	silverBoots
+	silverBoots,
+
+	//ship suplies
+	supplies
 };
