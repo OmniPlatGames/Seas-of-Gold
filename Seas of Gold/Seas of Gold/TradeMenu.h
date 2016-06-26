@@ -50,7 +50,7 @@ public:
 	void SetVendor(Vendor* vndr);
 
 	//updates the menu
-	bool Update(Input* in, int& frameCount, IrrlichtDevice* device);
+	bool Update(Input* in, int& frameCount, IrrlichtDevice* device, MapID currentMap);
 
 	//Renders the menu on the screen
 	void Render(IVideoDriver* driver, IrrlichtDevice* device);

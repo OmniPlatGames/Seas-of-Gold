@@ -14,7 +14,6 @@ void LoadMap::Load(ISceneManager* smgr, IrrlichtDevice *device, ITriangleSelecto
 	
 	if(rmapNode)
 		Unload();
-
 	//Load Merchant
 	IAnimatedMesh* merch = smgr->getMesh(mapData.MapMerchants[map].c_str());
 	merchNode = smgr->addAnimatedMeshSceneNode(merch);

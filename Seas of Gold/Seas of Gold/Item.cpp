@@ -4,11 +4,12 @@ Item::Item()
 {
 }
 
-Item::Item(int item_ID, irrstring item_Name, irrstring sprite_Location)
+Item::Item(int item_ID, irrstring item_Name, irrstring sprite_Location, CostTable cT)
 {
 	itemID = item_ID;
 	itemName = item_Name;
 	spriteLocation = sprite_Location;
+	cost = cT;
 }
 
 
