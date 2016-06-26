@@ -50,7 +50,7 @@ int MapMenu::Update(Input* in, int& frameCount)
 	//get player supplies
 	for (int i = 0; i < player->getInventory()->getSize(); i++)
 	{
-		if (player->getInventory()->getItem(i).item == Item(supplies, "Ship Supplies", "Assets/crate.png"))
+		if (player->getInventory()->getItem(i).item == Item(supplies, "Ship Supplies", "Assets/crate.png", CostTable(100,100,100,100,100,100)))
 		{
 			playerSupplies = player->getInventory()->getItem(i).qty;
 			break;

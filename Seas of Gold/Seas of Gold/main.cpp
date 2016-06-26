@@ -34,7 +34,7 @@ int main()
 	E_DRIVER_TYPE driverType = driverChoiceConsole();
 	EffectHandler *effect = new EffectHandler(device, driver->getScreenSize(), false, true);
 	E_FILTER_TYPE filterType = (E_FILTER_TYPE)core::clamp<u32>((u32)3 - '1', 0, 4);
-
+	MapID currentMap;
 	int skyR = 30, skyG = 30, skyB = 70;
 	int timer = 0;
 	SColor sky = SColor(255, skyR, skyG, skyB);
@@ -97,7 +97,7 @@ int main()
 	ICameraSceneNode* camera = smgr->addCameraSceneNode(0, plyrNode->getPosition() + vector3df(0, 2, 2), vector3df(0, 0, 100));
 
 	loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
-
+	currentMap = Map_Africa;
 	//loadMap.setCollisions(smgr, selector, plyrNode, anim);
 
 	if (loadMap.CollNode)
@@ -267,6 +267,7 @@ int main()
 				//vE.getItems()->addItem(itemB);
 				tradeMenu.SetVendor(&eastVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_India);
+				currentMap = Map_India;
 				if (loadMap.CollNode)
 				{
 					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
@@ -295,6 +296,7 @@ int main()
 				//tradeMenu.SetVendor(&vN);
 				tradeMenu.SetVendor(&northVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_England);
+				currentMap = Map_England;
 				if (loadMap.CollNode)
 				{
 					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
@@ -323,6 +325,7 @@ int main()
 				//tradeMenu.SetVendor(&vS);
 				tradeMenu.SetVendor(&southVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
+				currentMap = Map_Africa;
 				if (loadMap.CollNode)
 				{
 					selector = smgr->createOctreeTriangleSelector(loadMap.CollNode->getMesh(), loadMap.CollNode, 32);
@@ -353,7 +356,7 @@ int main()
 		{
 
 			bool out = false;
-			out = tradeMenu.Update(&input, frameCount, device);
+			out = tradeMenu.Update(&input, frameCount, device, currentMap);
 			if (out)
 				state = None;
 			break;

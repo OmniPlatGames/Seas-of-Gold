@@ -11,7 +11,7 @@ public:
 public:
 	ItemDatabase();
 	~ItemDatabase();
-
+	int itemBuyIndia[30];
 	void Initialize();
 
 	Item getItem(int itemID);
@@ -19,7 +19,8 @@ public:
 };
 
 //allows for readable reference to objects in itemDB
-enum
+
+enum enumItemID
 {
 	//Bronze Items
 	bronzeOre,

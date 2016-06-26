@@ -48,6 +48,7 @@ class LoadMap
 {
 	MapData mapData;
 public:
+	MapID cMap;
 	IAnimatedMeshSceneNode* seasNode;
 	IAnimatedMeshSceneNode* foliageNode;
 	IAnimatedMeshSceneNode* crfTblNode;

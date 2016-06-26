@@ -98,7 +98,7 @@ void TradeMenu::SetVendor(Vendor* vndr)
 }
 
 //updates the menu
-bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
+bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device, MapID currentMap)
 {
 	//get player gold and set the text
 	goldButton.setText(player->getGold());
@@ -143,8 +143,12 @@ bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
 			if (vendorButtons[i].isSelected() == true)
 			{
 				Item item = vendorButtons[i].getItem();
-				player->getInventory()->addItem(item, 1);
-				vendor->getInventory()->removeItem(item, 1);
+				int cPrice = item.getPrice(false, currentMap);
+				if (cPrice <= player->getGold()){
+					player->getInventory()->addItem(item, 1);
+					vendor->getInventory()->removeItem(item, 1);
+					player->modifyGold(-cPrice);
+				}
 				//reset inventory buttons for display
 				int incrX = 0;
 				int incrY = 0;
@@ -203,7 +207,7 @@ bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
 			{
 				Item item = playerButtons[i].getItem();
 				//get current last item information
-
+				player->modifyGold(item.getPrice(true, currentMap));
 				vendor->getInventory()->addItem(item, 1);
 				player->getInventory()->removeItem(item, 1);
 
