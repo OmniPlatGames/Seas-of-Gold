@@ -3,36 +3,46 @@
 
 class Item
 {
-private:
-	std::string itemID;
-	int quantity;
-	std::string itemName;
-	std::string spriteName;
-	//irr::io::path spriteName;
+public:
+	int itemID;
+	irrstring itemName;
+	irrstring spriteLocation;
 
 public:
 
-	//items should only be created with an ID and a quantity
-	Item(std::string itemID, int quantity);
+	Item();
+	Item(int itemID, irrstring itemName, irrstring spriteLocation);
 	~Item();
 
 	//returns ID of the item
 	int getItemID();
 
-	//returns quantity of item
-	int getItemQty();
-
-	//sets item qty
-	void setItemQty(int qty);
-
 	//returns item name
-	std::string getItemName();
-
-	//return sprite name
-	//std::string getItemSprite();
+	irrstring getItemName();
 
 	//load the sprite image
 	void loadSprite(IVideoDriver *driver, v2d pos);
+
+	//load the tool tip (future implementation)
+	void loadToolTip(IVideoDriver *driver, v2d pos);
+
+	bool operator == (Item item)
+	{
+		if (itemID == item.itemID)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool operator != (Item item)
+	{
+		if (itemID != item.itemID)
+		{
+			return true;
+		}
+		return false;
+	}
 
 };
 

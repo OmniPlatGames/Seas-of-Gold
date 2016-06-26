@@ -5,49 +5,97 @@
 #include "Input.h"
 #include "Graphics.h"
 #include "Button.h"
-#include "CraftingSystem.h"
+#include "ItemDatabase.h"
+//#include "CraftingSystem.h"
 
 class CraftingMenu
 {
 public:
 	CraftingMenu(IrrlichtDevice* device,
-		irr::video::IVideoDriver* driver);
+		irr::video::IVideoDriver* driver, Player* player,
+		ItemDatabase itemDB);
 
-	void SetPlayer(Player* p);
+	//void SetPlayer(Player* p);
 
-	bool Update(Input* in);
+	bool Update(Input* in, int& frameCount, IrrlichtDevice* device);
 
 	void Draw(irr::video::IVideoDriver* driver);
 
 private:
-	void UpdateContents();
+	GraphicsImage exitButtonTex;
+	GraphicsImage craftButtonTex;
 
-private:
-	Button RightPannel;
-	Button LeftPannel;
-	Button LeftTitle;
-	Button RightTitle;
+	Button exitButton;
+	Button craftButton;
 
-	Button ExitButton;
+	std::vector<Button> playerButtons;
+	std::vector<Button> craftableButtons;
+	v2d iconPos;
+	v2d qtyPos;
 
-	Button CraftButton;
-
-	std::vector<Button> bItemList;
-	std::vector<Button> bItemListAmnt;
-	std::vector<Button> bCraftList;
-	std::vector<Button> bCraftListAmnt;
-
-	bool SelectedItems[17];
+	std::vector<InventorySlot> playerSelectedItems;
+	std::vector<Item> craftSelectedItems;
 	int selectedCraft;
 
-	bool HasIron;
-	bool HasBronze;
+	Player* player;
 
-	Player* mPlayer;
 	irr::gui::IGUIFont* mfont;
+
+	int playerSelectedItemsCount;
+	int playerMaxSelectedCount;
+	int craftSelectedItemsCount;
+	int craftMaxSelectedCount;
 
 	GraphicsImage background;
 
-	CraftingSystem CS;
-	CSOutputItems Citems;
+	void InitializeCraftables(ItemDatabase itemDB);
+	Inventory bronzeCraftables;
+	Inventory ironCraftables;
+	Inventory obsidianCraftables;
+	Inventory goldCraftables;
+
+	//ItemDatabase itemDB;
+
+	int incrX;
+	int incrY;
+
+	//used inplace of database until data curruption cause can be found TEMPORARY
+	//bronze
+	Item testBronzeOre;
+	Item testBronzeDagger;
+	Item testBronzeSword;
+	Item testBronzeAxe;
+	Item testBronzeHelmet;
+	Item testBronzeChest;
+	Item testBronzeLegs;
+	Item testBronzeBoots;
+	//iron
+	Item testIronOre;
+	Item testIronDagger;
+	Item testIronSword;
+	Item testIronAxe;
+	Item testIronHelmet;
+	Item testIronChest;
+	Item testIronLegs;
+	Item testIronBoots;
+	//obsidian
+	Item testCoalOre;
+	Item testObsidianOre;
+	Item testObsidianDagger;
+	Item testObsidianSword;
+	Item testObsidianAxe;
+	Item testObsidianHelmet;
+	Item testObsidianChest;
+	Item testObsidianLegs;
+	Item testObsidianBoots;
+	//gold
+	Item testGoldOre;
+	Item testGoldHelmet;
+	Item testGoldChest;
+	Item testGoldLegs;
+	Item testGoldBoots;
+	
+	bool testNewClick;
+
+	void InitializeTestVariables();
 };

@@ -27,12 +27,12 @@ struct MapData
 		MapCraftingTable[Map_England] = "Assets/crftTble.x";
 		MapColl[Map_England] = "Assets/enmapcoll.3ds";
 
-		MapFiles[Map_India] = "Assets/indMap.3ds";
+		MapFiles[Map_India] = "Assets/indMap.x";
 		MapAssets[Map_India] = "Assets/trees_in.3ds";
 		MapMerchants[Map_India] = "Assets/inMerch.x";
 		MapVendorTable[Map_India] = "Assets/vndrTble.x";
 		MapCraftingTable[Map_India] = "Assets/crftTble.x";
-		MapColl[Map_India] = "Assets/indMap.3ds";
+		MapColl[Map_India] = "Assets/coll_in.3ds";
 
 		MapFiles[Map_Africa] = "Assets/afMap.x";
 		MapAssets[Map_Africa] = "Assets/trees_af.x";

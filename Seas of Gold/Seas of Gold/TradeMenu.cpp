@@ -1,441 +1,297 @@
 #include "TradeMenu.h"
 
-TradeMenu::TradeMenu(IrrlichtDevice* device,
-	irr::video::IVideoDriver* driver)
+TradeMenu::TradeMenu()
 {
-	mfont = device->getGUIEnvironment()->getBuiltInFont();
+	playerButtons.empty();
+	vendorButtons.empty();
+}
 
-	background = GraphicsImage(10, 10, 790, 590);
-	background.SetTexture("Assets/woodTex.png", driver);
+TradeMenu::~TradeMenu()
+{
+}
 
-	BbgL = Button(50, 50, 390, 500);
-	BbgL.SetFont(mfont);
-	BbgL.SetText("");
+//initializes the menu data
+void TradeMenu::Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player* plyr, Vendor* vndr)
+{
 
-	BbgR = Button(410, 50, 750, 500);
-	BbgR.SetFont(mfont);
-	BbgR.SetText("");
+	player = plyr;
+	vendor = vndr;
+	m_font = device->getGUIEnvironment()->getBuiltInFont();
 
-	BuySuppliesButton = Button(410, 512, 750, 540);
-	BuySuppliesButton.SetFont(mfont);
-	BuySuppliesButton.SetText("Buy 10 Supplies : Cost 10g : Current X : Max Y");
+	
+	//initialize background information
+	background = GraphicsImage(10, 10, 790, 500);
+	background.SetTexture("Assets/trademenu.png", driver);
 
-	BuyCrewButton = Button(410, 552, 750, 580);
-	BuyCrewButton.SetFont(mfont);
-	BuyCrewButton.SetText("Buy 1 Crew : Cost 100g : Current X : Max Y");
+	//initialize buy and sell and exit Buttons
+	buyButtonTex = GraphicsImage(160, 485, 288, 549); // 160, 485;
+	buyButtonTex.SetTexture("Assets/Buy.png", driver);
+	sellButtonTex = GraphicsImage(530, 485, 658, 549); // 530, 485;
+	sellButtonTex.SetTexture("Assets/Sell.png", driver);
+	exitButtonTex = GraphicsImage(720, 36, 752, 68);
+	exitButtonTex.SetTexture("Assets/x.png", driver);
+	goldButtonTex = GraphicsImage(43, 37, 75, 69);
+	goldButtonTex.SetTexture("Sprites/coins.png", driver);
 
-	BExit = Button(750, 10, 790, 50);
-	BExit.SetFont(mfont);
-	BExit.SetText("x");
 
-	GoldButton = Button(20, 20, 110, 40);
-	GoldButton.SetFont(mfont);
-	GoldButton.SetText("Gold: X");
+	buyButton = Button(buyButtonTex, device);
+	sellButton = Button(sellButtonTex, device);
+	exitButton = Button(exitButtonTex, device);
+	goldButton = Button(goldButtonTex, device);
+	goldButton.setText(player->getGold());
 
-	BShopTitle = Button(50, 50, 390, 75);
-	BShopTitle.SetFont(mfont);
-	BShopTitle.SetText("Shop");
+	//set up font
+	//font = device->getGUIEnvironment()->getBuiltInFont();
 
-	BShipTitle = Button(410, 50, 750, 75);
-	BShipTitle.SetFont(mfont);
-	BShipTitle.SetText("Ship");
+	selectedItems = 0;
+	maxSelected = 1;
 
-	BBuyButton = Button(50, 520, 160, 570);
-	BBuyButton.SetFont(mfont);
-	BBuyButton.SetText("Buy");
+	int incrX = 0;
+	int incrY = 0;
+	InventorySlot iSlot;
 
-	BSellButton = Button(280, 520, 390, 570);
-	BSellButton.SetFont(mfont);
-	BSellButton.SetText("Sell");
-
-	BamntDisp = Button(200, 530, 230, 560);
-	BamntDisp.SetFont(mfont);
-	BamntDisp.SetText("1");
-
-	BamntUp = Button(230, 530, 245, 545);
-	BamntUp.SetFont(mfont);
-	BamntUp.SetText("+");
-
-	BamntDown = Button(230, 545, 245, 560);
-	BamntDown.SetFont(mfont);
-	BamntDown.SetText("-");
-
-	for (int i = 0; i < 17; i++)
+	//setup the player's inventory
+	for (int i = 0; i < player->getInventory()->getSize(); i++)
 	{
-		// Make Left
-		Button nBut = Button(75, 75 + (25 * i), 365, 100 + (25 * i));
-		nBut.SetFont(mfont);
-		nBut.SetText("Empty");
-		BBuyList.push_back(nBut);
+		//get positions the icons need to be at
+		incrX = i;
+		if (incrX > 8)
+		{
+			incrX = 0;
+			incrY += 1;
+		}
+		iconPos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
+		qtyPos = v2d(90 + (incrX * 40), 133 + (incrY * 40));
 
-		// Left Amnt display
-		nBut = Button(365, 75 + (25 * i), 390, 100 + (25 * i));
-		nBut.SetFont(mfont);
-		nBut.SetText("0");
-		BBuyListAmnt.push_back(nBut);
+		//create the button and draw it
+		playerButtons.push_back(Button(player->getInventory()->getItem(i), iconPos, qtyPos, device));
 
-		// Make Right
-		nBut = Button(435, 75 + (25 * i), 725, 100 + (25 * i));
-		nBut.SetFont(mfont);
-		nBut.SetText("Empty");
-		BSellList.push_back(nBut);
-
-		// Right amnt display
-		nBut = Button(725, 75 + (25 * i), 750, 100 + (25 * i));
-		nBut.SetFont(mfont);
-		nBut.SetText("0");
-		BSellListAmnt.push_back(nBut);
 	}
 
-	SupplyCost = 10;
-	CrewCost = 100;
+	//reset incrementors
+	incrX = 0;
+	incrY = 0;
 
-	ModAmnt = 1;
-
-	SelectedItem = -1;
-}
-
-void TradeMenu::SetPlayer(Player* p)
-{
-	mPlayer = p;
-	UpdateContents();
-}
-
-void TradeMenu::SetVendor(Vendor* v)
-{
-	mVendor = v;
-	UpdateContents();
-}
-
-bool TradeMenu::Update(Input* in)
-{
-	Ship* curship = mPlayer->getPlayerShip();
-
-	// Update Buy supplies Button
-	irrstring str = "Buy 10 Supplies : Cost 10g : Current ";
-	str += std::to_string(curship->GetSupplies()).c_str();
-	str += " : Max ";
-	str += std::to_string(curship->GetSupplyMax()).c_str();
-	BuySuppliesButton.SetText(str);
-
-	// Update Buy Crew Button
-	str = "Buy 1 Crew : Cost 100g : Current ";
-	str += std::to_string(curship->GetCrew()).c_str();
-	str += " : Max ";
-	str += std::to_string(curship->GetCrewMax()).c_str();
-	BuyCrewButton.SetText(str);
-
-	// Update Gold Button
-	str = "Gold: ";
-	str += std::to_string(mPlayer->getGold()).c_str();
-	GoldButton.SetText(str);
-
-	str = "";
-	str += std::to_string(ModAmnt).c_str();
-	BamntDisp.SetText(str);
-
-	if (BuySuppliesButton.isPressed(in))
+	//draw the vendors's inventory
+	for (int i = 0; i < vendor->getInventory()->getSize(); i++)
 	{
-		if (curship->GetSupplies() < curship->GetSupplyMax())
+		//get positions the icons need to be at
+		incrX = i;
+		if (incrX > 8)
 		{
-			if (mPlayer->getGold() >= SupplyCost)
+			incrX = 0;
+			incrY += 1;
+		}
+		iconPos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
+		qtyPos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
+
+		//create the button and draw it
+		vendorButtons.push_back(Button(vendor->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+	}
+
+}
+
+void TradeMenu::SetVendor(Vendor* vndr)
+{
+	vendor = vndr;
+}
+
+//updates the menu
+bool TradeMenu::Update(Input* in, int& frameCount, IrrlichtDevice* device)
+{
+	//get player gold and set the text
+	goldButton.setText(player->getGold());
+
+	//if left mouse button is pressed, and we haven't reach max selected items, find out if an icon was clicked
+	if (in->IsMBDown(0) && (selectedItems < maxSelected))
+	{
+		for (int i = 0; i < playerButtons.size(); i++)
+		{
+			playerButtons[i].Select(in, frameCount, selectedItems);
+		}
+		for (int i = 0; i < vendorButtons.size(); i++)
+		{
+			vendorButtons[i].Select(in, frameCount, selectedItems);
+		}
+	}
+	//if left mouse button is pressed, but we reached our max selected items, only find out if a selected icon was clicked
+	else if(in->IsMBDown(0) && (selectedItems >= maxSelected))
+	{
+		for (int i = 0; i < playerButtons.size(); i++)
+		{
+			if (playerButtons[i].isSelected())
 			{
-				mPlayer->RemoveGold(SupplyCost);
-				curship->AddSupplies(10);
+				playerButtons[i].Select(in, frameCount, selectedItems);
+			}
+		}
+		for (int i = 0; i < vendorButtons.size(); i++)
+		{
+			if (vendorButtons[i].isSelected())
+			{
+				vendorButtons[i].Select(in, frameCount, selectedItems);
 			}
 		}
 	}
 
-	if (BuyCrewButton.isPressed(in))
+	//if buy button is pressed, see if a vendor item is selected. If it is, transfer from vendor to player inventory
+	if (in->IsMBDown(0) && buyButton.isPressed(in, frameCount))
 	{
-		if (curship->GetCrew() < curship->GetCrewMax())
+
+		for (int i = 0; i < vendorButtons.size(); i++)
 		{
-			if (mPlayer->getGold() >= CrewCost)
+			if (vendorButtons[i].isSelected() == true)
 			{
-				mPlayer->RemoveGold(CrewCost);
-				curship->AddCrew(1);
+				Item item = vendorButtons[i].getItem();
+				player->getInventory()->addItem(item, 1);
+				vendor->getInventory()->removeItem(item, 1);
+				//reset inventory buttons for display
+				int incrX = 0;
+				int incrY = 0;
+				playerButtons.clear();
+				vendorButtons.clear();
+				selectedItems -= 1;
+				for (int i = 0; i < player->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(90 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					playerButtons.push_back(Button(player->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+
+				//reset incrementors
+				incrX = 0;
+				incrY = 0;
+
+				//draw the vendors's inventory
+				for (int i = 0; i < vendor->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					vendorButtons.push_back(Button(vendor->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+				//no need to search through rest of items
+				break;
+			}
+		}
+	}
+	//if sell button is pressed, see if a player item is selected. If it is, transfer from player to vendor inventory
+	else if (in->IsMBDown(0) && sellButton.isPressed(in, frameCount))
+	{
+		for (int i = 0; i < playerButtons.size(); i++)
+		{
+			if (playerButtons[i].isSelected() == true)
+			{
+				Item item = playerButtons[i].getItem();
+				//get current last item information
+
+				vendor->getInventory()->addItem(item, 1);
+				player->getInventory()->removeItem(item, 1);
+
+				//reset inventory buttons for display
+				int incrX = 0;
+				int incrY = 0;
+				playerButtons.clear();
+				vendorButtons.clear();
+				selectedItems -= 1;
+				for (int i = 0; i < player->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(66 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(90 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					playerButtons.push_back(Button(player->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+
+				//reset incrementors
+				incrX = 0;
+				incrY = 0;
+
+				//draw the vendors's inventory
+				for (int i = 0; i < vendor->getInventory()->getSize(); i++)
+				{
+					//get positions the icons need to be at
+					incrX = i;
+					if (incrX > 8)
+					{
+						incrX = 0;
+						incrY += 1;
+					}
+					iconPos = v2d(430 + (incrX * 40), 109 + (incrY * 40));
+					qtyPos = v2d(454 + (incrX * 40), 133 + (incrY * 40));
+
+					//create the button and draw it
+					vendorButtons.push_back(Button(vendor->getInventory()->getItem(i), iconPos, qtyPos, device));
+
+				}
+				//sellButton.setSelected(false);
+				int test = 1;
+				break;
 			}
 		}
 	}
 
-	if (BExit.isPressed(in))
+	if (in->IsMBDown(0) && exitButton.isPressed(in, frameCount))
 	{
 		return true;
 	}
-
-	if (BBuyButton.isPressed(in))
-	{
-		if (SelectedItem < 16 && SelectedItem > -1)
-		{
-			Inventory* in = mVendor->getItems();
-			int amnt = 0;
-
-			for (int i = 0; i < in->items.size(); i++)
-			{
-				std::string str1 = in->items[i]->getItemName().c_str();
-				std::string str2 = BBuyList[SelectedItem].GetText().c_str();
-				if (str1 == str2)
-				{
-					if (ModAmnt * 5 <= mPlayer->getGold())
-					{
-						if (ModAmnt < in->items[i]->getItemQty())
-						{
-							Item* item = new Item(in->items[i]->getItemName(), ModAmnt);
-							in->items[i]->setItemQty(in->items[i]->getItemQty() - ModAmnt);
-							Inventory* pin = mPlayer->getItems();
-							pin->addItem(item);
-
-							// Need to implement a valid cost calc.
-							mPlayer->RemoveGold(5 * ModAmnt);
-						}
-						else
-						{
-							Item* item = new Item(in->items[i]->getItemName(), in->items[i]->getItemQty());
-							in->items[i]->setItemQty(0);
-							Inventory* pin = mPlayer->getItems();
-							pin->addItem(item);
-
-							// Need to implement a valid cost calc.
-							mPlayer->RemoveGold(5 * in->items[i]->getItemQty());
-						}
-					}
-					break;
-				}
-			}
-		}
-		UpdateContents();
-	}
-
-	if (BSellButton.isPressed(in))
-	{
-		if (SelectedItem >= 16 && SelectedItem > -1)
-		{
-			Inventory* in = mPlayer->getItems();
-			int amnt = 0;
-
-			for (int i = 0; i < in->items.size(); i++)
-			{
-				std::string str1 = in->items[i]->getItemName().c_str();
-				std::string str2 = BSellList[SelectedItem - 16].GetText().c_str();
-				if (str1 == str2)
-				{
-					if (ModAmnt < in->items[i]->getItemQty())
-					{
-						Item* item = new Item(in->items[i]->getItemName(), ModAmnt);
-						in->items[i]->setItemQty(in->items[i]->getItemQty() - ModAmnt);
-						Inventory* pin = mVendor->getItems();
-						pin->addItem(item);
-
-						// Need to implement a valid cost calc.
-						mPlayer->AddGold(5 * ModAmnt);
-					}
-					else
-					{
-						Item* item = new Item(in->items[i]->getItemName(), in->items[i]->getItemQty());
-						in->items[i]->setItemQty(0);
-						Inventory* pin = mVendor->getItems();
-						pin->addItem(item);
-
-						// Need to implement a valid cost calc.
-						mPlayer->AddGold(5 * in->items[i]->getItemQty());
-					}
-					break;
-				}
-			}
-		}
-		UpdateContents();
-	}
-
-	if (BamntUp.isPressed(in))
-	{
-		ModAmnt++;
-	}
-
-	if (BamntDown.isPressed(in))
-	{
-		ModAmnt--;
-		if (ModAmnt < 0)
-			ModAmnt = 0;
-	}
-
-	for (int i = 0; i < BBuyList.size(); i++)
-	{
-		if (BBuyList[i].isPressed(in) && BBuyList[i].GetText() != "")
-		{
-			SelectedItem = i;
-			bool selected = false;
-			BBuyList[i].SetColorFront(255, 255, 153, 255);
-			for (int j = 0; j < BBuyList.size(); j++)
-			{
-				if (j != i)
-				{
-					if (BBuyList[j].GetText() != "")
-					{
-						BBuyList[j].SetColorFront(255, 255, 115, 255);
-					}
-				}
-			}
-		}
-	}
-
-	for (int i = 0; i < BSellList.size(); i++)
-	{
-		if (BSellList[i].isPressed(in) && BSellList[i].GetText() != "")
-		{
-			SelectedItem = 16 + i;
-			bool selected = false;
-			BSellList[i].SetColorFront(255, 255, 153, 255);
-			for (int j = 0; j < BSellList.size(); j++)
-			{
-				if (j != i)
-				{
-					if (BSellList[j].GetText() != "")
-					{
-						BSellList[j].SetColorFront(255, 255, 255, 255);
-					}
-				}
-			}
-		}
-	}
-
-	//UpdateContents();
-
 	return false;
 }
 
-void TradeMenu::Draw(irr::video::IVideoDriver* driver)
+//renders the menu on the screen
+void TradeMenu::Render(IVideoDriver* driver, IrrlichtDevice* device)
 {
+	//playerButtons.clear();
+	//vendorButtons.clear();
+
+	//draw the background image
 	background.Draw(driver);
-	BbgL.Draw(driver);
-	BbgR.Draw(driver);
-	BuySuppliesButton.Draw(driver);
-	BuyCrewButton.Draw(driver);
-	BExit.Draw(driver);
-	GoldButton.Draw(driver);
 
-	BShopTitle.Draw(driver);
-	BShipTitle.Draw(driver);
+	//draw buy and sell buttons
+	buyButton.Draw(driver);
+	sellButton.Draw(driver);
+	exitButton.Draw(driver);
+	goldButton.Draw(driver);
 
-	BBuyButton.Draw(driver);
-	BSellButton.Draw(driver);
-
-	BamntDisp.Draw(driver);
-	BamntUp.Draw(driver);
-	BamntDown.Draw(driver);
-
-	for (int i = 0; i < BBuyList.size(); i++)
+	//draw the player's inventory
+	for (int i = 0; i < player->getInventory()->getSize(); i++)
 	{
-		BBuyList[i].Draw(driver);
-		BBuyListAmnt[i].Draw(driver);
-		BSellList[i].Draw(driver);
-		BSellListAmnt[i].Draw(driver);
-	}
-}
-
-void TradeMenu::UpdateContents()
-{
-	if (mPlayer != NULL)
-	{
-		Inventory* in = mPlayer->getItems();
-
-		int i = 0;
-		if (in != NULL)
-		{
-			for (i; i < in->items.size(); i++)
-			{
-				// Update contents
-				if (i >= 17)
-					break;
-
-				irrstring str = "";
-				str += in->items[i]->getItemName().c_str();
-				BSellList[i].SetText(str);
-				BSellList[i].SetColorFront(255, 255, 255, 255);
-				BSellList[i].SetColorBack(0, 0, 0, 255);
-
-				str = "";
-				str += std::to_string(in->items[i]->getItemQty()).c_str();
-				BSellListAmnt[i].SetText(str);
-				BSellListAmnt[i].SetColorFront(255, 255, 255, 255);
-				BSellListAmnt[i].SetColorBack(0, 0, 0, 255);
-			}
-		}
-
-		if (i < 17)
-		{
-			for (i; i < 17; i++)
-			{
-				BSellList[i].SetText("");
-				BSellList[i].SetColorFront(255, 255, 255, 0);
-				BSellList[i].SetColorBack(255, 255, 255, 0);
-				BSellListAmnt[i].SetText("");
-				BSellListAmnt[i].SetColorFront(255, 255, 255, 0);
-				BSellListAmnt[i].SetColorBack(255, 255, 255, 0);
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 17; i++)
-		{
-			BSellList[i].SetText("");
-			BSellList[i].SetColorFront(255, 255, 255, 0);
-			BSellList[i].SetColorBack(255, 255, 255, 0);
-			BSellListAmnt[i].SetText("");
-			BSellListAmnt[i].SetColorFront(255, 255, 255, 0);
-			BSellListAmnt[i].SetColorBack(255, 255, 255, 0);
-		}
+		playerButtons[i].Draw(driver);
 	}
 
-	if (mVendor != NULL)
+	//draw the vendors's inventory
+	for (int i = 0; i < vendor->getInventory()->getSize(); i++)
 	{
-		Inventory* in = mVendor->getItems();
-		int i = 0;
-		if (in != NULL)
-		{
-			for (i; i < in->items.size(); i++)
-			{
-				// Update contents
-				if (i >= 17)
-					break;
-
-				irrstring str = "";
-				str += in->items[i]->getItemName().c_str();
-				BBuyList[i].SetText(str);
-				BBuyList[i].SetColorFront(255, 255, 255, 255);
-				BBuyList[i].SetColorBack(0, 0, 0, 255);
-
-				str = "";
-				str += std::to_string(in->items[i]->getItemQty()).c_str();
-				BBuyListAmnt[i].SetText(str);
-				BBuyListAmnt[i].SetColorFront(255, 255, 255, 255);
-				BBuyListAmnt[i].SetColorBack(0, 0, 0, 255);
-			}
-		}	
-
-		if (i < 17)
-		{
-			for (i; i < 17; i++)
-			{
-				BBuyList[i].SetText("");
-				BBuyList[i].SetColorFront(255, 255, 255, 0);
-				BBuyList[i].SetColorBack(255, 255, 255, 0);
-				BBuyListAmnt[i].SetText("");
-				BBuyListAmnt[i].SetColorFront(255, 255, 255, 0);
-				BBuyListAmnt[i].SetColorBack(255, 255, 255, 0);
-			}
-		}
+		vendorButtons[i].Draw(driver);
 	}
-	else
-	{
-		for (int i = 0; i < 17; i++)
-		{
-			BBuyList[i].SetText("");
-			BBuyList[i].SetColorFront(255, 255, 255, 0);
-			BBuyList[i].SetColorBack(255, 255, 255, 0);
-			BBuyListAmnt[i].SetText("");
-			BBuyListAmnt[i].SetColorFront(255, 255, 255, 0);
-			BBuyListAmnt[i].SetColorBack(255, 255, 255, 0);
-		}
-	}
+
+	//draw player's gold
+	m_font->draw(std::to_string(player->getGold()).c_str(), irr::core::rect<s32>(43, 37, 75, 69), SColor(255, 255, 255, 255), true, true);
 }

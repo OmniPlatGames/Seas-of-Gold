@@ -48,39 +48,39 @@ void Player::movePlayer(IAnimatedMeshSceneNode* plyrNode, float dt, ISceneCollis
 
 	if (GetAsyncKeyState(0x57)) //W key move forward
 	{
-		plPos_z = -(dt * 10) * (cos((plyrNode->getRotation().Y)*PI / 180));
-		plPos_x = -(dt * 10) * (sin((plyrNode->getRotation().Y)*PI / 180));
+		plPos_z = -dt * 13 * (cos((plyrNode->getRotation().Y)*PI / 180));
+		plPos_x = -dt * 13 * (sin((plyrNode->getRotation().Y)*PI / 180));
 		movetest = true;
 		if (!plyrWalk)
 		{
 			plyrNode->setFrameLoop(40, 90);
-			plyrNode->setAnimationSpeed(30);
+			plyrNode->setAnimationSpeed(70);
 			plyrWalk = true;
 		}
 	}
 	if (GetAsyncKeyState(0x53)) //S key move backwards
 	{
-		plPos_z = dt * (cos((plyrNode->getRotation().Y)*PI / 180));
-		plPos_x = dt * (sin((plyrNode->getRotation().Y)*PI / 180));
+		plPos_z = dt * 3 * (cos((plyrNode->getRotation().Y)*PI / 180));
+		plPos_x = dt * 3 * (sin((plyrNode->getRotation().Y)*PI / 180));
 		movetest = true;
 		if (!plyrWalk)
 		{
 			plyrNode->setFrameLoop(40, 90);
-			plyrNode->setAnimationSpeed(-30);
+			plyrNode->setAnimationSpeed(-70);
 			plyrWalk = true;
 		}
 	}
 	if (GetAsyncKeyState(0x44)) // D key strafe right
 	{
-		plPos_z = dt * (sin((plyrNode->getRotation().Y)*PI / 180));
-		plPos_x = -dt * (cos((plyrNode->getRotation().Y)*PI / 180));
+		plPos_z = dt * 3 * (sin((plyrNode->getRotation().Y)*PI / 180));
+		plPos_x = -dt * 3 * (cos((plyrNode->getRotation().Y)*PI / 180));
 		movetest = true;
 
 	}
 	if (GetAsyncKeyState(0x41)) // A key strafe left
 	{
-		plPos_z = -dt * (sin((plyrNode->getRotation().Y)*PI / 180));
-		plPos_x = dt * (cos((plyrNode->getRotation().Y)*PI / 180));
+		plPos_z = -dt * 3 * (sin((plyrNode->getRotation().Y)*PI / 180));
+		plPos_x = dt * 3 * (cos((plyrNode->getRotation().Y)*PI / 180));
 		movetest = true;
 
 	}

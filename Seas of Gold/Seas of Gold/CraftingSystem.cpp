@@ -1,14 +1,14 @@
-#include "CraftingSystem.h"
+/*#include "CraftingSystem.h"
 
 void CSInputItems::AddItem(irrstring Name, int Amnt)
 {
-	itemNames.push_back(Name);
-	amnts.push_back(Amnt);
+	//itemNames.push_back(Name);
+	//amnts.push_back(Amnt);
 }
 
 void CSOutputItems::AddItem(irrstring Name, std::vector<irrstring> Icomponents, std::vector<int>  Amnt)
 {
-	CSOutputItem temp;
+	/*CSOutputItem temp;
 	temp.Name = Name;
 	temp.components = Icomponents;
 	temp.amnts = Amnt;
@@ -18,7 +18,7 @@ void CSOutputItems::AddItem(irrstring Name, std::vector<irrstring> Icomponents, 
 
 CraftingSystem::CraftingSystem()
 {
-	std::fstream file;
+	/*std::fstream file;
 	file.open("./Scripts/crafting.scpt");
 	bool listening = false;
 
@@ -79,35 +79,10 @@ CraftingSystem::CraftingSystem()
 	file.close();
 }
 
-CSOutputItems CraftingSystem::Craftables(CSInputItems ii)
+CSOutputItems CraftingSystem::InitializeCraftables()
 {
-	CSOutputItems output;
 
-	
-	
-	for (int i = 0; i < CraftableItems.size(); i++)
-	{
-		int ItemSize = CraftableItems[i].components.size();
-
-		if (ItemSize > ii.itemNames.size())
-			continue;
-
-		int validItems = 0;
-
-		for (int j = 0; j < ii.itemNames.size(); j++)
-		{
-			for (int k = 0; k < ItemSize; k++)
-			{
-				if (ii.itemNames[j] == CraftableItems[i].components[k] &&
-					ii.amnts[j] >= CraftableItems[i].amnts[k])
-					validItems++;
-			}		
-		}
-		if (validItems == ItemSize)
-			output.AddItem(CraftableItems[i].itemName,
-				CraftableItems[i].components,
-				CraftableItems[i].amnts);
-	}
-
-	return output;
 }
+
+
+//set up crafting "inventories"*/

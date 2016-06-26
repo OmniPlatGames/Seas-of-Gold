@@ -1,24 +1,50 @@
 #pragma once
-#include "Item.h"
+#include "ItemDatabase.h"
 #include "Common.h"
 
+
+
+//holds the item and how may of the item
+struct InventorySlot
+{
+	Item item;
+	int qty;
+
+	bool operator == (InventorySlot test)
+	{
+		if (test.item.getItemID() == item.getItemID())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+};
 
 class Inventory
 {
 public:
-	std::vector<Item*> items;
+	std::vector<InventorySlot> inventory;
 
 public:
 	Inventory();
 	~Inventory();
 
 	//return quantity of item ID
-	int hasItem(int itemID);
+	int qtyOfItem(int itemID);
 
-	//add item to inventory
-	void addItem(Item* item);
+	//add items to inventory
+	void addItem(Item item, int quantity);
 
-	//remove item to inventory
-	void removeItem(Item item);
+	//remove items inventory
+	void removeItem(Item item, int quantity);
+
+	//get number of slots in the inventory
+	int getSize();
+
+	//get item and it's qty from the inventory
+	InventorySlot getItem(int itemSlot);
 };
 

@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include "Common.h"
 
@@ -36,7 +36,7 @@ class CraftingSystem
 {
 public:
 	CraftingSystem();
-	CSOutputItems Craftables(CSInputItems ii);
+	//InitializeCraftables();
 private:
 	std::vector<CraftableItem> CraftableItems;
-};
+};*/

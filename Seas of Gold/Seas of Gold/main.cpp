@@ -15,6 +15,9 @@
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 
+//function prototype
+void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender, ItemDatabase itemDB);
+
 float direction = 0, zdirection = 0;
 vector3df dirLightVector = vector3df(0.0f, 0.0f, 1.0f);
 void moveCameraControl(IAnimatedMeshSceneNode*, IrrlichtDevice*, ICameraSceneNode*);
@@ -39,11 +42,49 @@ int main()
 	bool updateCam = true;
 	bool menu1 = false;
 	int state = Main;
+	int frameCount = 0;
 	LoadMap loadMap;
 	Player player;
 	Interface playerInterface(driver);
 	ITriangleSelector* selector = 0;
 	ISceneNodeAnimator* anim = 0;
+	Vendor southVendor;
+	Vendor eastVendor;
+	Vendor northVendor;
+	//InitializeVendors(northVendor, southVendor, eastVendor, itemD);
+
+	//ItemDatabase* itemD = new ItemDatabase;
+	ItemDatabase itemD;
+	itemD.Initialize();
+
+	//initialize player's inventory
+	player.AddGold(1000);
+	player.getInventory()->addItem(itemD.getItem(bronzeOre), 50);
+	player.getInventory()->addItem(itemD.getItem(ironOre), 50);
+	player.getInventory()->addItem(itemD.getItem(goldOre), 50);
+
+	//initialize south vendor's inventory
+	southVendor.getInventory()->addItem(itemD.getItem(bronzeOre), 100);
+	southVendor.getInventory()->addItem(itemD.getItem(coalOre), 100);
+	southVendor.getInventory()->addItem(itemD.getItem(supplies), 1000);
+
+	//initialize north vendor's inventory
+	northVendor.getInventory()->addItem(itemD.getItem(obsidianOre), 50);
+	northVendor.getInventory()->addItem(itemD.getItem(supplies), 1000);
+
+	//initialize south vendor's inventory
+	eastVendor.getInventory()->addItem(itemD.getItem(goldOre), 100);
+	eastVendor.getInventory()->addItem(itemD.getItem(ironOre), 100);
+	eastVendor.getInventory()->addItem(itemD.getItem(supplies), 1000);
+
+	//Item item(0, "bronzeOre", "Sprites/ore_Bronze.png");
+	//Item item2 = item;
+	//Item* item2 = itemD.getItem(3);
+	//inventory.addItem(&item, 2);
+	//inventory.addItem(&item, 2);
+	//inventory.addItem(item2, 2);
+
+	//int test = 0;
 
 	// Load the map scene
 	//loadMap.Load(smgr, device, Map_Africa);
@@ -73,6 +114,7 @@ int main()
 	{
 		anim = smgr->createCollisionResponseAnimator(selector, plyrNode, vector3df(0.6f, 0.75f, 0.4f), core::vector3df(0.0f, -0.05f, 0.0f),
 			core::vector3df(0.0f, -0.725f, 0.0f));
+
 		plyrNode->addAnimator(anim);
 	}
 
@@ -120,36 +162,44 @@ int main()
 	candleLight->setLightData(candleLight_data);
 	//------- end -----//
 
-	// Make the player
-	player.AddGold(1000);
-	player.SetCurrentPort(eMapDest::South);
-	Item* itemCi = new Item("Iron Ore", 1);
-	player.getItems()->addItem(itemCi);
-	Item* itemCb = new Item("Bronze Ore", 1);
-	player.getItems()->addItem(itemCb);
+	//// Make the player
+	//player.AddGold(1000);
+	//player.SetCurrentPort(eMapDest::South);
+	//Item* itemCi = new Item("Iron Ore", 1);
+	//player.getItems()->addItem(itemCi);
+	//Item* itemCb = new Item("Bronze Ore", 1);
+	//player.getItems()->addItem(itemCb);
 
-	Vendor vN;
-	Item* itemG = new Item("Gold Ore", 1000);
-	vN.getItems()->addItem(itemG);
-	Vendor vS;
-	Item* itemI = new Item("Iron Ore", 1000);
-	vS.getItems()->addItem(itemI);
-	Vendor vE;
-	Item* itemB = new Item("Bronze Ore", 1000);
-	vE.getItems()->addItem(itemB);
+	//Vendor vN;
+	//Item* itemG = new Item("Gold Ore", 1000);
+	//vN.getItems()->addItem(itemG);
+	//Vendor vS;
+	//Item* itemI = new Item("Iron Ore", 1000);
+	//vS.getItems()->addItem(itemI);
+	//Vendor vE;
+	//Item* itemB = new Item("Bronze Ore", 1000);
+	//vE.getItems()->addItem(itemB);
+	//Vendor northVendor
+
+	//delete &itemD;
+
+	int test99 = 0;
+
 
 	// Make the menus
-	MainMenu mainMenu(device);
+	MainMenu mainMenu(device, driver);
 
 	MapMenu mapMenu(device, driver);
 	mapMenu.SetPlayer(&player);
 
-	TradeMenu tradeMenu(device, driver);
-	tradeMenu.SetPlayer(&player);
-	tradeMenu.SetVendor(&vS);
-
-	CraftingMenu craftMenu(device, driver);
-	craftMenu.SetPlayer(&player);
+	TradeMenu tradeMenu;
+	tradeMenu.Initialize(device, driver, &player, &southVendor);
+	//TradeMenu tradeMenu(device, driver);
+	//tradeMenu.SetPlayer(&player);
+	//tradeMenu.SetVendor(&vS);
+	//
+	CraftingMenu craftMenu(device, driver, &player, itemD);
+	//craftMenu.SetPlayer(&player);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Initialize timer to compute elapsed time between frames
@@ -170,6 +220,7 @@ int main()
 
 		sun_node->setRotation(vector3df(sun_angle, 0.0f, 0.0f));
 		sun_angle += dt;
+		frameCount += 1;
 		if ((sun_angle > 0 && sun_angle < 109) || (sun_angle>350))
 		{
 			timer++;
@@ -196,14 +247,11 @@ int main()
 		player.updatePlayer(plyrNode, dt, collMan, selector);
 		playerInterface.update(plyrNode, loadMap, driver, device, input, updateCam, state);
 
-		int test = state;
-		int test2 = 0;
-
 		switch (state)
 		{
 		case Map:
 		{
-			int out = mapMenu.Update(&input);
+			int out = mapMenu.Update(&input, frameCount);
 
 			switch (out)
 			{
@@ -215,9 +263,9 @@ int main()
 			case eMapDest::East:
 			{
 				state = None;
-				Item* itemB = new Item("Bronze Ore", 1000);
-				vE.getItems()->addItem(itemB);
-				tradeMenu.SetVendor(&vE);
+				//Item* itemB = new Item("Bronze Ore", 1000);
+				//vE.getItems()->addItem(itemB);
+				tradeMenu.SetVendor(&eastVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_India);
 				if (loadMap.CollNode)
 				{
@@ -242,9 +290,10 @@ int main()
 			case eMapDest::North:
 			{
 				state = None;
-				Item *itemG = new Item("Gold Ore", 1000);
-				vN.getItems()->addItem(itemG);
-				tradeMenu.SetVendor(&vN);
+				//Item *itemG = new Item("Gold Ore", 1000);
+				//vN.getItems()->addItem(itemG);
+				//tradeMenu.SetVendor(&vN);
+				tradeMenu.SetVendor(&northVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_England);
 				if (loadMap.CollNode)
 				{
@@ -269,9 +318,10 @@ int main()
 			case eMapDest::South:
 			{
 				state = None;
-				Item *itemI = new Item("Iron Ore", 1000);
-				vS.getItems()->addItem(itemI);
-				tradeMenu.SetVendor(&vS);
+				//Item *itemI = new Item("Iron Ore", 1000);
+				//vS.getItems()->addItem(itemI);
+				//tradeMenu.SetVendor(&vS);
+				tradeMenu.SetVendor(&southVendor);
 				loadMap.Load(smgr, device, selector, plyrNode, anim, driver, Map_Africa);
 				if (loadMap.CollNode)
 				{
@@ -301,14 +351,16 @@ int main()
 		}
 		case Trade:
 		{
-			bool out = tradeMenu.Update(&input);
+
+			bool out = false;
+			out = tradeMenu.Update(&input, frameCount, device);
 			if (out)
 				state = None;
 			break;
 		}
 		case Main:
 		{
-			int out = mainMenu.Update(&input);
+			int out = mainMenu.Update(&input, frameCount);
 
 			switch (out)
 			{
@@ -320,6 +372,7 @@ int main()
 			case MSexit:
 			{
 				device->closeDevice();
+				//return 0;
 				break;
 			}
 			default:
@@ -330,7 +383,7 @@ int main()
 		}
 		case Craft:
 		{
-			bool out = craftMenu.Update(&input);
+			bool out = craftMenu.Update(&input, frameCount, device);
 			if (out)
 				state = None;
 			break;
@@ -362,12 +415,12 @@ int main()
 		{
 		case Map:
 		{
-			mapMenu.Draw(driver);
+			mapMenu.Draw(driver, device);
 			break;
 		}
 		case Trade:
 		{
-			tradeMenu.Draw(driver);
+			tradeMenu.Render(driver, device);
 			break;
 		}
 		case Main:
@@ -392,7 +445,7 @@ int main()
 
 	}
 
-	//device->drop();
+	device->drop();
 
 	return 0;
 }
@@ -424,4 +477,20 @@ void moveCameraControl(IAnimatedMeshSceneNode* playerNode, IrrlichtDevice* devic
 	camera->setPosition(core::vector3df(xf, yf, zf));
 	camera->setTarget(core::vector3df(playerPos.X, playerPos.Y + 2.0f, playerPos.Z));
 	playerNode->setRotation(core::vector3df(0, direction - 90, 0));
+}
+
+void InitializeVendors(Vendor &northVendor, Vendor& SouthVendor, Vendor& EastVender, ItemDatabase itemDB)
+{
+	//initialize north vendor's inventory
+
+
+	//initialize south vendor's inventory
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzeOre), 50);
+	//SouthVendor.getItems()->addItem(itemDB.getItem(3), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzeAxe), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzeHelmet), 50);
+	SouthVendor.getInventory()->addItem(itemDB.getItem(bronzePlateLegs), 50);
+										 
+	//initialize east vendor's inventory
+
 }

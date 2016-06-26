@@ -26,7 +26,7 @@ private:
 
 public:
 	Player() { playerShip = new Ship; }
-	~Player() { delete playerShip; }
+	~Player() {  }
 
 	void SetCurrentPort(int port);
 

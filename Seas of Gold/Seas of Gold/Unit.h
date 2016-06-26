@@ -7,7 +7,7 @@ class Unit : public WorldObject
 {
 	float fSpeed;
 	int iGold;
-	Inventory* items;
+	Inventory* inventory;
 
 
 public:
@@ -15,13 +15,13 @@ public:
 	~Unit();
 
 	//return pointer to unit's inventory
-	inline Inventory* getItems(){ return items; };
+	inline Inventory* getInventory(){ return inventory; };
 
 	//returns current gold
-	inline int getGold() { return iGold; };
+	int getGold() { return iGold; };
 
 	//return number of items the unit has of itemID
-	inline int unitHasItem(int itemID){ return items->hasItem(itemID); };
+	inline int unitHasItem(int itemID){ return inventory->qtyOfItem(itemID); };
 
 	//displace unit
 	void update(v3d dir, float dt);

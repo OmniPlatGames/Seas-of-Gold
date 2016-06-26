@@ -2,42 +2,54 @@
 
 #include "Graphics.h"
 #include "Input.h"
+#include "Inventory.h"
 
 class Button
 {
 public:
 	Button();
-	Button(int x1, int y1, int x2, int y2);
+	Button(InventorySlot& slot, v2d iconPos, v2d qtyPos, IrrlichtDevice* device);
+	Button(GraphicsImage& image, IrrlichtDevice* device);
 
-	void SetFont(irr::gui::IGUIFont* font);
-
-	void SetColorBack(int R, int G, int B, int A);
-	void SetColorFront(int R, int G, int B, int A);
-	void SetColorText(int R, int G, int B, int A);
-
-	irrstring GetText();
-
-	void SetText(irrstring text);
-
-	bool isPressed(Input* in);
+	bool isPressed(Input* in, int& frameCount);
+	void Select(Input* in, int& frameCount, int& selectedItems);
+	bool isSelected();
 
 	void Draw(irr::video::IVideoDriver* driver);
+
+	void setText(int);
+
+	Item getItem();
+	int getQty();
+
+	void setSelected(bool set);
+
 private:
-	irr::video::SColor m_BackColor;
-	irr::video::SColor m_FrontColor;
-	irr::video::SColor m_TextColor;
 
-	GraphicsRect m_backdrop;
-	GraphicsRect m_main;
+	v2d i_TopLeft;
+	v2d i_BotRight;
 
-	v2d m_Topleft;
-	v2d m_BotRight;
+	v2d q_TopLeft;
+	v2d q_BotRight;
 
-	irr::gui::IGUIFont* m_font;
+	stringw text;
 
-	irrstring m_text;
+	GraphicsRect selectedBorder;
 
+	InventorySlot iSlot;
+
+	IGUIFont* m_font;
+
+	ITexture* icon;
+
+	bool press;
 	bool pressed;
+	bool selected;
 
 	int borderthickness;
+
+	//used only for graphicsImage constructor and related draw
+	GraphicsImage buttonImage;
+
+
 };

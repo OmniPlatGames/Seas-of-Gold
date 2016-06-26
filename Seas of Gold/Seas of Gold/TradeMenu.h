@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "Button.h"
-#include "Inventory.h"
+#include "Graphics.h"
 #include "Player.h"
 #include "Vendor.h"
 
@@ -12,69 +12,46 @@
 // a player and vendor to communicate.
 class TradeMenu
 {
-public:
-	// Main constructor
-	// Takes in a device and a driver
-	TradeMenu(IrrlichtDevice* device,
-		irr::video::IVideoDriver* driver);
-
-	// Set the current player object via it's pointer
-	void SetPlayer(Player* p);
-
-	// Set the current vendor object via it's pointer
-	void SetVendor(Vendor* v);
-
-	// Update everything about the menu
-	bool Update(Input* in);
-
-	// Draw everything on the menu
-	void Draw(irr::video::IVideoDriver* driver);
-
 private:
-	// Update what is contained within the menu.
-	void UpdateContents();
-
-private:
-	// The background image.
 	GraphicsImage background;
+	GraphicsImage buyButtonTex;
+	GraphicsImage sellButtonTex;
+	GraphicsImage exitButtonTex;
+	GraphicsImage goldButtonTex;
 
-	// UI Layout elements
-	// I am using buttons with no interaction
-	// because it already had the easiest to modify visual interface
+	IGUIFont* m_font;
 
-	Button BbgL; // Background Column Left
-	Button BbgR; // Background Column
 
-	Button BShopTitle; // Title object for the shop
-	Button BShipTitle; // Title object for your inventory
+	Vendor* vendor;
+	Player* player;
 
-	Button BBuyButton; // Button used to buy your currently selected object
-	Button BSellButton; // Button used to sell your currently selected object
+	std::vector<Button> playerButtons;
+	std::vector<Button> vendorButtons;
 
-	Button BamntDisp; // How much you buy are sell display
-	Button BamntUp; // Modify your buy and sell display by increasing it
-	Button BamntDown; //  Modify your buy and sell display by decreasing it
+	Button buyButton;
+	Button sellButton;
+	Button exitButton;
+	Button goldButton;
 
-	Button GoldButton; // Displays how much gold you have
-	Button BuySuppliesButton; // Allows you to buy supplies until you reach your max
-	Button BuyCrewButton; // Allows you to buy crew until you reach your max
-	Button BExit; // Allows you to exit the menu
+	v2d iconPos;
+	v2d qtyPos;
 
-	irr::gui::IGUIFont* mfont; // Font object
-	Player* mPlayer; // Current player pointer
-	Vendor* mVendor; // Current vendor pointer
+	int selectedItems;
+	int maxSelected;
 
-	int SupplyCost; // How much Supply costs
-	int CrewCost; // How much Crew Costs
+public:
+	TradeMenu();
+	~TradeMenu();
 
-	std::vector<Button> BBuyList; // List of buttons used to select what you want to buy
-								  // And it displays what the object is
-	std::vector<Button> BBuyListAmnt; // Shows how much of a certain object there is
-	std::vector<Button> BSellList; // List of buttons used to select what you want to sell
-								   // And it displays what the object is
-	std::vector<Button> BSellListAmnt; // Shows how much of a certain object there is
+	//initializes the menu data
+	void Initialize(IrrlichtDevice* device, IVideoDriver* driver, Player* Plyr, Vendor* Vndr);
 
-	int ModAmnt; // How much of an object you will sell or buy
+	//sets vendor for new location
+	void SetVendor(Vendor* vndr);
 
-	int SelectedItem; // Which item you have selected.
+	//updates the menu
+	bool Update(Input* in, int& frameCount, IrrlichtDevice* device);
+
+	//Renders the menu on the screen
+	void Render(IVideoDriver* driver, IrrlichtDevice* device);
 };
